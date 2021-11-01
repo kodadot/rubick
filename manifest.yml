@@ -1,0 +1,16 @@
+version: '4.0'
+description: Test manifest
+
+typegen:
+  outDir: src/types
+  events:
+    - balances.Transfer
+
+mappings:
+  mappingsModule: lib/mappings
+  eventHandlers:
+    - event: balances.Transfer
+      handler: balancesTransfer
+  extrinsicHandlers:
+  preBlockHooks:
+  postBlockHooks:

@@ -1,0 +1,77 @@
+name: saas
+on:
+  pull_request:
+    types: [ labeled ]
+  workflow_dispatch:
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT }}
+
+jobs:
+  # check if we can deploy for this user
+  check_user:
+    if: ${{ github.event.label.name == 'fordeploy' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Call REST API for check if user registered'
+        uses: indiesdev/curl@v1
+        with: 
+          url: ${{ secrets.REST_API_URL }}/admin/ci/client/${{ github.event.pull_request.user.login }}/exists
+          method: 'GET'
+          accept: 200
+          bearer-token: ${{ secrets.API_ADMIN_TOKEN }}
+  # build and push component's images to registry
+  build:
+    needs: check_user
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: 'Project name generation'
+        uses: TGPSKI/name-generator-node-action@v2
+        id: namegen
+        with:
+          separator: '-'
+          length: 2
+          style: 'lowerCase'
+        env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.GCP_PROJECT }}
+          service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+          export_default_credentials: true
+
+      # Build and push images to Google Container Registry
+      - name: Build processor image
+        run: |-
+          docker build -t gcr.io/$PROJECT_ID/processor:$GITHUB_REF --target processor .
+      - name: Build query-node image
+        run: |-
+          docker build -t gcr.io/$PROJECT_ID/query-node:$GITHUB_REF --target query-node .
+      - name: 'gcloud cli --> docker credential helper'
+        run: |
+          gcloud auth configure-docker -q
+      # steps for push images to gcr
+      - name: Push processor image
+        run: |-
+          docker push gcr.io/$PROJECT_ID/processor:$GITHUB_REF
+      - name: Push query-node image
+        run: |-
+          docker push gcr.io/$PROJECT_ID/query-node:$GITHUB_REF
+    outputs:
+      deployment_name: ${{ steps.namegen.outputs.generated_name }}
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Call REST API for creating deployment'
+        uses: indiesdev/curl@v1
+        with:
+          url: ${{ secrets.REST_API_URL }}/admin/ci/deployment
+          method: 'POST'
+          accept: 200
+          bearer-token: ${{ secrets.API_ADMIN_TOKEN }}
+          headers: '{ "Content-Type": "application/json" }'
+          body: '{"deploymentName": "${{ needs.build.outputs.deployment_name }}", "username": "${{ github.event.pull_request.user.login }}", "ref": "$GITHUB_REF"}'

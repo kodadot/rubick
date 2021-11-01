@@ -1,0 +1,35 @@
+{
+  "name": "hydra-template",
+  "private": true,
+  "scripts": {
+    "typegen": "hydra-typegen typegen manifest.yml",
+    "codegen": "hydra-cli codegen",
+    "build": "rm -rf lib && tsc",
+    "db:create": "hydra-cli db:create",
+    "db:drop": "hydra-cli db:drop",
+    "db:create-migration": "hydra-cli db:create-migration",
+    "db:migrate": "hydra-cli db:migrate",
+    "db:revert": "hydra-cli db:revert",
+    "db:reset": "hydra-cli db:drop && hydra-cli db:create && hydra-processor migrate && hydra-cli db:migrate",
+    "processor:migrate": "hydra-processor migrate",
+    "processor:start": "hydra-processor run",
+    "query-node:start": "node ./lib/generated/server.js"
+  },
+  "dependencies": {
+    "@polkadot/types": "^6.5.1",
+    "@subsquid/openreader": "^0.2.0",
+    "@subsquid/hydra-common": "5.0.0-alpha.5",
+    "@subsquid/hydra-processor": "5.0.0-alpha.5",
+    "inflected": "^2.1.0",
+    "class-validator": "^0.13.1",
+    "type-graphql": "^1.1.1",
+    "typeorm": "0.2.38"
+  },
+  "devDependencies": {
+    "@subsquid/hydra-cli": "5.0.0-alpha.5",
+    "@subsquid/hydra-typegen": "5.0.0-alpha.5",
+    "@types/inflected": "^1.1.29",
+    "@types/pg": "^8.6.1",
+    "typescript": "~4.4.2"
+  }
+}
