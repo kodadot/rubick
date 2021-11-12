@@ -2,15 +2,26 @@ version: '4.0'
 description: Test manifest
 
 typegen:
+  metadata:
+    source: wss://kusama-rpc.polkadot.io/
   outDir: src/types
   events:
     - balances.Transfer
+  calls:
+  - utility.batchAll
+  - utility.batch
+  - system.remark
 
 mappings:
   mappingsModule: lib/mappings
+  range: '[4892957, )'
   eventHandlers:
-    - event: balances.Transfer
-      handler: balancesTransfer
   extrinsicHandlers:
+    - extrinsic: utility.batchAll
+      handler: handleRemark
+    - extrinsic: utility.batch
+      handler: handleRemark
+    - extrinsic: system.remark
+      handler: handleRemark
   preBlockHooks:
   postBlockHooks:

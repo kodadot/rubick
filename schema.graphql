@@ -1,14 +1,69 @@
-type Account @entity {
-    "Account address"
-    id: ID!
-    wallet: String!
-    balance: BigInt!
-    historicalBalances: [HistoricalBalance!] @derivedFrom(field: "account")
+type RemarkEntity @entity {
+  id: ID! #id is a required field
+  value: String!
+  caller: String!
+  blockNumber: String!
+  interaction: String
 }
 
-type HistoricalBalance @entity {
-    id: ID!
-    account: Account!
-    balance: BigInt!
-    timestamp: DateTime!
+type FailedEntity @entity {
+  id: ID! #id is a required field
+  value: String!
+  reason: String!
+  interaction: String
+}
+
+type CollectionEntity @entity {
+  version: String
+  name: String
+  max: Int
+  issuer: String
+  symbol: String
+  id: ID!
+  metadata: String
+  currentOwner: String
+  nfts: [NFTEntity] @derivedFrom(field: "collection")
+  events: [Event]
+  blockNumber: BigInt
+}
+
+type NFTEntity @entity {
+  name: String
+  instance: String
+  transferable: Int
+  collection: CollectionEntity!
+  issuer: String
+  sn: String
+  id: ID!
+  metadata: String
+  currentOwner: String
+  price: BigInt
+  burned: Boolean
+  blockNumber: BigInt
+  events: [Event]
+  emotes: [Emote] @derivedFrom(field: "nft")
+}
+
+type Event @jsonField {
+  blockNumber: String
+  timestamp: Int
+  caller: String!
+  interaction: String
+  meta: String!
+}
+
+type Emote @entity {
+  id: ID!
+  nft: NFTEntity!
+  caller: String!
+  value: String!
+}
+
+enum Interaction {
+  MINT
+  MINTNFT
+  LIST
+  BUY
+  CONSUME
+  EMOTE
 }
