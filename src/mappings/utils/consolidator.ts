@@ -1,5 +1,5 @@
 import { RmrkInteraction } from './types'
-import { CollectionEntity, NFTEntity } from '../../types'
+import { CollectionEntity, NFTEntity } from '../../generated/model'
 import { ExtraCall } from './extract'
 // import { decodeAddress } from '@polkadot/util-crypto'
 type Entity = CollectionEntity | NFTEntity
@@ -9,7 +9,7 @@ export function exists<T>(entity: T | undefined): boolean {
 }
 
 export function isBurned(nft: NFTEntity) {
-  return nft.burned
+  return nft.burned ?? false
 }
 
 export function isTransferable(nft: NFTEntity) {
@@ -60,7 +60,7 @@ export function isPositiveOrElseError(entity: BigInt | number, excludeZero?: boo
 
 
 const isBalanceTransfer = ({section, method}: ExtraCall) => section === 'balances' && method === 'transfer'
-const canBuy = (nft: NFTEntity) => (call: ExtraCall) => isBalanceTransfer(call) && isOwner(nft, call.args[0]) && BigInt(call.args[1]) >= BigInt(nft.price)
+const canBuy = (nft: NFTEntity) => (call: ExtraCall) => isBalanceTransfer(call) && isOwner(nft, call.args[0]) && BigInt(call.args[1]) >= BigInt(nft.price ?? 0)
 
 export function isBuyLegalOrElseError(entity: NFTEntity, extraCalls: ExtraCall[]) {
   const result = extraCalls.some(canBuy(entity))
