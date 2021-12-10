@@ -1,6 +1,5 @@
 import { DatabaseManager, EventContext, StoreContext, ExtrinsicContext } from '@subsquid/hydra-common'
 import { CollectionEntity, NFTEntity } from '../generated/model'
-import { Balances } from '../types'
 
 import { getRemarksFrom, RemarkResult } from './utils';
 import { Collection, eventFrom, getNftId, NFT, RmrkEvent, RmrkInteraction } from './utils/types';
