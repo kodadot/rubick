@@ -1,8 +1,11 @@
 up:
-  docker-compose up
+  docker compose up
+
+pull:
+  docker compose pull
 
 clear:
-  docker-compose rm -f
+  docker compose rm -f
   rm -rf .data
 
 types:
@@ -18,3 +21,6 @@ sub: types build
 
 run:
   npm run processor:start
+
+migrate NAME:
+  npm run db:create-migration -n "{{NAME}}"
