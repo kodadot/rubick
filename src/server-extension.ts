@@ -1,7 +1,5 @@
 import {Field, ObjectType, Query, Resolver} from "type-graphql"
 import type {EntityManager} from "typeorm"
-import {HistoricalBalance} from "./generated/model"
-
 
 @ObjectType()
 export class Hello {
@@ -22,8 +20,6 @@ export class HelloResolver {
 
   @Query(() => Hello)
   async hello(): Promise<Hello> {
-    const tx = await this.tx()
-    let count = await tx.getRepository(HistoricalBalance).count()
-    return new Hello(`Hello, we've seen ${count} transfers!`)
+      return new Hello(`Hey, this is you custom API extension`)
   }
 }
