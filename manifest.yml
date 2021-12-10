@@ -5,16 +5,14 @@ typegen:
   metadata:
     source: wss://kusama-rpc.polkadot.io/
   outDir: src/types
-  events:
-    - balances.Transfer
   calls:
-  - utility.batchAll
-  - utility.batch
-  - system.remark
+    - utility.batchAll
+    - utility.batch
+    - system.remark
 
 mappings:
   mappingsModule: lib/mappings
-  range: '[4892957, )'
+  range: '[4892957, 4892987]'
   eventHandlers:
   extrinsicHandlers:
     - extrinsic: utility.batchAll
