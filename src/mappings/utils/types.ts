@@ -1,5 +1,4 @@
-import { CollectionEntity, NFTEntity } from '../../types'
-import { Event } from '../../types'
+import { CollectionEntity, NFTEntity, Event } from '../../generated/model'
 import { RemarkResult } from './extract'
 
 export enum RmrkEvent {
@@ -18,13 +17,13 @@ export const getNftId = (nft: any, blocknumber?: string | number): string => {
 }
 
 export function eventFrom(interaction: RmrkEvent,  { blockNumber, caller, timestamp }: RemarkResult, meta: string): Event {
-  return {
+  return new Event({}, {
     interaction,
     blockNumber,
     caller,
-    timestamp,
+    timestamp: (+timestamp),
     meta
-  }
+  })
 }
 
 export interface RmrkInteraction {
