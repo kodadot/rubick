@@ -10,12 +10,13 @@ RUN npm run build
 
 FROM node:14 AS processor
 WORKDIR /hydra-project
-COPY --from=builder /hydra-build/package.json .
-COPY --from=builder /hydra-build/package-lock.json .
-RUN npm ci --production
+ADD package.json .
+ADD package-lock.json .
+RUN npm ci # TODO: --production
 COPY --from=builder /hydra-build/lib lib
 ADD db db
 ADD manifest.yml .
+ADD schema.graphql .
 ADD .env .
 CMD ["npm", "run", "processor:start"]
 
