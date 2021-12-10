@@ -6,7 +6,7 @@ typegen:
     source: wss://kusama-rpc.polkadot.io/
   outDir: src/types
   calls:
-    - utility.batchAll
+    - utility.batch_all
     - utility.batch
     - system.remark
 
