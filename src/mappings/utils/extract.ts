@@ -1,11 +1,11 @@
 import { Vec } from '@polkadot/types';
 import { Call as TCall } from "@polkadot/types/interfaces";
-import { Event } from '@polkadot/types/interfaces';
+import { Event as TEvent } from '@polkadot/types/interfaces';
 import { ExtrinsicContext, SubstrateExtrinsic, SubstrateEvent } from '@subsquid/hydra-common'
 const PREFIXES = ['0x726d726b', '0x524d524b']
 
 
- type ExtraCall = {
+ export type ExtraCall = {
   section: string;
   method: string;
   args: string[];
@@ -22,6 +22,8 @@ const PREFIXES = ['0x726d726b', '0x524d524b']
   timestamp: Date;
 }
 
+export type Records = RemarkResult[]
+
  const startsWithRemark = (value: string, prefixes: string[] = PREFIXES): boolean => (prefixes.length < 1 || prefixes.some((word) => value.startsWith(word)))
 
  const isSystemRemark = (call: SubstrateExtrinsic | TCall, prefixes: string[] = PREFIXES): boolean =>
@@ -33,7 +35,7 @@ const PREFIXES = ['0x726d726b', '0x524d524b']
 //   call.section === "utility" &&
 //   (call.method === "batch" || call.method === "batchAll");
 
-const hasBatchFailed = (event: SubstrateEvent | Event): boolean => {
+const hasBatchFailed = (event: SubstrateEvent | TEvent): boolean => {
   const { method } = event;
   return method.toString() === "BatchInterrupted" || method.toString() === "ExtrinsicFailed";
 }
