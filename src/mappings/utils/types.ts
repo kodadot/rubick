@@ -1,4 +1,5 @@
 import { CollectionEntity, NFTEntity, Event } from '../../generated/model'
+import { StoreContext, ExtrinsicContext } from '@subsquid/hydra-common'
 import { RemarkResult } from './extract'
 
 export enum RmrkEvent {
@@ -25,6 +26,8 @@ export function eventFrom(interaction: RmrkEvent,  { blockNumber, caller, timest
     meta
   })
 }
+
+export type Context = ExtrinsicContext & StoreContext
 
 export interface RmrkInteraction {
   id: string;
