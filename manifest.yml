@@ -15,11 +15,11 @@ mappings:
   range: '[4892957, 4892987]'
   eventHandlers:
   extrinsicHandlers:
-    - extrinsic: utility.batchAll
-      handler: handleRemark
-    - extrinsic: utility.batch
-      handler: handleRemark
     - extrinsic: system.remark
       handler: handleRemark
+    - extrinsic: utility.batchAll
+      handler: handleBatchAll
+    - extrinsic: utility.batch
+      handler: handleBatch
   preBlockHooks:
   postBlockHooks:
