@@ -1,6 +1,8 @@
+import { Vec } from '@polkadot/types';
 import { Call as TCall } from "@polkadot/types/interfaces";
-import { EventRecord } from '@polkadot/types/interfaces';
-import { ExtrinsicContext, SubstrateExtrinsic, EventInfo } from '@subsquid/hydra-common'
+import { EventRecord, Event } from '@polkadot/types/interfaces';
+import { ExtrinsicContext, SubstrateExtrinsic, EventInfo, SubstrateEvent } from '@subsquid/hydra-common'
+import { Context } from './types';
 const PREFIXES = ['0x726d726b', '0x524d524b']
 // import { encodeAddress } from "@polkadot/util-crypto";
 
@@ -10,11 +12,8 @@ export type ExtraCall = {
   args: string[];
 }
 
-export interface RemarkResult {
+export interface RemarkResult extends BaseCall {
   value: string;
-  caller: string;
-  blockNumber: string;
-  timestamp: Date;
   extra?: ExtraCall[];
 }
 
@@ -22,11 +21,18 @@ export interface RemarkResultEntity extends RemarkResult {
   id: string;
 }
 
+export interface BaseCall {
+  caller: string;
+  blockNumber: string;
+  timestamp: Date;
+}
+
+export const startsWithRemark = (value: string, prefixes: string[] = PREFIXES): boolean => (prefixes.length < 1 || prefixes.some((word) => value.startsWith(word)))
+
 export const isSystemRemark = (call: SubstrateExtrinsic | TCall, prefixes: string[] = PREFIXES): boolean =>
   call.section === "system" &&
   call.method === "remark" &&
-  (prefixes.length < 1 ||
-    prefixes.some((word) => call.args.toString().startsWith(word)));
+  startsWithRemark(call.args.toString(), prefixes)
 
 export const isUtilityBatch = (call: SubstrateExtrinsic) =>
   call.section === "utility" &&
@@ -40,12 +46,50 @@ export const isUtilityBatch = (call: SubstrateExtrinsic) =>
       ({ phase, event }) =>
         phase.isApplyExtrinsic &&
         // phase.asApplyExtrinsic.eq(extrinsicIndex) &&
-        (event.method.toString() === "BatchInterrupted" ||
-          event.method.toString() === "ExtrinsicFailed")
+        hasBatchFailed(event)
     );
   
     return Boolean(events.length);
   };
+
+const hasBatchFailed = (event: SubstrateEvent | Event): boolean => {
+  const { method } = event;
+  return method.toString() === "BatchInterrupted" || method.toString() === "ExtrinsicFailed";
+}
+
+type RemarkOrBatch = string | Vec<TCall>;
+
+export function extractRemark(processed: RemarkOrBatch, extrinsic: ExtrinsicContext): RemarkResult[] {
+  if (typeof processed === 'string' && startsWithRemark(processed)) {
+    return [toRemarkResult(processed, toBaseCall(extrinsic))]
+  }
+
+  if (Array.isArray(processed)) {
+    if (hasBatchFailed(extrinsic.event)) {
+      return [];
+    }
+
+    return processBatch(processed, toBaseCall(extrinsic));
+  }
+
+  return [];
+}
+
+export function toBaseCall(extrinsic: ExtrinsicContext): BaseCall {
+  const caller = extrinsic.extrinsic.signer.toString();
+  const blockNumber = extrinsic.block.height.toString();
+  const timestamp = new Date(extrinsic.block.timestamp);
+
+  return { caller, blockNumber, timestamp };
+}
+
+
+export function toRemarkResult(value: string, base: BaseCall): RemarkResult {
+  return {
+    value,
+    ...base
+  };
+}
 
 export const getRemarksFrom = (extrinsic: ExtrinsicContext): RemarkResult[] => {
   if (!extrinsic.extrinsic.indexInBlock) {
@@ -79,7 +123,7 @@ export const getRemarksFrom = (extrinsic: ExtrinsicContext): RemarkResult[] => {
 }
 
 
-export const processBatch = (calls: TCall[], caller: string, blockNumber: string, timestamp: Date): RemarkResult[] => {
+export const processBatch = (calls: TCall[], base: BaseCall): RemarkResult[] => {
   const extra: ExtraCall[] = []
   return calls
   .filter(call => {
@@ -90,5 +134,5 @@ export const processBatch = (calls: TCall[], caller: string, blockNumber: string
       return false
     }
   })
-  .map(call => ({ value: call.args.toString(), caller, blockNumber, timestamp, extra }))
+  .map(call => ({ value: call.args.toString(), ...base, extra }))
 }

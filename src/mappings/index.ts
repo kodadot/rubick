@@ -1,58 +1,77 @@
-import { DatabaseManager, EventContext, StoreContext, ExtrinsicContext } from '@subsquid/hydra-common'
 import { CollectionEntity, NFTEntity } from '../generated/model'
 
-import { getRemarksFrom, RemarkResult } from './utils';
+import { getRemarksFrom, processBatch, RemarkResult } from './utils';
 import { Collection, eventFrom, getNftId, NFT, RmrkEvent, RmrkInteraction } from './utils/types';
 import NFTUtils, { hexToString } from './utils/NftUtils';
 import { canOrElseError, exists, hasMeta, isBurned, isBuyLegalOrElseError, isOwnerOrElseError, isPositiveOrElseError, isTransferable, validateInteraction } from './utils/consolidator'
 import { randomBytes } from 'crypto'
 import { emoteId, ensureInteraction } from './utils/helper';
+import { System, Utility } from '../types';
+import { Context } from './utils/types';
 
-export async function handleRemark(extrinsic: ExtrinsicContext & StoreContext): Promise<void> {
-  const records = getRemarksFrom(extrinsic)
 
-  for (const remark of records) {
-    console.log(`Handling remark ${remark.value} ${remark.blockNumber}`)
-    try {
-      const decoded = hexToString(remark.value)
-      const event: RmrkEvent = NFTUtils.getAction(decoded)
+export async function handleRemark(context: Context): Promise<void> {
+  // // const records = getRemarksFrom(extrinsic)
 
-      switch (event) {
-        case RmrkEvent.MINT:
-          // await mint(remark)
-          break;
-        case RmrkEvent.MINTNFT:
-          // await mintNFT(remark)
-          break;
-        case RmrkEvent.SEND:
-          // await send(remark)
-          break;
-        case RmrkEvent.BUY:
-          // await buy(remark)
-          break;
-        case RmrkEvent.CONSUME:
-          // await consume(remark)
-          break;
-        case RmrkEvent.LIST:
-          // await list(remark)
-          break;
-        case RmrkEvent.CHANGEISSUER:
-          // await changeIssuer(remark)
-          break;
-        case RmrkEvent.EMOTE:
-          // await emote(remark)
-          break;
-        default:
-          // logger.warn(`[SKIP] ${event}::${remark.value}::${remark.blockNumber}`)
-          // throw new EvalError(`Unable to evaluate following string, ${event}::${remark.value}`)
-      }
-    } catch (e) {
-      // logger.error(`[MALFORMED] ${remark.blockNumber}::${hexToString(remark.value)}`)
-    }
+  const remark = new System.RemarkCall(context.extrinsic).remark
+  const decoded = hexToString(remark.toString())
+  console.log('remark', decoded)
+
+
+
+  // for (const remark of records) {
+  //   console.log(`Handling remark ${remark.value} ${remark.blockNumber}`)
+  //   try {
+  //     const decoded = hexToString(remark.value)
+  //     const event: RmrkEvent = NFTUtils.getAction(decoded)
+
+  //     switch (event) {
+  //       case RmrkEvent.MINT:
+  //         // await mint(remark)
+  //         break;
+  //       case RmrkEvent.MINTNFT:
+  //         // await mintNFT(remark)
+  //         break;
+  //       case RmrkEvent.SEND:
+  //         // await send(remark)
+  //         break;
+  //       case RmrkEvent.BUY:
+  //         // await buy(remark)
+  //         break;
+  //       case RmrkEvent.CONSUME:
+  //         // await consume(remark)
+  //         break;
+  //       case RmrkEvent.LIST:
+  //         // await list(remark)
+  //         break;
+  //       case RmrkEvent.CHANGEISSUER:
+  //         // await changeIssuer(remark)
+  //         break;
+  //       case RmrkEvent.EMOTE:
+  //         // await emote(remark)
+  //         break;
+  //       default:
+  //         // logger.warn(`[SKIP] ${event}::${remark.value}::${remark.blockNumber}`)
+  //         // throw new EvalError(`Unable to evaluate following string, ${event}::${remark.value}`)
+  //     }
+  //   } catch (e) {
+  //     // logger.error(`[MALFORMED] ${remark.blockNumber}::${hexToString(remark.value)}`)
+  //   }
       
-  }
+  // }
 }
 
+export async function handleBatch(context: Context): Promise<void> {
+  const batch = new Utility.BatchCall(context.extrinsic).calls
+  console.log('handleBatch', batch.toString())
+  // processBatch(batch)
+}
+
+
+export async function handleBatchAll(context: Context): Promise<void> {
+  const batch = new Utility.Batch_allCall(context.extrinsic).calls
+  console.log('handleBatchAll', batch.toString())
+}
 
 
 // export async function balancesTransfer({
