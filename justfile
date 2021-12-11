@@ -13,13 +13,12 @@ types:
   yarn codegen
 
 build:
-  rm -rfv dist
-  yarn build
+  npm run build
 
 bug: clear build up
 sub: types build
 
-run:
+start:
   npm run processor:start
 
 migrate NAME:
