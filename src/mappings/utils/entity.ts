@@ -1,0 +1,52 @@
+import { DatabaseManager } from '@subsquid/hydra-common'
+import { EntityConstructor } from './types'
+
+type EntityWithId = {
+  id: string
+}
+
+/**
+ * Get or Create the provided entity with the given ID
+ *
+ * Note: you need to persist/save the entity yourself
+ */
+export async function getOrCreate<T extends EntityWithId>(
+  store: DatabaseManager,
+  entityConstructor: EntityConstructor<T>,
+  id: string,
+  init: Partial<T>
+): Promise<T> {
+  // attempt to get the entity from the database
+  let entity = await get(store, entityConstructor, id)
+
+  // if the entity does not exist, construct a new one
+  // and assign the provided ID to it
+  if (entity == null) {
+    entity = new entityConstructor()
+    entity.id = id
+    Object.assign(entity, init)
+  }
+
+  return entity
+}
+
+export async function get<T extends EntityWithId>(
+  store: DatabaseManager,
+  entityConstructor: EntityConstructor<T>,
+  id: string
+): Promise<T | undefined> {
+  return store.get(entityConstructor, {
+    where: { id },
+  })
+}
+
+export function create<T extends EntityWithId>(
+  entityConstructor: EntityConstructor<T>,
+  id: string,
+  init: Partial<T>
+) {
+  const entity = new entityConstructor()
+  entity.id = id
+  Object.assign(entity, init)
+  return entity
+}

@@ -67,4 +67,9 @@ export interface RMRK {
   view: RmrkType;
 }
 
+export type EntityConstructor<T> = {
+  new (...args: any[]): T;
+};
+
+
 export type RmrkType = Collection | NFT | RmrkInteraction
