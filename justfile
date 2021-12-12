@@ -8,6 +8,9 @@ clear:
   docker compose rm -f
   rm -rf .data
 
+down:
+  docker compose down
+
 types:
   rm -rf src/types
   yarn codegen
@@ -17,6 +20,10 @@ build:
 
 bug: build start
 sub: types build
+
+again:
+  npm run db:reset
+  npm run db:migrate
 
 start:
   npm run processor:start
