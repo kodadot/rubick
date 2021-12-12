@@ -1,11 +1,12 @@
 import { CollectionEntity, NFTEntity } from '../generated/model'
 
-import { extractRemark, Records } from './utils'
+import { extractRemark, Records, RemarkResult } from './utils'
 import {
   Collection,
   eventFrom,
   getNftId,
   NFT,
+  Optional,
   RmrkEvent,
   RmrkInteraction,
 } from './utils/types'
@@ -25,35 +26,38 @@ import { randomBytes } from 'crypto'
 import { emoteId, ensureInteraction } from './utils/helper'
 import { System, Utility } from '../types'
 import { Context } from './utils/types'
+import logger, { logError } from './utils/logger'
+import { create, get } from './utils/entity'
 
 export function handleRemark(context: Context): void {
   const remark = new System.RemarkCall(context.extrinsic).remark
   const records = extractRemark(remark.toString(), context)
-  mainFrame(records)
+  mainFrame(records, context)
 }
 
 export function handleBatch(context: Context): void {
   const batch = new Utility.BatchCall(context.extrinsic).calls
   const records = extractRemark(batch.toString(), context)
-  mainFrame(records)
+  mainFrame(records, context)
 }
 
 export function handleBatchAll(context: Context): void {
   const batch = new Utility.Batch_allCall(context.extrinsic).calls
   const records = extractRemark(batch, context)
-  mainFrame(records)
+  mainFrame(records, context)
 }
 
-async function mainFrame(records: Records): Promise<void> {
+async function mainFrame(records: Records, context: Context): Promise<void> {
   for (const remark of records) {
     console.log(`Handling remark ${remark.value} ${remark.blockNumber}`)
     try {
       const decoded = hexToString(remark.value)
       const event: RmrkEvent = NFTUtils.getAction(decoded)
+      console.log(`Handling event ${event}`)
 
       switch (event) {
         case RmrkEvent.MINT:
-          // await mint(remark)
+          await mint(remark, context)
           break
         case RmrkEvent.MINTNFT:
           // await mintNFT(remark)
@@ -84,6 +88,36 @@ async function mainFrame(records: Records): Promise<void> {
       // logger.error(`[MALFORMED] ${remark.blockNumber}::${hexToString(remark.value)}`)
     }
   }
+}
+
+async function mint(remark: RemarkResult, { store }: Context): Promise<void> {
+  let collection: Optional<Collection> = null
+  try {
+    collection = NFTUtils.unwrap(remark.value) as Collection
+    canOrElseError<string>(exists, collection.id, true)
+    const entity = await get<CollectionEntity>(store, CollectionEntity, collection.id)
+    canOrElseError<CollectionEntity>(exists, entity as CollectionEntity)
+    
+    const final = create<CollectionEntity>(CollectionEntity, collection.id, {})
+    
+    final.name = collection.name.trim()
+    final.max = Number(collection.max)
+    final.issuer = remark.caller
+    final.currentOwner = remark.caller
+    final.symbol = collection.symbol.trim()
+    final.blockNumber = BigInt(remark.blockNumber)
+    final.metadata = collection.metadata
+    final.events = [eventFrom(RmrkEvent.MINT, remark, '')]
+
+    logger.info(`Processed [COLLECTION] ${final.id}`)
+    // await store.save(final) 
+    
+  } catch (e) {
+    logError(e, (e) => logger.error(`[COLLECTION] ${e.message}, ${JSON.stringify(collection)}`))
+    
+    // await logFail(JSON.stringify(collection), e.message, RmrkEvent.MINT)
+  }
+
 }
 
 // export async function balancesTransfer({

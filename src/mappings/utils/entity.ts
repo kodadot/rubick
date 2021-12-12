@@ -5,6 +5,20 @@ type EntityWithId = {
   id: string
 }
 
+export async function createOrElseThrow<T extends EntityWithId>(
+  store: DatabaseManager,
+  entityConstructor: EntityConstructor<T>,
+  id: string,
+  init: Partial<T>
+): Promise<T> {
+    const entity = await get(store, entityConstructor, id)
+    if (entity) {
+        throw new Error(`Entity with id ${id} already exists`)
+    }
+
+    return create(entityConstructor, id, init)
+}
+
 /**
  * Get or Create the provided entity with the given ID
  *

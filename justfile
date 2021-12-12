@@ -15,7 +15,7 @@ types:
 build:
   npm run build
 
-bug: clear build up
+bug: build start
 sub: types build
 
 start:

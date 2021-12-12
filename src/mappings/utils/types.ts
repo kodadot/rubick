@@ -29,6 +29,8 @@ export function eventFrom(interaction: RmrkEvent,  { blockNumber, caller, timest
 
 export type Context = ExtrinsicContext & StoreContext
 
+export type Optional<T> = T | null | undefined
+
 export interface RmrkInteraction {
   id: string;
   metadata?: string;
