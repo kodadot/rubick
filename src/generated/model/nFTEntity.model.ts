@@ -41,14 +41,14 @@ export class NFTEntity {
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
   price!: bigint | undefined | null
 
-  @Column_("bool", {nullable: true})
-  burned!: boolean | undefined | null
+  @Column_("bool", {nullable: false})
+  burned!: boolean
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
   blockNumber!: bigint | undefined | null
 
-  @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.map((val: any) => val == null ? undefined : val.toJSON()), from: obj => obj == null ? undefined : marshal.fromList(obj, val => val == null ? undefined : new Event(undefined, val))}, nullable: true})
-  events!: (Event | undefined | null)[] | undefined | null
+  @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.map((val: any) => val.toJSON()), from: obj => obj == null ? undefined : marshal.fromList(obj, val => new Event(undefined, marshal.nonNull(val)))}, nullable: true})
+  events!: (Event)[] | undefined | null
 
   @OneToMany_(() => Emote, e => e.nft)
   emotes!: Emote[]

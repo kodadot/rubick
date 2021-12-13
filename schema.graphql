@@ -16,14 +16,14 @@ type FailedEntity @entity {
 type CollectionEntity @entity {
   version: String
   name: String
-  max: Int
+  max: Int!
   issuer: String
   symbol: String
   id: ID!
   metadata: String
   currentOwner: String
-  nfts: [NFTEntity] @derivedFrom(field: "collection")
-  events: [Event]
+  nfts: [NFTEntity!] @derivedFrom(field: "collection")
+  events: [Event!]
   blockNumber: BigInt
 }
 
@@ -38,10 +38,10 @@ type NFTEntity @entity {
   metadata: String
   currentOwner: String
   price: BigInt
-  burned: Boolean
+  burned: Boolean!
   blockNumber: BigInt
-  events: [Event]
-  emotes: [Emote] @derivedFrom(field: "nft")
+  events: [Event!]
+  emotes: [Emote!] @derivedFrom(field: "nft")
 }
 
 type Event @jsonField {
