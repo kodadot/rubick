@@ -23,7 +23,7 @@ import {
   validateInteraction,
 } from './utils/consolidator'
 import { randomBytes } from 'crypto'
-import { emoteId, ensureInteraction } from './utils/helper'
+import { emoteId, ensure, ensureInteraction } from './utils/helper'
 import { System, Utility } from '../types'
 import { Context } from './utils/types'
 import logger, { logError } from './utils/logger'
@@ -60,25 +60,25 @@ async function mainFrame(records: Records, context: Context): Promise<void> {
           await mint(remark, context)
           break
         case RmrkEvent.MINTNFT:
-          // await mintNFT(remark)
+          await mintNFT(remark, context)
           break
         case RmrkEvent.SEND:
-          // await send(remark)
+          // await send(remark, context)
           break
         case RmrkEvent.BUY:
-          // await buy(remark)
+          // await buy(remark, context)
           break
         case RmrkEvent.CONSUME:
-          // await consume(remark)
+          // await consume(remark, context)
           break
         case RmrkEvent.LIST:
-          // await list(remark)
+          // await list(remark, context)
           break
         case RmrkEvent.CHANGEISSUER:
-          // await changeIssuer(remark)
+          // await changeIssuer(remark, context)
           break
         case RmrkEvent.EMOTE:
-          // await emote(remark)
+          // await emote(remark, context)
           break
         default:
         // logger.warn(`[SKIP] ${event}::${remark.value}::${remark.blockNumber}`)
@@ -95,13 +95,17 @@ async function mint(remark: RemarkResult, { store }: Context): Promise<void> {
   try {
     collection = NFTUtils.unwrap(remark.value) as Collection
     canOrElseError<string>(exists, collection.id, true)
-    const entity = await get<CollectionEntity>(store, CollectionEntity, collection.id)
+    const entity = await get<CollectionEntity>(
+      store,
+      CollectionEntity,
+      collection.id
+    )
     canOrElseError<CollectionEntity>(exists, entity as CollectionEntity)
-    
+
     const final = create<CollectionEntity>(CollectionEntity, collection.id, {})
-    
+
     final.name = collection.name.trim()
-    final.max = Number(collection.max)
+    final.max = Number(collection.max) || 0
     final.issuer = remark.caller
     final.currentOwner = remark.caller
     final.symbol = collection.symbol.trim()
@@ -110,14 +114,82 @@ async function mint(remark: RemarkResult, { store }: Context): Promise<void> {
     final.events = [eventFrom(RmrkEvent.MINT, remark, '')]
 
     logger.info(`Processed [COLLECTION] ${final.id}`)
-    // await store.save(final) 
-    
+    // await store.save(final)
   } catch (e) {
-    logError(e, (e) => logger.error(`[COLLECTION] ${e.message}, ${JSON.stringify(collection)}`))
-    
+    logError(e, (e) =>
+      logger.error(`[COLLECTION] ${e.message}, ${JSON.stringify(collection)}`)
+    )
+
     // await logFail(JSON.stringify(collection), e.message, RmrkEvent.MINT)
   }
+}
 
+async function mintNFT(
+  remark: RemarkResult,
+  { store }: Context
+): Promise<void> {
+  let nft: Optional<NFT> = null
+  try {
+    nft = NFTUtils.unwrap(remark.value) as NFT
+    canOrElseError<string>(exists, nft.collection, true)
+    const collection = ensure<CollectionEntity>(
+      await get<CollectionEntity>(store, CollectionEntity, nft.collection)
+    )
+    canOrElseError<CollectionEntity>(exists, collection, true)
+    isOwnerOrElseError(collection, remark.caller)
+    const final = create<NFTEntity>(NFTEntity, collection.id, {})
+
+    final.id = getNftId(nft, remark.blockNumber)
+    final.issuer = remark.caller
+    final.currentOwner = remark.caller
+    final.blockNumber = BigInt(remark.blockNumber)
+    final.name = nft.name
+    final.instance = nft.instance
+    final.transferable = nft.transferable
+    final.collection = collection
+    final.sn = nft.sn
+    final.metadata = nft.metadata
+    final.price = BigInt(0)
+    final.burned = false
+    final.events = [eventFrom(RmrkEvent.MINTNFT, remark, '')]
+
+    logger.info(`SAVED [MINT] ${final.id}`)
+    // await store.save(final)
+  } catch (e) {
+    logError(e, (e) =>
+      logger.error(`[MINT] ${e.message}, ${JSON.stringify(nft)}`)
+    )
+    // await logFail(JSON.stringify(nft), e.message, RmrkEvent.MINTNFT)
+  }
+}
+
+async function send(remark: RemarkResult, { store }: Context) {
+  let interaction: Optional<RmrkInteraction> = null
+
+  try {
+    interaction = ensureInteraction(
+      NFTUtils.unwrap(remark.value) as RmrkInteraction
+    )
+
+    const nft = ensure<NFTEntity>(
+      await get<CollectionEntity>(store, CollectionEntity, interaction.id)
+    )
+    validateInteraction(nft, interaction)
+    isOwnerOrElseError(nft, remark.caller)
+
+    nft.currentOwner = interaction.metadata
+    nft.price = BigInt(0)
+    nft.events?.push(
+      eventFrom(RmrkEvent.SEND, remark, interaction.metadata || '')
+    )
+
+    // await store.save(nft)
+  } catch (e) {
+    logError(e, (e) =>
+      logger.error(`[SEND] ${e.message} ${JSON.stringify(interaction)}`)
+    )
+    // await logFail(JSON.stringify(interaction), e.message, RmrkEvent.SEND)
+  }
 }
 
 // export async function balancesTransfer({
@@ -173,7 +245,3 @@ async function mint(remark: RemarkResult, { store }: Context): Promise<void> {
 
 //   return e
 // }
-
-type EntityConstructor<T> = {
-  new (...args: any[]): T
-}
