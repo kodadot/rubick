@@ -13,7 +13,8 @@
     "db:reset": "hydra-cli db:drop && hydra-cli db:create && hydra-processor migrate && hydra-cli db:migrate",
     "processor:migrate": "hydra-processor migrate",
     "processor:start": "hydra-processor run",
-    "query-node:start": "node ./lib/generated/server.js"
+    "query-node:start": "node ./lib/generated/server.js",
+    "test:unit": "mocha -r ts-node/register tests/unit/**.spec.ts"
   },
   "dependencies": {
     "@polkadot/types": "^6.8.1",
@@ -28,8 +29,13 @@
   "devDependencies": {
     "@subsquid/hydra-cli": "5.0.0-alpha.14",
     "@subsquid/hydra-typegen": "5.0.0-alpha.14",
+    "@types/chai": "^4.3.0",
     "@types/inflected": "^1.1.29",
+    "@types/mocha": "^9.0.0",
     "@types/pg": "^8.6.1",
+    "chai": "^4.3.4",
+    "mocha": "^9.1.3",
+    "ts-node": "^10.4.0",
     "typescript": "~4.4.2"
   }
 }
