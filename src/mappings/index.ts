@@ -1,4 +1,4 @@
-import { CollectionEntity, NFTEntity } from '../generated/model'
+import { CollectionEntity, Emote, NFTEntity } from '../generated/model'
 
 import { extractRemark, Records, RemarkResult } from './utils'
 import {
@@ -63,22 +63,22 @@ async function mainFrame(records: Records, context: Context): Promise<void> {
           await mintNFT(remark, context)
           break
         case RmrkEvent.SEND:
-          // await send(remark, context)
+          await send(remark, context)
           break
         case RmrkEvent.BUY:
-          // await buy(remark, context)
+          // await buy(remark, context, records)
           break
         case RmrkEvent.CONSUME:
-          // await consume(remark, context)
+          await consume(remark, context)
           break
         case RmrkEvent.LIST:
-          // await list(remark, context)
+          await list(remark, context)
           break
         case RmrkEvent.CHANGEISSUER:
-          // await changeIssuer(remark, context)
+          await changeIssuer(remark, context)
           break
         case RmrkEvent.EMOTE:
-          // await emote(remark, context)
+          await emote(remark, context)
           break
         default:
         // logger.warn(`[SKIP] ${event}::${remark.value}::${remark.blockNumber}`)
@@ -172,7 +172,7 @@ async function send(remark: RemarkResult, { store }: Context) {
     )
 
     const nft = ensure<NFTEntity>(
-      await get<CollectionEntity>(store, CollectionEntity, interaction.id)
+      await get<NFTEntity>(store, NFTEntity, interaction.id)
     )
     validateInteraction(nft, interaction)
     isOwnerOrElseError(nft, remark.caller)
@@ -190,6 +190,120 @@ async function send(remark: RemarkResult, { store }: Context) {
     )
     // await logFail(JSON.stringify(interaction), e.message, RmrkEvent.SEND)
   }
+}
+
+async function consume(remark: RemarkResult,  { store }: Context) {
+  let interaction: Optional<RmrkInteraction> = null
+
+  try {
+    interaction = ensureInteraction(NFTUtils.unwrap(remark.value) as RmrkInteraction)
+    const nft = ensure<NFTEntity>(
+      await get<NFTEntity>(store, NFTEntity, interaction.id)
+    )
+    canOrElseError<NFTEntity>(exists, nft, true)
+    canOrElseError<NFTEntity>(isBurned, nft)
+    isOwnerOrElseError(nft, remark.caller)
+    nft.price = BigInt(0)
+    nft.burned = true;
+    nft.events?.push(eventFrom(RmrkEvent.CONSUME, remark, ''))
+    // await store.save(nft)
+
+  } catch (e) {
+    logError(e, (e) =>
+      logger.warn(`[CONSUME] ${e.message} ${JSON.stringify(interaction)}`)
+    )
+
+    // await logFail(JSON.stringify(interaction), e.message, RmrkEvent.CONSUME)
+  }
+}
+
+async function list(remark: RemarkResult,  { store }: Context) {
+  let interaction: Optional<RmrkInteraction> = null
+
+  try {
+    interaction = ensureInteraction(NFTUtils.unwrap(remark.value) as RmrkInteraction)
+    const nft = ensure<NFTEntity>(
+      await get<NFTEntity>(store, NFTEntity, interaction.id)
+    )
+    validateInteraction(nft, interaction)
+    isOwnerOrElseError(nft, remark.caller)
+    const price = BigInt(interaction.metadata || '0')
+    isPositiveOrElseError(price)
+    nft.price = price
+    nft.events?.push(eventFrom(RmrkEvent.LIST, remark, interaction.metadata || ''))
+    // await store.save(nft)
+
+  } catch (e) {
+    logError(e, (e) =>
+    logger.warn(`[LIST] ${e.message} ${JSON.stringify(interaction)}`)
+  )
+    
+    // await logFail(JSON.stringify(interaction), e.message, RmrkEvent.LIST)
+  }
+}
+
+async function changeIssuer(remark: RemarkResult, { store }: Context) {
+  let interaction: Optional<RmrkInteraction> = null
+  
+  try {
+    interaction = ensureInteraction(NFTUtils.unwrap(remark.value) as RmrkInteraction)
+    canOrElseError<RmrkInteraction>(hasMeta, interaction, true)
+    const collection = ensure<CollectionEntity>(
+      await get<CollectionEntity>(store, CollectionEntity, interaction.id)
+    )
+    canOrElseError<CollectionEntity>(exists, collection, true)
+    isOwnerOrElseError(collection, remark.caller)
+    collection.currentOwner = interaction.metadata
+    collection.events?.push(eventFrom(RmrkEvent.CHANGEISSUER, remark, ensure<string>(interaction.metadata)))
+    // await store.save(collection)
+  } catch (e) {
+    logError(e, (e) =>
+    logger.warn(`[CHANGEISSUER] ${e.message} ${JSON.stringify(interaction)}`)
+    )
+    // await logFail(JSON.stringify(interaction), e.message, RmrkEvent.CHANGEISSUER)
+  }
+}
+
+async function emote(remark: RemarkResult, { store }: Context) {
+  let interaction: Optional<RmrkInteraction> = null
+
+  try {
+    interaction = ensureInteraction(NFTUtils.unwrap(remark.value) as RmrkInteraction)
+    canOrElseError<RmrkInteraction>(hasMeta, interaction, true)
+    const nft = ensure<NFTEntity>(
+      await get<NFTEntity>(store, NFTEntity, interaction.id)
+    )
+    canOrElseError<NFTEntity>(exists, nft, true)
+    canOrElseError<NFTEntity>(isBurned, nft)
+    const id = emoteId(interaction, remark.caller)
+    let emote = await get<Emote>(store, Emote, interaction.id)
+
+    if (emote) {
+      await store.remove(emote)
+      return;
+    }
+    
+    // emote = create<Emote>(Emote, id, {
+    //   id,
+    //   nftId: interaction.id || '',
+    //   caller: remark.caller,
+    //   value: interaction.metadata
+    // })
+
+
+    // await store.save(emote)
+
+  } catch (e) {
+    logError(e, (e) =>
+    logger.warn(`[EMOTE] ${e.message}`)
+    )
+    // await logFail(JSON.stringify(interaction), e.message, RmrkEvent.EMOTE)
+  }
+
+  // exists
+  // not burned
+  // transferable
+  // has meta
 }
 
 // export async function balancesTransfer({
