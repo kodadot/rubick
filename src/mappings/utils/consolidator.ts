@@ -1,6 +1,5 @@
-import { RmrkInteraction } from './types'
+import { BatchArg, RmrkInteraction } from './types'
 import { CollectionEntity, NFTEntity } from '../../generated/model'
-import { ExtraCall } from './extract'
 // import { decodeAddress } from '@polkadot/util-crypto'
 type Entity = CollectionEntity | NFTEntity
 
@@ -58,11 +57,10 @@ export function isPositiveOrElseError(entity: BigInt | number, excludeZero?: boo
   }
 }
 
+export const isBalanceTransfer = ({ callIndex }: BatchArg): boolean => callIndex === '0x0400'
+const canBuy = (nft: NFTEntity) => (call: BatchArg) => isBalanceTransfer(call) && isOwner(nft, call.args.dest.id) && BigInt(call.args.value) >= BigInt(nft.price ?? 0)
 
-const isBalanceTransfer = ({section, method}: ExtraCall) => section === 'balances' && method === 'transfer'
-const canBuy = (nft: NFTEntity) => (call: ExtraCall) => isBalanceTransfer(call) && isOwner(nft, call.args[0]) && BigInt(call.args[1]) >= BigInt(nft.price ?? 0)
-
-export function isBuyLegalOrElseError(entity: NFTEntity, extraCalls: ExtraCall[]) {
+export function isBuyLegalOrElseError(entity: NFTEntity, extraCalls: BatchArg[]) {
   const result = extraCalls.some(canBuy(entity))
   if (!result) {
     throw new ReferenceError(`[CONSOLIDATE ILLEGAL BUY] Entity: ${entity.id} CALLS: ${JSON.stringify(extraCalls)}`)

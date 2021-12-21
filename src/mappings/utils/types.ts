@@ -75,3 +75,10 @@ export type EntityConstructor<T> = {
 
 
 export type RmrkType = Collection | NFT | RmrkInteraction
+
+export type BatchArg = {
+  args: Record<string, any>,
+  callIndex: string,  
+}
+
+

@@ -31,20 +31,30 @@ import { create, get } from './utils/entity'
 
 export function handleRemark(context: Context): void {
   const remark = new System.RemarkCall(context.extrinsic).remark
-  const records = extractRemark(remark.toString(), context)
-  mainFrame(records, context)
+  logger.log('Remark', remark)
+  logger.log(context.extrinsic)
+  // const records = extractRemark(remark.toString(), context)
+  // mainFrame(records, context)
 }
 
 export function handleBatch(context: Context): void {
-  const batch = new Utility.BatchCall(context.extrinsic).calls
-  const records = extractRemark(batch.toString(), context)
-  mainFrame(records, context)
+  // const batch = new Utility.BatchCall(context.extrinsic).calls
+  // logger.log('Batch', batch)
+  logger.log(context.extrinsic)
+  const records = extractRemark(context.extrinsic, context)
+
+  // mainFrame(records, context)
 }
 
 export function handleBatchAll(context: Context): void {
-  const batch = new Utility.Batch_allCall(context.extrinsic).calls
-  const records = extractRemark(batch, context)
-  mainFrame(records, context)
+  // const batch = new Utility.Batch_allCall(context.extrinsic).calls
+  // logger.log('BatchALL', batch)
+  logger.log(context.extrinsic)
+  logger.log(context.event)
+  logger.log(context.block)
+  const records = extractRemark(context.extrinsic, context)
+  console.log(records)
+  // mainFrame(records, context)
 }
 
 async function mainFrame(records: Records, context: Context): Promise<void> {
@@ -66,6 +76,7 @@ async function mainFrame(records: Records, context: Context): Promise<void> {
           await send(remark, context)
           break
         case RmrkEvent.BUY:
+
           // await buy(remark, context, records)
           break
         case RmrkEvent.CONSUME:

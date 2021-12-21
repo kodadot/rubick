@@ -2,14 +2,11 @@ import { Vec } from '@polkadot/types';
 import { Call as TCall } from "@polkadot/types/interfaces";
 import { Event as TEvent } from '@polkadot/types/interfaces';
 import { ExtrinsicContext, SubstrateExtrinsic, SubstrateEvent } from '@subsquid/hydra-common'
+import { BatchArg } from './types';
 const PREFIXES = ['0x726d726b', '0x524d524b']
 
 
- export type ExtraCall = {
-  section: string;
-  method: string;
-  args: string[];
-}
+ export type ExtraCall = BatchArg
 
  export interface RemarkResult extends BaseCall {
   value: string;
@@ -31,9 +28,20 @@ export type Records = RemarkResult[]
   call.method === "remark" &&
   startsWithRemark(call.args.toString(), prefixes)
 
-//  const isUtilityBatch = (call: SubstrateExtrinsic) =>
-//   call.section === "utility" &&
-//   (call.method === "batch" || call.method === "batchAll");
+ const isUtilityBatch = (call: SubstrateExtrinsic) =>
+  call.section === "utility" &&
+  (call.method === "batch" || call.method === "batchAll");
+
+const justArg = (batchArg: BatchArg): Record<string, any> => batchArg.args
+
+const isSytemRemarkHex = ({ callIndex }: BatchArg): boolean => callIndex === '0x0001'
+
+const valueOfArg = (args: Record<string, any>): string => args.remark || args._remark
+
+const hasBatchArgRemark = (args: Record<string, any>): boolean => {
+  const call: string = valueOfArg(args)
+  return Boolean(call) && startsWithRemark(call, PREFIXES)
+}
 
 const hasBatchFailed = (event: SubstrateEvent | TEvent): boolean => {
   const { method } = event;
@@ -56,33 +64,43 @@ const hasBatchFailed = (event: SubstrateEvent | TEvent): boolean => {
   };
 }
 
- const processBatch = (calls: TCall[], base: BaseCall): RemarkResult[] => {
+ const processBatch = (calls: BatchArg[], base: BaseCall): RemarkResult[] => {
   const extra: ExtraCall[] = []
   return calls
-  .filter(call => {
-    if (isSystemRemark(call)) {
+  .map(justArg)
+  .filter((call, index) => {
+    if (hasBatchArgRemark(call)) {
       return true
     } else {
-      extra.push({ section: call.section, method: call.method, args: call.args.toString().split(',') })
+      extra.push({ ...calls[index] })
       return false
     }
   })
-  .map(call => ({ value: call.args.toString(), ...base, extra }))
+  .map(call => ({ value: valueOfArg(call), ...base, extra }))
 }
 
-type RemarkOrBatch = string | Vec<TCall>;
+type RemarkOrBatch = string | SubstrateExtrinsic;
 
  export function extractRemark(processed: RemarkOrBatch, extrinsic: ExtrinsicContext): RemarkResult[] {
-  if (typeof processed === 'string' && startsWithRemark(processed)) {
-    return [toRemarkResult(processed, toBaseCall(extrinsic))]
+  if (typeof processed === 'string') {
+    if (startsWithRemark(processed)) {
+      return [toRemarkResult(processed, toBaseCall(extrinsic))]
+    } else {
+      return []
+    }
+    
   }
 
-  if (Array.isArray(processed)) {
-    if (hasBatchFailed(extrinsic.event)) {
-      return [];
-    }
+  if (isUtilityBatch(processed)) {
+    console.log('Batch detected')
+    // if (hasBatchFailed(extrinsic.event)) {
+    //   console.warn('Batch failed')
+    //   return [];
+    // }
 
-    return processBatch(processed, toBaseCall(extrinsic));
+    console.log('Batch succeeded', JSON.stringify(processed.args[0].value, null, 2))
+
+    return processBatch(processed.args[0].value as BatchArg[], toBaseCall(extrinsic));
   }
 
   return [];

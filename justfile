@@ -21,6 +21,9 @@ build:
 bug: build start
 sub: types build
 
+reset:
+  npm run db:reset
+
 again:
   npm run db:reset
   npm run db:migrate
@@ -30,3 +33,6 @@ start:
 
 migrate NAME:
   npm run db:create-migration -n "{{NAME}}"
+
+test:
+  npm run test:unit
