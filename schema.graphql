@@ -55,7 +55,8 @@ type NFTEntity @entity {
 }
 
 type Attribute @jsonField {
-  trait_type: String
+  display: String
+  trait: String
   value: String!
 }
 

@@ -93,5 +93,18 @@ export type Metadata = {
   external_url?: string
   image: string
   animation_url?: string
+  attributes?: MetadataAttribute[]
 }
 
+export type MetadataAttribute = {
+  display_type?: DisplayType
+  trait_type?: string
+  value: number | string
+}
+
+export enum DisplayType {
+  null,
+  'boost_number',
+  'number',
+  'boost_percentage',
+}

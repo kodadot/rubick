@@ -3,6 +3,7 @@ import * as marshal from "../marshal"
 import {CollectionEntity} from "./collectionEntity.model"
 import {Event} from "./event"
 import {Emote} from "./emote.model"
+import {Attribute} from "./attribute"
 
 @Entity_()
 export class NFTEntity {
@@ -52,4 +53,19 @@ export class NFTEntity {
 
   @OneToMany_(() => Emote, e => e.nft)
   emotes!: Emote[]
+
+  @Column_("text", {nullable: true})
+  description!: string | undefined | null
+
+  @Column_("text", {nullable: true})
+  image!: string | undefined | null
+
+  @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.map((val: any) => val.toJSON()), from: obj => obj == null ? undefined : marshal.fromList(obj, val => new Attribute(undefined, marshal.nonNull(val)))}, nullable: true})
+  attributes!: (Attribute)[] | undefined | null
+
+  @Column_("text", {nullable: true})
+  animationUrl!: string | undefined | null
+
+  @Column_("text", {nullable: true})
+  type!: string | undefined | null
 }
