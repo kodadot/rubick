@@ -31,30 +31,23 @@ import { create, get } from './utils/entity'
 
 export function handleRemark(context: Context): void {
   const remark = new System.RemarkCall(context.extrinsic).remark
-  logger.log('Remark', remark)
-  logger.log(context.extrinsic)
-  // const records = extractRemark(remark.toString(), context)
-  // mainFrame(records, context)
+  logger.log('Remark')
+  const records = extractRemark(remark.toString(), context)
+  mainFrame(records, context)
 }
 
 export function handleBatch(context: Context): void {
   // const batch = new Utility.BatchCall(context.extrinsic).calls
-  // logger.log('Batch', batch)
-  logger.log(context.extrinsic)
+  logger.log('Batch')
   const records = extractRemark(context.extrinsic, context)
-
-  // mainFrame(records, context)
+  mainFrame(records, context)
 }
 
 export function handleBatchAll(context: Context): void {
   // const batch = new Utility.Batch_allCall(context.extrinsic).calls
-  // logger.log('BatchALL', batch)
-  logger.log(context.extrinsic)
-  logger.log(context.event)
-  logger.log(context.block)
+  logger.log('BatchALL')
   const records = extractRemark(context.extrinsic, context)
-  console.log(records)
-  // mainFrame(records, context)
+  mainFrame(records, context)
 }
 
 async function mainFrame(records: Records, context: Context): Promise<void> {
@@ -125,7 +118,7 @@ async function mint(remark: RemarkResult, { store }: Context): Promise<void> {
     final.events = [eventFrom(RmrkEvent.MINT, remark, '')]
 
     logger.info(`Processed [COLLECTION] ${final.id}`)
-    // await store.save(final)
+    await store.save(final)
   } catch (e) {
     logError(e, (e) =>
       logger.error(`[COLLECTION] ${e.message}, ${JSON.stringify(collection)}`)
@@ -165,7 +158,7 @@ async function mintNFT(
     final.events = [eventFrom(RmrkEvent.MINTNFT, remark, '')]
 
     logger.info(`SAVED [MINT] ${final.id}`)
-    // await store.save(final)
+    await store.save(final)
   } catch (e) {
     logError(e, (e) =>
       logger.error(`[MINT] ${e.message}, ${JSON.stringify(nft)}`)
@@ -194,7 +187,7 @@ async function send(remark: RemarkResult, { store }: Context) {
       eventFrom(RmrkEvent.SEND, remark, interaction.metadata || '')
     )
 
-    // await store.save(nft)
+    await store.save(nft)
   } catch (e) {
     logError(e, (e) =>
       logger.error(`[SEND] ${e.message} ${JSON.stringify(interaction)}`)
@@ -219,7 +212,7 @@ async function buy(remark: RemarkResult, { store }: Context) {
     nft.currentOwner = remark.caller
     nft.price = BigInt(0)
     nft.events?.push(eventFrom(RmrkEvent.BUY, remark, remark.caller))
-    // await store.save(nft)
+    await store.save(nft)
 
   } catch (e) {
     logError(e, (e) =>
@@ -242,7 +235,7 @@ async function consume(remark: RemarkResult,  { store }: Context) {
     nft.price = BigInt(0)
     nft.burned = true;
     nft.events?.push(eventFrom(RmrkEvent.CONSUME, remark, ''))
-    // await store.save(nft)
+    await store.save(nft)
 
   } catch (e) {
     logError(e, (e) =>
@@ -267,7 +260,7 @@ async function list(remark: RemarkResult,  { store }: Context) {
     isPositiveOrElseError(price)
     nft.price = price
     nft.events?.push(eventFrom(RmrkEvent.LIST, remark, interaction.metadata || ''))
-    // await store.save(nft)
+    await store.save(nft)
 
   } catch (e) {
     logError(e, (e) =>
@@ -291,7 +284,7 @@ async function changeIssuer(remark: RemarkResult, { store }: Context) {
     isOwnerOrElseError(collection, remark.caller)
     collection.currentOwner = interaction.metadata
     collection.events?.push(eventFrom(RmrkEvent.CHANGEISSUER, remark, ensure<string>(interaction.metadata)))
-    // await store.save(collection)
+    await store.save(collection)
   } catch (e) {
     logError(e, (e) =>
     logger.warn(`[CHANGEISSUER] ${e.message} ${JSON.stringify(interaction)}`)
