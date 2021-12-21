@@ -35,21 +35,16 @@ import { DatabaseManager } from '@subsquid/hydra-common'
 
 export async function handleRemark(context: Context): Promise<void> {
   const remark = new System.RemarkCall(context.extrinsic).remark
-  logger.log('Remark')
   const records = extractRemark(remark.toString(), context)
   await mainFrame(records, context)
 }
 
 export async function handleBatch(context: Context): Promise<void> {
-  // const batch = new Utility.BatchCall(context.extrinsic).calls
-  logger.log('Batch')
   const records = extractRemark(context.extrinsic, context)
   await mainFrame(records, context)
 }
 
 export async function handleBatchAll(context: Context): Promise<void> {
-  // const batch = new Utility.Batch_allCall(context.extrinsic).calls
-  logger.log('BatchALL')
   const records = extractRemark(context.extrinsic, context)
   await mainFrame(records, context)
 }
@@ -88,8 +83,7 @@ async function mainFrame(records: Records, context: Context): Promise<void> {
           await emote(remark, context)
           break
         default:
-          logger.warn(`[SKIP] ${event}::${remark.value}::${remark.blockNumber}`)
-        // throw new EvalError(`Unable to evaluate following string, ${event}::${remark.value}`)
+          logger.error(`[SKIP] ${event}::${remark.value}::${remark.blockNumber}`)
       }
     } catch (e) {
         logger.warn(`[MALFORMED] ${remark.blockNumber}::${hexToString(remark.value)}`)
@@ -123,7 +117,7 @@ async function mint(remark: RemarkResult, { store }: Context): Promise<void> {
     const metadata = await handleMetadata(final.metadata, final.name, store)
     final.meta = metadata
 
-    logger.info(`Processed [COLLECTION] ${final.id}`)
+    logger.success(`[COLLECTION] ${final.id}`)
     await store.save(final)
   } catch (e) {
     logError(e, (e) =>
@@ -166,7 +160,7 @@ async function mintNFT(
     const metadata = await handleMetadata(final.metadata, final.name, store)
     final.meta = metadata
 
-    logger.info(`SAVED [MINT] ${final.id}`)
+    logger.success(`[MINT] ${final.id}`)
     await store.save(final)
   } catch (e) {
     logError(e, (e) =>
@@ -195,7 +189,8 @@ async function send(remark: RemarkResult, { store }: Context) {
     nft.events?.push(
       eventFrom(RmrkEvent.SEND, remark, interaction.metadata || '')
     )
-
+    
+    logger.success(`[SEND] ${nft.id} to ${interaction.metadata}`)
     await store.save(nft)
   } catch (e) {
     logError(e, (e) =>
@@ -221,8 +216,9 @@ async function buy(remark: RemarkResult, { store }: Context) {
     nft.currentOwner = remark.caller
     nft.price = BigInt(0)
     nft.events?.push(eventFrom(RmrkEvent.BUY, remark, remark.caller))
+    
+    logger.success(`[BUY] ${nft.id} from ${remark.caller}`)
     await store.save(nft)
-
   } catch (e) {
     logError(e, (e) =>
     logger.error(`[BUY] ${e.message} ${JSON.stringify(interaction)}`)
@@ -244,8 +240,9 @@ async function consume(remark: RemarkResult,  { store }: Context) {
     nft.price = BigInt(0)
     nft.burned = true;
     nft.events?.push(eventFrom(RmrkEvent.CONSUME, remark, ''))
-    await store.save(nft)
 
+    logger.success(`[CONSUME] ${nft.id} from ${remark.caller}`)
+    await store.save(nft)
   } catch (e) {
     logError(e, (e) =>
       logger.warn(`[CONSUME] ${e.message} ${JSON.stringify(interaction)}`)
@@ -269,8 +266,9 @@ async function list(remark: RemarkResult,  { store }: Context) {
     isPositiveOrElseError(price)
     nft.price = price
     nft.events?.push(eventFrom(RmrkEvent.LIST, remark, interaction.metadata || ''))
-    await store.save(nft)
 
+    logger.success(`[LIST] ${nft.id} from ${remark.caller}`)
+    await store.save(nft)
   } catch (e) {
     logError(e, (e) =>
     logger.warn(`[LIST] ${e.message} ${JSON.stringify(interaction)}`)
@@ -293,6 +291,8 @@ async function changeIssuer(remark: RemarkResult, { store }: Context) {
     isOwnerOrElseError(collection, remark.caller)
     collection.currentOwner = interaction.metadata
     collection.events?.push(eventFrom(RmrkEvent.CHANGEISSUER, remark, ensure<string>(interaction.metadata)))
+
+    logger.success(`[CHANGEISSUER] ${collection.id} from ${remark.caller}`)
     await store.save(collection)
   } catch (e) {
     logError(e, (e) =>
@@ -321,15 +321,16 @@ async function emote(remark: RemarkResult, { store }: Context) {
       return;
     }
     
-    // emote = create<Emote>(Emote, id, {
-    //   id,
-    //   nftId: interaction.id || '',
-    //   caller: remark.caller,
-    //   value: interaction.metadata
-    // })
+    emote = create<Emote>(Emote, id, {
+      id,
+      caller: remark.caller,
+      value: interaction.metadata
+    })
 
+    emote.nft = nft
 
-    // await store.save(emote)
+    logger.success(`[EMOTE] ${nft.id} from ${remark.caller}`)
+    await store.save(emote)
 
   } catch (e) {
     logError(e, (e) =>

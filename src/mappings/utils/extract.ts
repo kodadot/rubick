@@ -2,6 +2,7 @@ import { Vec } from '@polkadot/types';
 import { Call as TCall } from "@polkadot/types/interfaces";
 import { Event as TEvent } from '@polkadot/types/interfaces';
 import { ExtrinsicContext, SubstrateExtrinsic, SubstrateEvent } from '@subsquid/hydra-common'
+import logger from './logger';
 import { BatchArg } from './types';
 const PREFIXES = ['0x726d726b', '0x524d524b']
 
@@ -93,7 +94,7 @@ type RemarkOrBatch = string | SubstrateExtrinsic;
 
   if (isUtilityBatch(processed)) {
     if (hasBatchFailed(extrinsic.event)) {
-      console.warn('[BATCH] failed', extrinsic.block.height.toString())
+      logger.warn('[BATCH] failed', extrinsic.block.height.toString())
       return [];
     }
 
