@@ -81,4 +81,9 @@ export type BatchArg = {
   callIndex: string,  
 }
 
+export type SomethingWithMeta = {
+  metadata: string
+}
+
+export type SanitizerFunc = (url: string) => string
 
