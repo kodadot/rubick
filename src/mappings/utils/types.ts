@@ -87,3 +87,11 @@ export type SomethingWithMeta = {
 
 export type SanitizerFunc = (url: string) => string
 
+export type Metadata = {
+  name?: string
+  description: string
+  external_url?: string
+  image: string
+  animated_url?: string
+}
+
