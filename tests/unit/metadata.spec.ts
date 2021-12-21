@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import { sanitizeIpfsUrl, BASE_URL, fetchMetadata, fetchMimeType } from '../../src/mappings/utils/metadata'
-import { Metadata } from '../../src/mappings/utils/types'
+import { TokenMetadata as Metadata } from '../../src/mappings/utils/types'
 
 describe('METADATA TEST', (): void => {
   describe('[fn] sanitizeIpfsUrl', () => {

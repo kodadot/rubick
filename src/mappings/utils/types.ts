@@ -1,4 +1,4 @@
-import { CollectionEntity, NFTEntity, Event } from '../../generated/model'
+import { CollectionEntity, NFTEntity, Event, Attribute } from '../../generated/model'
 import { StoreContext, ExtrinsicContext } from '@subsquid/hydra-common'
 import { RemarkResult } from './extract'
 
@@ -24,6 +24,14 @@ export function eventFrom(interaction: RmrkEvent,  { blockNumber, caller, timest
     caller,
     timestamp: (+timestamp),
     meta
+  })
+}
+
+export function attributeFrom(attribute: MetadataAttribute): Attribute {
+  return new Attribute({}, {
+    display: String(attribute.display_type),
+    trait: String(attribute.trait_type),
+    value: String(attribute.value)
   })
 }
 
@@ -87,7 +95,7 @@ export type SomethingWithMeta = {
 
 export type SanitizerFunc = (url: string) => string
 
-export type Metadata = {
+export type TokenMetadata = {
   name?: string
   description: string
   external_url?: string

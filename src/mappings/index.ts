@@ -1,11 +1,12 @@
-import { CollectionEntity, Emote, NFTEntity } from '../generated/model'
+import { CollectionEntity, Emote, MetadataEntity as Metadata, NFTEntity } from '../generated/model'
 
 import { extractRemark, Records, RemarkResult } from './utils'
 import {
+  attributeFrom,
   Collection,
   eventFrom,
   getNftId,
-  Metadata,
+  TokenMetadata,
   NFT,
   Optional,
   RmrkEvent,
@@ -30,6 +31,7 @@ import { Context } from './utils/types'
 import logger, { logError } from './utils/logger'
 import { create, get } from './utils/entity'
 import { fetchMetadata } from './utils/metadata'
+import { DatabaseManager } from '@subsquid/hydra-common'
 
 export async function handleRemark(context: Context): Promise<void> {
   const remark = new System.RemarkCall(context.extrinsic).remark
@@ -118,6 +120,9 @@ async function mint(remark: RemarkResult, { store }: Context): Promise<void> {
     final.metadata = collection.metadata
     final.events = [eventFrom(RmrkEvent.MINT, remark, '')]
 
+    const metadata = await handleMetadata(final.metadata, final.name, store)
+    final.meta = metadata
+
     logger.info(`Processed [COLLECTION] ${final.id}`)
     await store.save(final)
   } catch (e) {
@@ -158,11 +163,8 @@ async function mintNFT(
     final.burned = false
     final.events = [eventFrom(RmrkEvent.MINTNFT, remark, '')]
 
-    const metadata = fetchMetadata<Metadata>(nft)
-    if (!isEmpty(metadata)) {
-      
-    }
-
+    const metadata = await handleMetadata(final.metadata, final.name, store)
+    final.meta = metadata
 
     logger.info(`SAVED [MINT] ${final.id}`)
     await store.save(final)
@@ -340,6 +342,31 @@ async function emote(remark: RemarkResult, { store }: Context) {
   // not burned
   // transferable
   // has meta
+}
+
+async function handleMetadata(id: string, name: string, store: DatabaseManager): Promise<Optional<Metadata>> {
+  const meta = await get<Metadata>(store, Metadata, id)
+  if (meta) {
+    return meta
+  }
+
+  const metadata = await fetchMetadata<TokenMetadata>({ metadata: id })
+  if (isEmpty(metadata)) {
+    return null
+  }
+
+  const partial: Partial<Metadata> = {
+    id,
+    description: metadata.description || '',
+    image: metadata.image,
+    animationUrl: metadata.animation_url,
+    attributes: metadata.attributes?.map(attributeFrom) || [],
+    name: metadata.name || name,
+  }
+
+  const final = create<Metadata>(Metadata, id, partial)
+  await store.save(final)
+  return final
 }
 
 // export async function balancesTransfer({
