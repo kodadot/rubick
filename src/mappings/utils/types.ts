@@ -92,6 +92,6 @@ export type Metadata = {
   description: string
   external_url?: string
   image: string
-  animated_url?: string
+  animation_url?: string
 }
 
