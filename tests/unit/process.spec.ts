@@ -139,7 +139,7 @@ describe('Process TEST', (): void => {
     expect(records).to.have.lengthOf(0)
   })
 
-  it.only('can correctly process utility.batch with balance (10603640)',  () => {
+  it('can correctly process utility.batch with balance (10603640)',  () => {
     const args: BatchArg[] = [
       {
         "args": {
