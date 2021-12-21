@@ -29,25 +29,25 @@ import { Context } from './utils/types'
 import logger, { logError } from './utils/logger'
 import { create, get } from './utils/entity'
 
-export function handleRemark(context: Context): void {
+export async function handleRemark(context: Context): Promise<void> {
   const remark = new System.RemarkCall(context.extrinsic).remark
   logger.log('Remark')
   const records = extractRemark(remark.toString(), context)
-  mainFrame(records, context)
+  await mainFrame(records, context)
 }
 
-export function handleBatch(context: Context): void {
+export async function handleBatch(context: Context): Promise<void> {
   // const batch = new Utility.BatchCall(context.extrinsic).calls
   logger.log('Batch')
   const records = extractRemark(context.extrinsic, context)
-  mainFrame(records, context)
+  await mainFrame(records, context)
 }
 
-export function handleBatchAll(context: Context): void {
+export async function handleBatchAll(context: Context): Promise<void> {
   // const batch = new Utility.Batch_allCall(context.extrinsic).calls
   logger.log('BatchALL')
   const records = extractRemark(context.extrinsic, context)
-  mainFrame(records, context)
+  await mainFrame(records, context)
 }
 
 async function mainFrame(records: Records, context: Context): Promise<void> {
@@ -69,7 +69,6 @@ async function mainFrame(records: Records, context: Context): Promise<void> {
           await send(remark, context)
           break
         case RmrkEvent.BUY:
-
           await buy(remark, context)
           break
         case RmrkEvent.CONSUME:
