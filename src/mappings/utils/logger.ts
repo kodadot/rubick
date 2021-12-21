@@ -1,3 +1,5 @@
+import singale from 'signale'
+
 type ErrorCallback = (error: Error) => void;
 
 export const logError = (e: Error | unknown, cb: ErrorCallback) => {
@@ -6,4 +8,4 @@ export const logError = (e: Error | unknown, cb: ErrorCallback) => {
   }
 }
 
-export default console
+export default singale
