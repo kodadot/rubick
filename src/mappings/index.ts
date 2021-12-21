@@ -55,7 +55,7 @@ async function mainFrame(records: Records, context: Context): Promise<void> {
     try {
       const decoded = hexToString(remark.value)
       const event: RmrkEvent = NFTUtils.getAction(decoded)
-      console.log(`Handling event ${event}`)
+      logger.pending(`[EVENT] ${event} BLOCK ${remark.blockNumber}`)
 
       switch (event) {
         case RmrkEvent.MINT:
