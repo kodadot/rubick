@@ -12,8 +12,7 @@ down:
   docker compose down
 
 types:
-  rm -rf src/types
-  yarn codegen
+  npm run codegen
 
 build:
   npm run build
