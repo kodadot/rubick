@@ -37,7 +37,7 @@ type NFTEntity @entity {
   id: ID!
   metadata: String
   currentOwner: String
-  price: BigInt
+  price: BigInt!
   burned: Boolean!
   blockNumber: BigInt
   events: [Event!]

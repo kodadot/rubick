@@ -38,8 +38,8 @@ export class NFTEntity {
   @Column_("text", {nullable: true})
   currentOwner!: string | undefined | null
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
-  price!: bigint | undefined | null
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  price!: bigint
 
   @Column_("bool", {nullable: false})
   burned!: boolean

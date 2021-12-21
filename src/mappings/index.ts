@@ -77,7 +77,7 @@ async function mainFrame(records: Records, context: Context): Promise<void> {
           break
         case RmrkEvent.BUY:
 
-          // await buy(remark, context, records)
+          await buy(remark, context)
           break
         case RmrkEvent.CONSUME:
           await consume(remark, context)
@@ -92,11 +92,11 @@ async function mainFrame(records: Records, context: Context): Promise<void> {
           await emote(remark, context)
           break
         default:
-        // logger.warn(`[SKIP] ${event}::${remark.value}::${remark.blockNumber}`)
+          logger.warn(`[SKIP] ${event}::${remark.value}::${remark.blockNumber}`)
         // throw new EvalError(`Unable to evaluate following string, ${event}::${remark.value}`)
       }
     } catch (e) {
-      // logger.error(`[MALFORMED] ${remark.blockNumber}::${hexToString(remark.value)}`)
+        logger.warn(`[MALFORMED] ${remark.blockNumber}::${hexToString(remark.value)}`)
     }
   }
 }
@@ -200,6 +200,31 @@ async function send(remark: RemarkResult, { store }: Context) {
       logger.error(`[SEND] ${e.message} ${JSON.stringify(interaction)}`)
     )
     // await logFail(JSON.stringify(interaction), e.message, RmrkEvent.SEND)
+  }
+}
+
+async function buy(remark: RemarkResult, { store }: Context) {
+  let interaction: Optional<RmrkInteraction> = null
+  
+  try {
+    interaction = ensureInteraction(NFTUtils.unwrap(remark.value) as RmrkInteraction)
+    const nft = ensure<NFTEntity>(
+      await get<NFTEntity>(store, NFTEntity, interaction.id)
+    )
+    canOrElseError<NFTEntity>(exists, nft, true)
+    canOrElseError<NFTEntity>(isBurned, nft)
+    canOrElseError<NFTEntity>(isTransferable, nft, true)
+    isPositiveOrElseError(nft.price, true)
+    isBuyLegalOrElseError(nft, remark.extra || [])
+    nft.currentOwner = remark.caller
+    nft.price = BigInt(0)
+    nft.events?.push(eventFrom(RmrkEvent.BUY, remark, remark.caller))
+    // await store.save(nft)
+
+  } catch (e) {
+    logError(e, (e) =>
+    logger.error(`[BUY] ${e.message} ${JSON.stringify(interaction)}`)
+  )
   }
 }
 
