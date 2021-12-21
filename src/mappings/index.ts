@@ -55,11 +55,10 @@ export async function handleBatchAll(context: Context): Promise<void> {
 
 async function mainFrame(records: Records, context: Context): Promise<void> {
   for (const remark of records) {
-    console.log(`Handling remark ${remark.value} ${remark.blockNumber}`)
     try {
       const decoded = hexToString(remark.value)
       const event: RmrkEvent = NFTUtils.getAction(decoded)
-      logger.pending(`[EVENT] ${event} BLOCK ${remark.blockNumber}`)
+      logger.pending(`[${remark.blockNumber}] Event ${event} `)
 
       switch (event) {
         case RmrkEvent.MINT:
