@@ -18,11 +18,13 @@
   },
   "dependencies": {
     "@polkadot/types": "^6.8.1",
-    "@subsquid/openreader": "^0.2.0",
     "@subsquid/hydra-common": "5.0.0-alpha.14",
     "@subsquid/hydra-processor": "5.0.0-alpha.14",
-    "inflected": "^2.1.0",
+    "@subsquid/openreader": "^0.2.0",
+    "@types/signale": "^1.4.2",
     "class-validator": "^0.13.1",
+    "inflected": "^2.1.0",
+    "signale": "^1.4.0",
     "type-graphql": "^1.1.1",
     "typeorm": "0.2.38"
   },
