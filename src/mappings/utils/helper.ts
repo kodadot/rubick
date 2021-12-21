@@ -11,3 +11,8 @@ export const ensureInteraction = ({ id, metadata }: RmrkInteraction): RmrkIntera
 export function ensure<T>(value: any): T {
   return value as T
 }
+
+export function isEmpty(obj: Record<string, any>) {
+  for (const _ in obj) { return false; }
+  return true;
+}

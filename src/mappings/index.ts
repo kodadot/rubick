@@ -5,6 +5,7 @@ import {
   Collection,
   eventFrom,
   getNftId,
+  Metadata,
   NFT,
   Optional,
   RmrkEvent,
@@ -23,11 +24,12 @@ import {
   validateInteraction,
 } from './utils/consolidator'
 import { randomBytes } from 'crypto'
-import { emoteId, ensure, ensureInteraction } from './utils/helper'
+import { emoteId, ensure, ensureInteraction, isEmpty } from './utils/helper'
 import { System, Utility } from '../types'
 import { Context } from './utils/types'
 import logger, { logError } from './utils/logger'
 import { create, get } from './utils/entity'
+import { fetchMetadata } from './utils/metadata'
 
 export async function handleRemark(context: Context): Promise<void> {
   const remark = new System.RemarkCall(context.extrinsic).remark
@@ -155,6 +157,12 @@ async function mintNFT(
     final.price = BigInt(0)
     final.burned = false
     final.events = [eventFrom(RmrkEvent.MINTNFT, remark, '')]
+
+    const metadata = fetchMetadata<Metadata>(nft)
+    if (!isEmpty(metadata)) {
+      
+    }
+
 
     logger.info(`SAVED [MINT] ${final.id}`)
     await store.save(final)
