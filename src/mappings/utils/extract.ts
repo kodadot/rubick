@@ -92,13 +92,10 @@ type RemarkOrBatch = string | SubstrateExtrinsic;
   }
 
   if (isUtilityBatch(processed)) {
-    console.log('Batch detected')
-    // if (hasBatchFailed(extrinsic.event)) {
-    //   console.warn('Batch failed')
-    //   return [];
-    // }
-
-    console.log('Batch succeeded', JSON.stringify(processed.args[0].value, null, 2))
+    if (hasBatchFailed(extrinsic.event)) {
+      console.warn('[BATCH] failed', extrinsic.block.height.toString())
+      return [];
+    }
 
     return processBatch(processed.args[0].value as BatchArg[], toBaseCall(extrinsic));
   }
