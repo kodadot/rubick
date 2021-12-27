@@ -35,3 +35,6 @@ migrate NAME:
 
 test:
   npm run test:unit
+
+query:
+  npm run query-node:start
