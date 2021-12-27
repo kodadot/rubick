@@ -1,25 +1,27 @@
 import { Arg, Query, Resolver } from 'type-graphql'
 import type { EntityManager } from 'typeorm'
-import { NFTEntity } from '../generated/model'
+import { NFTEntity, CollectionEntity } from '../generated/model'
+import { EntityConstructor } from '../mappings/utils/types'
 import { CountEntity } from './model/count.model'
 
 @Resolver()
 export class CountResolver {
   constructor(private tx: () => Promise<EntityManager>) {}
 
-  private async execQuery(query: string): Promise<CountEntity> {
+  private async execQuery<T>(entityConstructor: EntityConstructor<T>): Promise<Number> {
     const manager = await this.tx()
-    return  manager.getRepository(NFTEntity).query(query)
+    const count = await manager.getRepository(entityConstructor).count()
+    return count
   }
 
-  @Query(() => CountEntity)
-  async totalCollections(): Promise<CountEntity> {
-    return this.execQuery(`SELECT COUNT(*) as total collection_entity;`)
+  @Query(() => Number)
+  async totalCollections(): Promise<Number> {
+    return this.execQuery(CollectionEntity)
   }
 
-  @Query(() => CountEntity)
-  async totalTokens(): Promise<CountEntity> {
-    return this.execQuery(`SELECT COUNT(*) as total nft_entity;`)
+  @Query(() => Number)
+  async totalTokens(): Promise<Number> {
+    return this.execQuery(NFTEntity)
   }
 
   // TODO: could be hacked with SQL injection

@@ -11,8 +11,8 @@ export class SpotlightEntity {
     @Field(() => Number, { nullable: false })
     unique!: number
 
-    @Field(() => Number, { nullable: false })
-    average!: number
+    @Field(() => BigInt, { nullable: true, defaultValue: 0n })
+    average!: bigint
 
     @Field(() => Number, { nullable: false })
     sold!: number
