@@ -1,5 +1,7 @@
 import {Field, ObjectType, Query, Resolver} from "type-graphql"
 import type {EntityManager} from "typeorm"
+import { SpotlightResolver } from './resolvers/spotlight'
+import { CountResolver } from './resolvers/count'
 
 @ObjectType()
 export class Hello {
@@ -22,4 +24,9 @@ export class HelloResolver {
   async hello(): Promise<Hello> {
       return new Hello(`Hey, this is you custom API extension`)
   }
+}
+
+export {
+  SpotlightResolver,
+  CountResolver,
 }
