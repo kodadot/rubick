@@ -17,13 +17,19 @@ export class SeriesResolver {
     const result: SeriesEntity[] = await manager.getRepository(NFTEntity)
       .query(`
       SELECT
-       collection_id as id, COUNT(distinct meta_id) as unique,
-       COUNT(distinct current_owner) as unique_collectors, COUNT(distinct current_owner) as sold,
-       COUNT(*) as total, AVG(price) as average_price, MIN(price) as floor_price
-       FROM nft_entity 
-       GROUP BY collection_id 
-       ORDER BY total DESC 
-       LIMIT $1 OFFSET $2;
+        ce.id, ce.name, ce.meta_id as metadata, me.image, 
+        COUNT(distinct ne.meta_id) as unique, 
+        COUNT(distinct ne.current_owner) as unique_collectors, 
+        COUNT(distinct ne.current_owner) as sold, 
+        COUNT(ne.*) as total, 
+        AVG(ne.price) as average_price, 
+        MIN(ne.price) as floor_price 
+      FROM collection_entity ce 
+      LEFT JOIN metadata_entity me on ce.meta_id = me.id 
+      LEFT JOIN nft_entity ne on ce.id = ne.collection_id 
+      GROUP BY ce.id, me.image, ce.name 
+      ORDER BY total DESC
+      LIMIT $1 OFFSET $2;
     `, [limit, offset])
 
     return result
