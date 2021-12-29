@@ -1,7 +1,8 @@
 import {Field, ObjectType, Query, Resolver} from "type-graphql"
 import type {EntityManager} from "typeorm"
-import { SpotlightResolver } from './resolvers/spotlight'
 import { CountResolver } from './resolvers/count'
+import { SeriesResolver } from './resolvers/series'
+import { SpotlightResolver } from './resolvers/spotlight'
 
 @ObjectType()
 export class Hello {
@@ -27,6 +28,7 @@ export class HelloResolver {
 }
 
 export {
-  SpotlightResolver,
   CountResolver,
+  SeriesResolver,
+  SpotlightResolver,
 }
