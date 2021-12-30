@@ -1,0 +1,33 @@
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
+import * as marshal from "../marshal"
+import {Interaction} from "./interaction"
+import {NFTEntity} from "./nFTEntity.model"
+
+@Entity_()
+export class Event {
+  constructor(props?: Partial<Event>) {
+    Object.assign(this, props)
+  }
+
+  @PrimaryColumn_()
+  id!: string
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  blockNumber!: bigint | undefined | null
+
+  @Column_("integer", {nullable: true})
+  timestamp!: number | undefined | null
+
+  @Column_("text", {nullable: false})
+  caller!: string
+
+  @Column_("varchar", {length: 12, nullable: false})
+  interaction!: Interaction
+
+  @Column_("text", {nullable: false})
+  meta!: string
+
+  @Index_()
+  @ManyToOne_(() => NFTEntity, {nullable: false})
+  nft!: NFTEntity
+}

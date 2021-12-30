@@ -23,7 +23,7 @@ type CollectionEntity @entity {
   metadata: String
   currentOwner: String
   nfts: [NFTEntity!] @derivedFrom(field: "collection")
-  events: [Event!]
+  events: [CollectionEvent!]
   blockNumber: BigInt
   meta: MetadataEntity
 }
@@ -41,7 +41,7 @@ type NFTEntity @entity {
   price: BigInt!
   burned: Boolean!
   blockNumber: BigInt
-  events: [Event!]
+  events: [Event!] @derivedFrom(field: "nft")
   emotes: [Emote!] @derivedFrom(field: "nft")
   meta: MetadataEntity
 }
@@ -62,11 +62,29 @@ type Attribute @jsonField {
   value: String!
 }
 
-type Event @jsonField {
-  blockNumber: String
+interface EventType {
+  blockNumber: BigInt
   timestamp: Int
   caller: String!
-  interaction: String
+  interaction: Interaction!
+  meta: String!
+}
+
+type Event implements EventType @entity {
+  id: ID!
+  blockNumber: BigInt
+  timestamp: Int
+  caller: String!
+  interaction: Interaction!
+  meta: String!
+  nft: NFTEntity!
+}
+
+type CollectionEvent implements EventType @jsonField {
+  blockNumber: BigInt
+  timestamp: Int
+  caller: String!
+  interaction: Interaction!
   meta: String!
 }
 
@@ -82,6 +100,8 @@ enum Interaction {
   MINTNFT
   LIST
   BUY
+  SEND
   CONSUME
+  CHANGEISSUER
   EMOTE
 }

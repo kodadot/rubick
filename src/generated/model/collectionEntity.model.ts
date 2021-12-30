@@ -1,7 +1,7 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, OneToMany as OneToMany_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "../marshal"
 import {NFTEntity} from "./nFTEntity.model"
-import {Event} from "./event"
+import {CollectionEvent} from "./collectionEvent"
 import {MetadataEntity} from "./metadataEntity.model"
 
 @Entity_()
@@ -37,8 +37,8 @@ export class CollectionEntity {
   @OneToMany_(() => NFTEntity, e => e.collection)
   nfts!: NFTEntity[]
 
-  @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.map((val: any) => val.toJSON()), from: obj => obj == null ? undefined : marshal.fromList(obj, val => new Event(undefined, marshal.nonNull(val)))}, nullable: true})
-  events!: (Event)[] | undefined | null
+  @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.map((val: any) => val.toJSON()), from: obj => obj == null ? undefined : marshal.fromList(obj, val => new CollectionEvent(undefined, marshal.nonNull(val)))}, nullable: true})
+  events!: (CollectionEvent)[] | undefined | null
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
   blockNumber!: bigint | undefined | null

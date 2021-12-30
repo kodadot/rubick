@@ -1,29 +1,30 @@
 import assert from "assert"
 import * as marshal from "../marshal"
+import {Interaction} from "./interaction"
 
-export class Event {
-  private _blockNumber!: string | undefined | null
+export class CollectionEvent {
+  private _blockNumber!: bigint | undefined | null
   private _timestamp!: number | undefined | null
   private _caller!: string
-  private _interaction!: string | undefined | null
+  private _interaction!: Interaction
   private _meta!: string
 
-  constructor(props?: Partial<Omit<Event, 'toJSON'>>, json?: any) {
+  constructor(props?: Partial<Omit<CollectionEvent, 'toJSON'>>, json?: any) {
     Object.assign(this, props)
     if (json != null) {
-      this._blockNumber = json.blockNumber == null ? undefined : marshal.string.fromJSON(json.blockNumber)
+      this._blockNumber = json.blockNumber == null ? undefined : marshal.bigint.fromJSON(json.blockNumber)
       this._timestamp = json.timestamp == null ? undefined : marshal.int.fromJSON(json.timestamp)
       this._caller = marshal.string.fromJSON(json.caller)
-      this._interaction = json.interaction == null ? undefined : marshal.string.fromJSON(json.interaction)
+      this._interaction = marshal.string.fromJSON(json.interaction)
       this._meta = marshal.string.fromJSON(json.meta)
     }
   }
 
-  get blockNumber(): string | undefined | null {
+  get blockNumber(): bigint | undefined | null {
     return this._blockNumber
   }
 
-  set blockNumber(value: string | undefined | null) {
+  set blockNumber(value: bigint | undefined | null) {
     this._blockNumber = value
   }
 
@@ -44,11 +45,12 @@ export class Event {
     this._caller = value
   }
 
-  get interaction(): string | undefined | null {
+  get interaction(): Interaction {
+    assert(this._interaction != null, 'uninitialized access')
     return this._interaction
   }
 
-  set interaction(value: string | undefined | null) {
+  set interaction(value: Interaction) {
     this._interaction = value
   }
 
@@ -63,7 +65,7 @@ export class Event {
 
   toJSON(): object {
     return {
-      blockNumber: this.blockNumber,
+      blockNumber: this.blockNumber == null ? undefined : marshal.bigint.toJSON(this.blockNumber),
       timestamp: this.timestamp,
       caller: this.caller,
       interaction: this.interaction,

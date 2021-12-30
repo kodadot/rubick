@@ -1,7 +1,7 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
 import * as marshal from "../marshal"
 import {CollectionEntity} from "./collectionEntity.model"
-import {Event} from "./event"
+import {Event} from "./event.model"
 import {Emote} from "./emote.model"
 import {MetadataEntity} from "./metadataEntity.model"
 
@@ -48,8 +48,8 @@ export class NFTEntity {
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
   blockNumber!: bigint | undefined | null
 
-  @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.map((val: any) => val.toJSON()), from: obj => obj == null ? undefined : marshal.fromList(obj, val => new Event(undefined, marshal.nonNull(val)))}, nullable: true})
-  events!: (Event)[] | undefined | null
+  @OneToMany_(() => Event, e => e.nft)
+  events!: Event[]
 
   @OneToMany_(() => Emote, e => e.nft)
   emotes!: Emote[]
