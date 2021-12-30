@@ -1,12 +1,11 @@
 import assert from "assert"
 import * as marshal from "../marshal"
-import {Interaction} from "./interaction"
 
 export class CollectionEvent {
   private _blockNumber!: bigint | undefined | null
   private _timestamp!: number | undefined | null
   private _caller!: string
-  private _interaction!: Interaction
+  private _interaction!: string
   private _meta!: string
 
   constructor(props?: Partial<Omit<CollectionEvent, 'toJSON'>>, json?: any) {
@@ -45,12 +44,12 @@ export class CollectionEvent {
     this._caller = value
   }
 
-  get interaction(): Interaction {
+  get interaction(): string {
     assert(this._interaction != null, 'uninitialized access')
     return this._interaction
   }
 
-  set interaction(value: Interaction) {
+  set interaction(value: string) {
     this._interaction = value
   }
 
