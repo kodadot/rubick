@@ -63,27 +63,29 @@ type Attribute @jsonField {
 }
 
 interface EventType {
+  id: ID!
   blockNumber: BigInt
-  timestamp: Int
+  timestamp: BigInt!
   caller: String!
+  interaction: Interaction!
   meta: String!
 }
 
 type Event implements EventType @entity {
   id: ID!
   blockNumber: BigInt
-  timestamp: Int
+  timestamp: BigInt!
   caller: String!
   interaction: Interaction!
   meta: String!
   nft: NFTEntity!
 }
 
-type CollectionEvent implements EventType @jsonField {
-  blockNumber: BigInt
-  timestamp: Int
+type CollectionEvent @jsonField {
+  blockNumber: String
+  timestamp: String
   caller: String!
-  interaction: String!
+  interaction: String
   meta: String!
 }
 

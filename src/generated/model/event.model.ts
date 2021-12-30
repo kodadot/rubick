@@ -15,8 +15,8 @@ export class Event {
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
   blockNumber!: bigint | undefined | null
 
-  @Column_("integer", {nullable: true})
-  timestamp!: number | undefined | null
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+  timestamp!: bigint
 
   @Column_("text", {nullable: false})
   caller!: string

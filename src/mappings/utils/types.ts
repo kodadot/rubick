@@ -9,8 +9,15 @@ export const getNftId = (nft: any, blocknumber?: string | number): string => {
   return `${blocknumber ? blocknumber + '-' : '' }${nft.collection}-${nft.instance || nft.name}-${nft.sn}`
 }
 
-export function collectionEvent(interaction: RmrkEvent.MINT | RmrkEvent.CHANGEISSUER,  remark: RemarkResult, meta: string): CollectionEvent {
-  return new CollectionEvent({}, eventFrom(interaction, remark, meta))
+
+export function collectionEventFrom(interaction: RmrkEvent.MINT | RmrkEvent.CHANGEISSUER,  { blockNumber, caller, timestamp }: RemarkResult, meta: string): CollectionEvent {
+  return new CollectionEvent({}, {
+    interaction,
+    blockNumber,
+    caller,
+    timestamp: (+timestamp),
+    meta
+  })
 }
 
 export function eventFrom(interaction: RmrkEvent,  { blockNumber, caller, timestamp }: RemarkResult, meta: string): IEvent {
@@ -18,7 +25,7 @@ export function eventFrom(interaction: RmrkEvent,  { blockNumber, caller, timest
     interaction,
     blockNumber: BigInt(blockNumber),
     caller,
-    timestamp: (+timestamp),
+    timestamp: BigInt(+ timestamp),
     meta
   }
 }
@@ -39,7 +46,7 @@ export interface IEvent {
   interaction: RmrkEvent;
   blockNumber: bigint,
   caller: string,
-  timestamp: number,
+  timestamp: bigint,
   meta: string;
 }
 

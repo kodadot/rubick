@@ -17,7 +17,7 @@ import {
   Optional,
   RmrkEvent,
   RmrkInteraction,
-  collectionEvent,
+  collectionEventFrom,
 } from './utils/types'
 import NFTUtils, { hexToString } from './utils/NftUtils'
 import {
@@ -121,7 +121,9 @@ async function mint(remark: RemarkResult, { store }: Context): Promise<void> {
     final.symbol = collection.symbol.trim()
     final.blockNumber = BigInt(remark.blockNumber)
     final.metadata = collection.metadata
-    final.events = [collectionEvent(RmrkEvent.MINT, remark, '')]
+    // final.events = [collectionEventFrom(RmrkEvent.MINT, remark, '')]
+
+    // logger.watch(`[MINT] ${final.events[0]}`)
 
     const metadata = await handleMetadata(final.metadata, final.name, store)
     final.meta = metadata
@@ -176,7 +178,7 @@ async function mintNFT(
     const newEventId = eventId(final.id, RmrkEvent.MINTNFT)
     const event = create<Event>(Event, newEventId, eventFrom(RmrkEvent.MINTNFT, remark, ''))
     event.nft = final
-    await store.save(final)
+    await store.save(event)
 
 
   } catch (e) {
@@ -318,7 +320,7 @@ async function changeIssuer(remark: RemarkResult, { store }: Context) {
     isOwnerOrElseError(collection, remark.caller)
     collection.currentOwner = interaction.metadata
     collection.events?.push(
-      collectionEvent(
+      collectionEventFrom(
         RmrkEvent.CHANGEISSUER,
         remark,
         ensure<string>(interaction.metadata)
