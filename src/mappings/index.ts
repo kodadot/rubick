@@ -3,6 +3,7 @@ import {
   Emote,
   MetadataEntity as Metadata,
   NFTEntity,
+  Event,
 } from '../generated/model'
 
 import { extractRemark, Records, RemarkResult } from './utils'
@@ -16,6 +17,7 @@ import {
   Optional,
   RmrkEvent,
   RmrkInteraction,
+  collectionEvent,
 } from './utils/types'
 import NFTUtils, { hexToString } from './utils/NftUtils'
 import {
@@ -29,7 +31,7 @@ import {
   isTransferable,
   validateInteraction,
 } from './utils/consolidator'
-import { emoteId, ensure, ensureInteraction, isEmpty } from './utils/helper'
+import { emoteId, ensure, ensureInteraction, isEmpty, eventId } from './utils/helper'
 import { System } from '../types'
 import { Context } from './utils/types'
 import logger, { logError } from './utils/logger'
@@ -119,7 +121,7 @@ async function mint(remark: RemarkResult, { store }: Context): Promise<void> {
     final.symbol = collection.symbol.trim()
     final.blockNumber = BigInt(remark.blockNumber)
     final.metadata = collection.metadata
-    final.events = [eventFrom(RmrkEvent.MINT, remark, '')]
+    final.events = [collectionEvent(RmrkEvent.MINT, remark, '')]
 
     const metadata = await handleMetadata(final.metadata, final.name, store)
     final.meta = metadata
@@ -162,13 +164,21 @@ async function mintNFT(
     final.metadata = nft.metadata
     final.price = BigInt(0)
     final.burned = false
-    final.events = [eventFrom(RmrkEvent.MINTNFT, remark, '')]
+    // final.events = [eventFrom(RmrkEvent.MINTNFT, remark, '')]
 
     const metadata = await handleMetadata(final.metadata, final.name, store)
     final.meta = metadata
 
     logger.success(`[MINT] ${final.id}`)
     await store.save(final)
+
+    // saving Event
+    const newEventId = eventId(final.id, RmrkEvent.MINTNFT)
+    const event = create<Event>(Event, newEventId, eventFrom(RmrkEvent.MINTNFT, remark, ''))
+    event.nft = final
+    await store.save(final)
+
+
   } catch (e) {
     logError(e, (e) =>
       logger.error(`[MINT] ${e.message}, ${JSON.stringify(nft)}`)
@@ -193,9 +203,9 @@ async function send(remark: RemarkResult, { store }: Context) {
 
     nft.currentOwner = interaction.metadata
     nft.price = BigInt(0)
-    nft.events?.push(
-      eventFrom(RmrkEvent.SEND, remark, interaction.metadata || '')
-    )
+    // nft.events?.push(
+    //   eventFrom(RmrkEvent.SEND, remark, interaction.metadata || '')
+    // )
 
     logger.success(`[SEND] ${nft.id} to ${interaction.metadata}`)
     await store.save(nft)
@@ -224,7 +234,7 @@ async function buy(remark: RemarkResult, { store }: Context) {
     isBuyLegalOrElseError(nft, remark.extra || [])
     nft.currentOwner = remark.caller
     nft.price = BigInt(0)
-    nft.events?.push(eventFrom(RmrkEvent.BUY, remark, remark.caller))
+    // nft.events?.push(eventFrom(RmrkEvent.BUY, remark, remark.caller))
 
     logger.success(`[BUY] ${nft.id} from ${remark.caller}`)
     await store.save(nft)
@@ -250,7 +260,7 @@ async function consume(remark: RemarkResult, { store }: Context) {
     isOwnerOrElseError(nft, remark.caller)
     nft.price = BigInt(0)
     nft.burned = true
-    nft.events?.push(eventFrom(RmrkEvent.CONSUME, remark, ''))
+    // nft.events?.push(eventFrom(RmrkEvent.CONSUME, remark, ''))
 
     logger.success(`[CONSUME] ${nft.id} from ${remark.caller}`)
     await store.save(nft)
@@ -278,9 +288,9 @@ async function list(remark: RemarkResult, { store }: Context) {
     const price = BigInt(interaction.metadata || '0')
     isPositiveOrElseError(price)
     nft.price = price
-    nft.events?.push(
-      eventFrom(RmrkEvent.LIST, remark, interaction.metadata || '')
-    )
+    // nft.events?.push(
+    //   eventFrom(RmrkEvent.LIST, remark, interaction.metadata || '')
+    // )
 
     logger.success(`[LIST] ${nft.id} from ${remark.caller}`)
     await store.save(nft)
@@ -308,7 +318,7 @@ async function changeIssuer(remark: RemarkResult, { store }: Context) {
     isOwnerOrElseError(collection, remark.caller)
     collection.currentOwner = interaction.metadata
     collection.events?.push(
-      eventFrom(
+      collectionEvent(
         RmrkEvent.CHANGEISSUER,
         remark,
         ensure<string>(interaction.metadata)

@@ -1,30 +1,26 @@
-import { CollectionEntity, NFTEntity, Event, Attribute } from '../../generated/model'
+import { Attribute, CollectionEvent, Interaction as RmrkEvent } from '../../generated/model'
 import { StoreContext, ExtrinsicContext } from '@subsquid/hydra-common'
 import { RemarkResult } from './extract'
+import { string } from '../../generated/marshal'
 
-export enum RmrkEvent {
-  MINT = 'MINT',
-  MINTNFT = 'MINTNFT',
-  LIST = 'LIST',
-  BUY = 'BUY',
-  CONSUME = 'CONSUME',
-  CHANGEISSUER = 'CHANGEISSUER',
-  SEND = 'SEND',
-  EMOTE = 'EMOTE',
-}
+export { RmrkEvent }
 
 export const getNftId = (nft: any, blocknumber?: string | number): string => {
   return `${blocknumber ? blocknumber + '-' : '' }${nft.collection}-${nft.instance || nft.name}-${nft.sn}`
 }
 
-export function eventFrom(interaction: RmrkEvent,  { blockNumber, caller, timestamp }: RemarkResult, meta: string): Event {
-  return new Event({}, {
+export function collectionEvent(interaction: RmrkEvent.MINT | RmrkEvent.CHANGEISSUER,  remark: RemarkResult, meta: string): CollectionEvent {
+  return new CollectionEvent({}, eventFrom(interaction, remark, meta))
+}
+
+export function eventFrom(interaction: RmrkEvent,  { blockNumber, caller, timestamp }: RemarkResult, meta: string): IEvent {
+  return {
     interaction,
-    blockNumber,
+    blockNumber: BigInt(blockNumber),
     caller,
     timestamp: (+timestamp),
     meta
-  })
+  }
 }
 
 export function attributeFrom(attribute: MetadataAttribute): Attribute {
@@ -38,6 +34,14 @@ export function attributeFrom(attribute: MetadataAttribute): Attribute {
 export type Context = ExtrinsicContext & StoreContext
 
 export type Optional<T> = T | null
+
+export interface IEvent {
+  interaction: RmrkEvent;
+  blockNumber: bigint,
+  caller: string,
+  timestamp: number,
+  meta: string;
+}
 
 export interface RmrkInteraction {
   id: string;
