@@ -3,18 +3,18 @@ import * as marshal from "../marshal"
 
 export class CollectionEvent {
   private _blockNumber!: string | undefined | null
-  private _timestamp!: string | undefined | null
+  private _timestamp!: Date | undefined | null
   private _caller!: string
-  private _interaction!: string | undefined | null
+  private _interaction!: string
   private _meta!: string
 
   constructor(props?: Partial<Omit<CollectionEvent, 'toJSON'>>, json?: any) {
     Object.assign(this, props)
     if (json != null) {
       this._blockNumber = json.blockNumber == null ? undefined : marshal.string.fromJSON(json.blockNumber)
-      this._timestamp = json.timestamp == null ? undefined : marshal.string.fromJSON(json.timestamp)
+      this._timestamp = json.timestamp == null ? undefined : marshal.datetime.fromJSON(json.timestamp)
       this._caller = marshal.string.fromJSON(json.caller)
-      this._interaction = json.interaction == null ? undefined : marshal.string.fromJSON(json.interaction)
+      this._interaction = marshal.string.fromJSON(json.interaction)
       this._meta = marshal.string.fromJSON(json.meta)
     }
   }
@@ -27,11 +27,11 @@ export class CollectionEvent {
     this._blockNumber = value
   }
 
-  get timestamp(): string | undefined | null {
+  get timestamp(): Date | undefined | null {
     return this._timestamp
   }
 
-  set timestamp(value: string | undefined | null) {
+  set timestamp(value: Date | undefined | null) {
     this._timestamp = value
   }
 
@@ -44,11 +44,12 @@ export class CollectionEvent {
     this._caller = value
   }
 
-  get interaction(): string | undefined | null {
+  get interaction(): string {
+    assert(this._interaction != null, 'uninitialized access')
     return this._interaction
   }
 
-  set interaction(value: string | undefined | null) {
+  set interaction(value: string) {
     this._interaction = value
   }
 
@@ -64,7 +65,7 @@ export class CollectionEvent {
   toJSON(): object {
     return {
       blockNumber: this.blockNumber,
-      timestamp: this.timestamp,
+      timestamp: this.timestamp == null ? undefined : marshal.datetime.toJSON(this.timestamp),
       caller: this.caller,
       interaction: this.interaction,
       meta: this.meta,

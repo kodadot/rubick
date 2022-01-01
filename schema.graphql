@@ -86,9 +86,9 @@ type Event implements EventType @entity {
 
 type CollectionEvent @jsonField {
   blockNumber: String
-  timestamp: String
+  timestamp: DateTime
   caller: String!
-  interaction: String
+  interaction: String!
   meta: String!
 }
 

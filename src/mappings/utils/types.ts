@@ -11,11 +11,11 @@ export const getNftId = (nft: any, blocknumber?: string | number): string => {
 
 
 export function collectionEventFrom(interaction: RmrkEvent.MINT | RmrkEvent.CHANGEISSUER,  { blockNumber, caller, timestamp }: RemarkResult, meta: string): CollectionEvent {
-  return new CollectionEvent({}, {
+  return new CollectionEvent({
     interaction,
     blockNumber,
     caller,
-    timestamp: (+timestamp),
+    timestamp,
     meta
   })
 }

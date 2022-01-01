@@ -122,6 +122,7 @@ async function mint(remark: RemarkResult, { store }: Context): Promise<void> {
     final.blockNumber = BigInt(remark.blockNumber)
     final.metadata = collection.metadata
     final.createdAt = remark.timestamp
+    final.events = []
     // final.events = [collectionEventFrom(RmrkEvent.MINT, remark, '')]
 
     // logger.watch(`[MINT] ${final.events[0]}`)
