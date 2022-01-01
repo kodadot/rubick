@@ -121,6 +121,7 @@ async function mint(remark: RemarkResult, { store }: Context): Promise<void> {
     final.symbol = collection.symbol.trim()
     final.blockNumber = BigInt(remark.blockNumber)
     final.metadata = collection.metadata
+    final.createdAt = remark.timestamp
     // final.events = [collectionEventFrom(RmrkEvent.MINT, remark, '')]
 
     // logger.watch(`[MINT] ${final.events[0]}`)
@@ -166,6 +167,8 @@ async function mintNFT(
     final.metadata = nft.metadata
     final.price = BigInt(0)
     final.burned = false
+    final.createdAt = remark.timestamp
+    final.updatedAt = remark.timestamp
     // final.events = [eventFrom(RmrkEvent.MINTNFT, remark, '')]
 
     const metadata = await handleMetadata(final.metadata, final.name, store)
@@ -205,6 +208,7 @@ async function send(remark: RemarkResult, { store }: Context) {
 
     nft.currentOwner = interaction.metadata
     nft.price = BigInt(0)
+    nft.updatedAt = remark.timestamp
     // nft.events?.push(
     //   eventFrom(RmrkEvent.SEND, remark, interaction.metadata || '')
     // )
@@ -236,6 +240,7 @@ async function buy(remark: RemarkResult, { store }: Context) {
     isBuyLegalOrElseError(nft, remark.extra || [])
     nft.currentOwner = remark.caller
     nft.price = BigInt(0)
+    nft.updatedAt = remark.timestamp
     // nft.events?.push(eventFrom(RmrkEvent.BUY, remark, remark.caller))
 
     logger.success(`[BUY] ${nft.id} from ${remark.caller}`)
@@ -262,6 +267,7 @@ async function consume(remark: RemarkResult, { store }: Context) {
     isOwnerOrElseError(nft, remark.caller)
     nft.price = BigInt(0)
     nft.burned = true
+    nft.updatedAt = remark.timestamp
     // nft.events?.push(eventFrom(RmrkEvent.CONSUME, remark, ''))
 
     logger.success(`[CONSUME] ${nft.id} from ${remark.caller}`)
@@ -290,6 +296,7 @@ async function list(remark: RemarkResult, { store }: Context) {
     const price = BigInt(interaction.metadata || '0')
     isPositiveOrElseError(price)
     nft.price = price
+    nft.updatedAt = remark.timestamp
     // nft.events?.push(
     //   eventFrom(RmrkEvent.LIST, remark, interaction.metadata || '')
     // )

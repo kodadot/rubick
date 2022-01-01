@@ -26,6 +26,7 @@ type CollectionEntity @entity {
   events: [CollectionEvent!]
   blockNumber: BigInt
   meta: MetadataEntity
+  createdAt: DateTime!
 }
 
 type NFTEntity @entity {
@@ -44,6 +45,8 @@ type NFTEntity @entity {
   events: [Event!] @derivedFrom(field: "nft")
   emotes: [Emote!] @derivedFrom(field: "nft")
   meta: MetadataEntity
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type MetadataEntity @entity {

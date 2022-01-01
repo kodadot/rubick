@@ -57,4 +57,10 @@ export class NFTEntity {
   @Index_()
   @ManyToOne_(() => MetadataEntity, {nullable: true})
   meta!: MetadataEntity | undefined | null
+
+  @Column_("timestamp with time zone", {nullable: false})
+  createdAt!: Date
+
+  @Column_("timestamp with time zone", {nullable: false})
+  updatedAt!: Date
 }
