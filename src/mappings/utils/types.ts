@@ -25,7 +25,7 @@ export function eventFrom(interaction: RmrkEvent,  { blockNumber, caller, timest
     interaction,
     blockNumber: BigInt(blockNumber),
     caller,
-    timestamp: BigInt(+ timestamp),
+    timestamp,
     meta
   }
 }
@@ -46,7 +46,7 @@ export interface IEvent {
   interaction: RmrkEvent;
   blockNumber: bigint,
   caller: string,
-  timestamp: bigint,
+  timestamp: Date,
   meta: string;
 }
 
