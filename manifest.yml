@@ -12,7 +12,7 @@ typegen:
 
 mappings:
   mappingsModule: lib/mappings
-  range: '[4892957, )'
+  range: '[5756453, )'
   eventHandlers:
   extrinsicHandlers:
     - extrinsic: system.remark
