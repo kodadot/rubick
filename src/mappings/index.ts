@@ -176,13 +176,7 @@ async function mintNFT(
 
     logger.success(`[MINT] ${final.id}`)
     await store.save(final)
-
-    // saving Event
-    const newEventId = eventId(final.id, RmrkEvent.MINTNFT)
-    const event = create<Event>(Event, newEventId, eventFrom(RmrkEvent.MINTNFT, remark, ''))
-    event.nft = final
-    await store.save(event)
-
+    await createEvent(final, RmrkEvent.MINTNFT, remark, '', store)
 
   } catch (e) {
     logError(e, (e) =>
@@ -209,12 +203,10 @@ async function send(remark: RemarkResult, { store }: Context) {
     nft.currentOwner = interaction.metadata
     nft.price = BigInt(0)
     nft.updatedAt = remark.timestamp
-    // nft.events?.push(
-    //   eventFrom(RmrkEvent.SEND, remark, interaction.metadata || '')
-    // )
 
     logger.success(`[SEND] ${nft.id} to ${interaction.metadata}`)
     await store.save(nft)
+    await createEvent(nft, RmrkEvent.SEND, remark, interaction.metadata || '', store)
   } catch (e) {
     logError(e, (e) =>
       logger.error(`[SEND] ${e.message} ${JSON.stringify(interaction)}`)
@@ -238,13 +230,14 @@ async function buy(remark: RemarkResult, { store }: Context) {
     canOrElseError<NFTEntity>(isTransferable, nft, true)
     isPositiveOrElseError(nft.price, true)
     isBuyLegalOrElseError(nft, remark.extra || [])
+    const originalPrice = nft.price
     nft.currentOwner = remark.caller
     nft.price = BigInt(0)
     nft.updatedAt = remark.timestamp
-    // nft.events?.push(eventFrom(RmrkEvent.BUY, remark, remark.caller))
 
     logger.success(`[BUY] ${nft.id} from ${remark.caller}`)
     await store.save(nft)
+    await createEvent(nft, RmrkEvent.BUY, remark, String(originalPrice), store)
   } catch (e) {
     logError(e, (e) =>
       logger.error(`[BUY] ${e.message} ${JSON.stringify(interaction)}`)
@@ -268,10 +261,10 @@ async function consume(remark: RemarkResult, { store }: Context) {
     nft.price = BigInt(0)
     nft.burned = true
     nft.updatedAt = remark.timestamp
-    // nft.events?.push(eventFrom(RmrkEvent.CONSUME, remark, ''))
 
     logger.success(`[CONSUME] ${nft.id} from ${remark.caller}`)
     await store.save(nft)
+    await createEvent(nft, RmrkEvent.CONSUME, remark, '', store)
   } catch (e) {
     logError(e, (e) =>
       logger.warn(`[CONSUME] ${e.message} ${JSON.stringify(interaction)}`)
@@ -297,12 +290,10 @@ async function list(remark: RemarkResult, { store }: Context) {
     isPositiveOrElseError(price)
     nft.price = price
     nft.updatedAt = remark.timestamp
-    // nft.events?.push(
-    //   eventFrom(RmrkEvent.LIST, remark, interaction.metadata || '')
-    // )
 
     logger.success(`[LIST] ${nft.id} from ${remark.caller}`)
     await store.save(nft)
+    await createEvent(nft, RmrkEvent.LIST, remark, String(price), store)
   } catch (e) {
     logError(e, (e) =>
       logger.warn(`[LIST] ${e.message} ${JSON.stringify(interaction)}`)
@@ -415,6 +406,18 @@ async function handleMetadata(
   return final
 }
 
+
+async function createEvent(final: NFTEntity, interaction: RmrkEvent, remark: RemarkResult, meta: string, store: DatabaseManager) {
+  try {
+    const newEventId = eventId(final.id, interaction)
+    const event = create<Event>(Event, newEventId, eventFrom(interaction, remark, meta))
+    event.nft = final
+    await store.save(event)
+  } catch (e) {
+    logError(e, (e) => logger.warn(`[[${interaction}]]: ${final.id} Reason: ${e.message}`))
+  }
+  
+}
 // export async function balancesTransfer({
 //   store,
 //   event,
