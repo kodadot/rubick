@@ -23,10 +23,14 @@ export class SeriesResolver {
         COUNT(distinct ne.current_owner) as sold, 
         COUNT(ne.*) as total, 
         AVG(ne.price) as average_price, 
-        MIN(ne.price) as floor_price 
+        MIN(ne.price) as floor_price, 
+        COALESCE(SUM(e.meta::bigint), 0) as volume, 
+        COUNT(e.*) as buys 
       FROM collection_entity ce 
       LEFT JOIN metadata_entity me on ce.meta_id = me.id 
       LEFT JOIN nft_entity ne on ce.id = ne.collection_id 
+      JOIN event e on ne.id = e.nft_id
+      WHERE e.interaction = 'BUY'
       GROUP BY ce.id, me.image, ce.name 
       ORDER BY total DESC
       LIMIT $1 OFFSET $2;
