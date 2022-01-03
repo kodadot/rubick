@@ -25,22 +25,20 @@ export class SeriesEntity {
 
 
     @Field(() => Number, { nullable: true, defaultValue: 0 })
-    totalBuys!: number
+    buys!: number
 
     // @Field(() => Number, { nullable: true, defaultValue: 0 })
     // rank!: number
 
-    // @Field(() => BigInt, { nullable: true, defaultValue: 0n })
-    // volume!: bigint
+    @Field(() => BigInt, { nullable: true, defaultValue: 0n })
+    volume!: bigint
 
-    // need it from collection
     @Field(() => String, { nullable: false })
     name!: string
 
     @Field(() => String, { nullable: true })
     metadata!: string
 
-    // need it from collection
     @Field(() => String, { nullable: true })
     image!: string
 

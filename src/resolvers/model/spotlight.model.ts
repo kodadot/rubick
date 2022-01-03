@@ -20,6 +20,9 @@ export class SpotlightEntity {
     @Field(() => Number, { nullable: false, name: 'uniqueCollectors' })
     unique_collectors!: number
 
+    @Field(() => BigInt, { nullable: true, defaultValue: 0n })
+    volume!: bigint
+
     @Field(() => Number, { nullable: false })
     total!: number
 
