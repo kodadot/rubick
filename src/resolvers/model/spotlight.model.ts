@@ -17,6 +17,9 @@ export class SpotlightEntity {
     @Field(() => Number, { nullable: false })
     sold!: number
 
+    @Field(() => Number, { nullable: false, name: 'uniqueCollectors' })
+    unique_collectors!: number
+
     @Field(() => Number, { nullable: false })
     total!: number
 
