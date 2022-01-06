@@ -5,17 +5,21 @@ import { SeriesEntity } from './model/series.model'
 
 @Resolver()
 export class SeriesResolver {
-  constructor(private tx: () => Promise<EntityManager>) {}
+	constructor(private tx: () => Promise<EntityManager>) {}
 
-  // TODO: calculate score sold * (unique / total)
-  @Query(() => [SeriesEntity])
-  async seriesInsightTable(
-    @Arg('limit', { nullable: true }) limit: number,
-    @Arg('offset', { nullable: true }) offset: string,
-  ): Promise<SeriesEntity[]> {
-    const manager = await this.tx()
-    const result: SeriesEntity[] = await manager.getRepository(NFTEntity)
-      .query(`
+	// TODO: calculate score sold * (unique / total)
+	@Query(() => [SeriesEntity])
+	async seriesInsightTable(
+		@Arg('limit', { nullable: true }) limit: number,
+		@Arg('offset', { nullable: true }) offset: string,
+		@Arg('orderBy', { nullable: true, defaultValue: 'total' }) orderBy: string,
+		@Arg('orderDirection', { nullable: true, defaultValue: 'DESC' }) orderDirection: string
+	): Promise<SeriesEntity[]> {
+		const manager = await this.tx()
+		const result: SeriesEntity[] = await manager
+			.getRepository(NFTEntity)
+			.query(
+				`
       SELECT
         ce.id, ce.name, ce.meta_id as metadata, me.image, 
         COUNT(distinct ne.meta_id) as unique, 
@@ -32,10 +36,12 @@ export class SeriesResolver {
       JOIN event e on ne.id = e.nft_id
       WHERE e.interaction = 'BUY'
       GROUP BY ce.id, me.image, ce.name 
-      ORDER BY total DESC
-      LIMIT $1 OFFSET $2;
-    `, [limit, offset])
+      ORDER BY $1 $2
+      LIMIT $3 OFFSET $4;
+    `,
+				[orderBy, orderDirection, limit, offset]
+			)
 
-    return result
-  }
+		return result
+	}
 }
