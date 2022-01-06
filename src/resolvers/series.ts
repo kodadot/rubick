@@ -23,7 +23,7 @@ export class SeriesResolver {
         COUNT(distinct ne.current_owner) as sold, 
         COUNT(ne.*) as total, 
         AVG(ne.price) as average_price, 
-        MIN(ne.price) as floor_price, 
+        MIN((NULLIF (ne.price, 0))) as floor_price, 
         COALESCE(SUM(e.meta::bigint), 0) as volume, 
         COUNT(e.*) as buys 
       FROM collection_entity ce 
