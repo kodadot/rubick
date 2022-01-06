@@ -3,6 +3,22 @@ import type { EntityManager } from 'typeorm'
 import { NFTEntity } from '../generated/model'
 import { SeriesEntity } from './model/series.model'
 
+enum OrderBy {
+  volume = 'volume',
+  unique = 'unique',
+  unique_collectors = 'unique_collectors',
+  sold = 'sold',
+  total = 'total',
+  average_price = 'average_price',
+  floor_price = 'floor_price',
+  buys = 'buys',
+}
+
+enum orderDirection {
+  DESC = 'DESC',
+  ASC = 'ASC',
+}
+
 @Resolver()
 export class SeriesResolver {
   constructor(private tx: () => Promise<EntityManager>) {}
@@ -12,8 +28,8 @@ export class SeriesResolver {
   async seriesInsightTable(
     @Arg('limit', { nullable: true }) limit: number,
     @Arg('offset', { nullable: true }) offset: string,
-    @Arg('orderBy', { nullable: true, defaultValue: 'total' }) orderBy: string,
-    @Arg('orderDirection', { nullable: true, defaultValue: 'DESC' }) orderDirection: string
+    @Arg('orderBy', { nullable: true, defaultValue: 'total' }) orderBy: OrderBy,
+    @Arg('orderDirection', { nullable: true, defaultValue: 'DESC' }) orderDirection: orderDirection
   ): Promise<SeriesEntity[]> {
     const manager = await this.tx()
     const result: SeriesEntity[] = await manager
