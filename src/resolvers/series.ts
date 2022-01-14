@@ -26,8 +26,8 @@ export class SeriesResolver {
   // TODO: calculate score sold * (unique / total)
   @Query(() => [SeriesEntity])
   async seriesInsightTable(
-    @Arg('limit', { nullable: true }) limit: number,
-    @Arg('offset', { nullable: true }) offset: string,
+    @Arg('limit', { nullable: true, defaultValue: null }) limit: number,
+    @Arg('offset', { nullable: true, defaultValue: null }) offset: string,
     @Arg('orderBy', { nullable: true, defaultValue: 'total' }) orderBy: OrderBy,
     @Arg('orderDirection', { nullable: true, defaultValue: 'DESC' }) orderDirection: OrderDirection
   ): Promise<SeriesEntity[]> {
