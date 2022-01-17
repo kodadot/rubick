@@ -6,11 +6,11 @@ import { SeriesEntity } from './model/series.model'
 enum OrderBy {
   volume = 'volume',
   unique = 'unique',
-  unique_collectors = 'unique_collectors',
+  uniqueCollectors = 'unique_collectors',
   sold = 'sold',
   total = 'total',
-  average_price = 'average_price',
-  floor_price = 'floor_price',
+  averagePrice = 'average_price',
+  floorPrice = 'floor_price',
   buys = 'buys',
 }
 
