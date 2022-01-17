@@ -40,10 +40,10 @@ export class SpotlightResolver {
       JOIN event e on e.nft_id = ne.id WHERE e.interaction = 'BUY'
       GROUP BY issuer 
       ORDER BY ${orderBy} ${orderDirection}
-      LIMIT ${limit} OFFSET ${offset}`
+      LIMIT $1 OFFSET $2`
     const manager = await this.tx()
     const result: SpotlightEntity[] = await manager.getRepository(NFTEntity)
-      .query(query)
+      .query(query, [limit, offset])
 
     return result
   }
