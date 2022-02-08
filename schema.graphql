@@ -109,3 +109,36 @@ enum Interaction {
   CHANGEISSUER
   EMOTE
 }
+
+#PRESERVE ITS PREVIOUS MODEL BEFORE CODEGEN
+type Series @entity {
+  id: ID!
+  unique: Int!
+  uniqueCollectors: Int!
+  sold: Int!
+  total: Int!
+  averagePrice: String
+  floorPrice: BigInt
+  buys: Int
+  volume: BigInt
+  name: String!
+  metadata: String
+  image: String
+}
+
+#PRESERVE ITS PREVIOUS MODEL BEFORE CODEGEN
+type Spotlight @entity {
+  id: ID!
+  collections: Int!
+  uniqueCollectors: Int!
+  unique: Int!
+  sold: Int!
+  total: Int!
+  average: String
+  volume: BigInt
+}
+
+type CacheStatus @entity {
+  id: ID!
+  lastBlockTimestamp: DateTime!
+}
