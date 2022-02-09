@@ -3,7 +3,7 @@ import { Series, Spotlight, CacheStatus } from "../../generated/model";
 import { DatabaseManager } from "@subsquid/hydra-common";
 import { EntityConstructor } from "./types";
 import { create, EntityWithId, getOrCreate } from './entity';
-
+import { camelCase } from './helper';
 
 const DELAY_MIN: number = 10
 const STATUS_ID: string = "0"
@@ -60,14 +60,17 @@ export async function updateCache(timestamp: Date, store: DatabaseManager): Prom
     }
 }
 
-async function updateEntityCache<T extends EntityWithId>(
+async function updateEntityCache<T>(
     store: DatabaseManager,
     entityConstructor: EntityConstructor<T>,
     query: Query
 ): Promise<void[]> {
-    const result: T[] = await store.query(query)
+    const result: any[] = await store.query(query)
     const Promises = result.map((el) => {
-        const entity = create(entityConstructor, el.id, el)
+        const entity: T = new entityConstructor()
+        for (const prop in el) {
+            entity[camelCase(prop) as keyof T] = el[prop]
+        }
         return store.save(entity)
     })
     return Promise.all(Promises);

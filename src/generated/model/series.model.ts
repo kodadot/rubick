@@ -1,4 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_} from "typeorm"
 import * as marshal from "../marshal"
 
 @Entity_()
@@ -10,39 +10,30 @@ export class Series {
   @PrimaryColumn_()
   id!: string
 
-  @Index_()  
   @Column_("integer", {nullable: false})
   unique!: number
 
-  @Index_()
   @Column_("integer", {nullable: false})
-  unique_collectors!: number
+  uniqueCollectors!: number
 
-  @Index_()
   @Column_("integer", {nullable: false})
   sold!: number
 
-  @Index_()
   @Column_("integer", {nullable: false})
   total!: number
 
-  @Index_()
   @Column_("text", {nullable: true})
-  average_price!: string | undefined | null
+  averagePrice!: string | undefined | null
 
-  @Index_()
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
-  floor_price!: bigint | undefined | null
+  floorPrice!: bigint | undefined | null
 
-  @Index_()
   @Column_("integer", {nullable: true})
   buys!: number | undefined | null
 
-  @Index_()
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
   volume!: bigint | undefined | null
 
-  @Index_()
   @Column_("text", {nullable: false})
   name!: string
 
