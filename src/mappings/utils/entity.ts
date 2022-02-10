@@ -1,7 +1,7 @@
 import { DatabaseManager } from '@subsquid/hydra-common'
 import { EntityConstructor } from './types'
 
-export type EntityWithId = {
+type EntityWithId = {
   id: string
 }
 
