@@ -38,6 +38,7 @@ import logger, { logError } from './utils/logger'
 import { create, get } from './utils/entity'
 import { fetchMetadata } from './utils/metadata'
 import { DatabaseManager } from '@subsquid/hydra-common'
+import {updateCache} from './utils/cache'
 
 export async function handleRemark(context: Context): Promise<void> {
   const remark = new System.RemarkCall(context.extrinsic).remark
@@ -92,6 +93,7 @@ async function mainFrame(records: Records, context: Context): Promise<void> {
             `[SKIP] ${event}::${remark.value}::${remark.blockNumber}`
           )
       }
+      await updateCache(remark.timestamp,context.store)
     } catch (e) {
       logger.warn(
         `[MALFORMED] ${remark.blockNumber}::${hexToString(remark.value)}`
