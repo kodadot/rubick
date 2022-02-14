@@ -1,11 +1,11 @@
-version: "3.4"
+version: "3"
 
 services:
   db:
     image: postgres:12
-    ports:
-      - "${DB_PORT}:5432"
     environment:
       POSTGRES_DB: postgres
       POSTGRES_PASSWORD: postgres
-    # command: ["postgres", "-c", "log_statement=all"]
+    ports:
+      - "${DB_PORT}:5432"
+      # command: ["postgres", "-c", "log_statement=all"]
