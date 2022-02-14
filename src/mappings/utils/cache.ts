@@ -1,8 +1,8 @@
 import logger, { logError } from './logger';
-import { Series, Spotlight, CacheStatus } from "../../generated/model";
-import { DatabaseManager } from "@subsquid/hydra-common";
+import { Series, Spotlight, CacheStatus } from "../../model/generated";
+import { Store } from "@subsquid/substrate-processor";
 import { EntityConstructor } from "./types";
-import { create, EntityWithId, getOrCreate } from './entity';
+import { getOrCreate } from './entity';
 import { camelCase } from './helper';
 
 const DELAY_MIN: number = 10
@@ -38,7 +38,7 @@ enum Query {
     GROUP BY issuer`
 }
 
-export async function updateCache(timestamp: Date, store: DatabaseManager): Promise<void> {
+export async function updateCache(timestamp: Date, store: Store): Promise<void> {
     let lastUpdate = await getOrCreate(store, CacheStatus, STATUS_ID, { id: STATUS_ID, lastBlockTimestamp: new Date(0) })
     const passedMins = (timestamp.getTime() - lastUpdate.lastBlockTimestamp.getTime()) / 60000
     logger.info(`[CACHE UPDATE] PASSED TIME - ${passedMins} MINS`)
@@ -61,17 +61,17 @@ export async function updateCache(timestamp: Date, store: DatabaseManager): Prom
 }
 
 async function updateEntityCache<T>(
-    store: DatabaseManager,
+    store: Store,
     entityConstructor: EntityConstructor<T>,
     query: Query
-): Promise<void[]> {
+): Promise<T[]> {
     const result: any[] = await store.query(query)
-    const Promises = result.map((el) => {
+    const entities = result.map((el) => {
         const entity: T = new entityConstructor()
         for (const prop in el) {
             entity[camelCase(prop) as keyof T] = el[prop]
         }
-        return store.save(entity)
+        return entity
     })
-    return Promise.all(Promises);
+    return store.save(entities)
 }
