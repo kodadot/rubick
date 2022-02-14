@@ -7,7 +7,7 @@
     "db:migrate": "sqd db migrate",
     "schema:reset": "",
     "processor:migrate": "echo skip",
-    "processor:start": "node -r dotenv/config lib/processor.js",
+    "processor:start": "node lib/processor.js",
     "query-node:start": "squid-graphql-server",
     "test:unit": "mocha -r ts-node/register tests/unit/**.spec.ts"
   },
