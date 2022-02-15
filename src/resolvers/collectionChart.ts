@@ -12,7 +12,7 @@ export class CollectionChartResolver {
   // TODO: calculate score sold * (unique / total)
   @Query(() => [ChartEntity])
   async collectionChartById(
-    @Arg('id', { nullable: false, defaultValue: null }) id: string,
+    @Arg('id', { nullable: false }) id: string,
     // @Arg('floor', { nullable: true, defaultValue: false }) floor: boolean,
     // @Arg('price', { nullable: true, defaultValue: null }) id: boolean,
     // @Arg('average', { nullable: true, defaultValue: null }) id: boolean,
