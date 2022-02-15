@@ -1,4 +1,4 @@
-import { DatabaseManager } from '@subsquid/hydra-common'
+import { Store } from '@subsquid/substrate-processor'
 import { EntityConstructor } from './types'
 
 export type EntityWithId = {
@@ -6,7 +6,7 @@ export type EntityWithId = {
 }
 
 export async function createOrElseThrow<T extends EntityWithId>(
-  store: DatabaseManager,
+  store: Store,
   entityConstructor: EntityConstructor<T>,
   id: string,
   init: Partial<T>
@@ -25,7 +25,7 @@ export async function createOrElseThrow<T extends EntityWithId>(
  * Note: you need to persist/save the entity yourself
  */
 export async function getOrCreate<T extends EntityWithId>(
-  store: DatabaseManager,
+  store: Store,
   entityConstructor: EntityConstructor<T>,
   id: string,
   init: Partial<T>
@@ -45,11 +45,11 @@ export async function getOrCreate<T extends EntityWithId>(
 }
 
 export async function get<T extends EntityWithId>(
-  store: DatabaseManager,
+  store: Store,
   entityConstructor: EntityConstructor<T>,
   id: string
 ): Promise<T | undefined> {
-  return store.get(entityConstructor, {
+  return store.get<T>(entityConstructor, {
     where: { id },
   })
 }

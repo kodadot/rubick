@@ -1,0 +1,10 @@
+{
+  "outDir": "src/types",
+  "chainVersions": "kusamaVersions.json",
+  "typesBundle": "kusama",
+  "events": [
+  ],
+  "calls": [
+    "system.remark"
+  ]
+}

@@ -1,4 +1,4 @@
-import { SubstrateExtrinsic } from '@subsquid/hydra-common'
+import { SubstrateExtrinsic } from '@subsquid/substrate-processor'
 import { System } from '../../src/types'
 import { extractRemark } from '../../src/mappings/utils'
 import { BatchArg, Context } from '../../src/mappings/utils/types'

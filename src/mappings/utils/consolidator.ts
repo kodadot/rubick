@@ -1,5 +1,5 @@
 import { BatchArg, RmrkInteraction } from './types'
-import { CollectionEntity, NFTEntity } from '../../generated/model'
+import { CollectionEntity, NFTEntity } from '../../model/generated'
 // import { decodeAddress } from '@polkadot/util-crypto'
 type Entity = CollectionEntity | NFTEntity
 
