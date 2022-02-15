@@ -39,6 +39,7 @@ import { create, get } from './utils/entity'
 import { fetchMetadata } from './utils/metadata'
 import { Store} from '@subsquid/substrate-processor'
 import {updateCache} from './utils/cache'
+import md5 from 'md5'
 
 
 export async function handleRemark(context: Context): Promise<void> {
@@ -158,8 +159,9 @@ async function mintNFT(
     canOrElseError<CollectionEntity>(exists, collection, true)
     isOwnerOrElseError(collection, remark.caller)
     const final = create<NFTEntity>(NFTEntity, collection.id, {})
-
-    final.id = getNftId(nft, remark.blockNumber)
+    const id = getNftId(nft, remark.blockNumber)
+    final.id = id
+    final.hash = md5(id)
     final.issuer = remark.caller
     final.currentOwner = remark.caller
     final.blockNumber = BigInt(remark.blockNumber)
