@@ -4,7 +4,7 @@ import {
   MetadataEntity as Metadata,
   NFTEntity,
   Event,
-} from '../generated/model'
+} from '../model/generated'
 
 import { extractRemark, Records, RemarkResult } from './utils'
 import {
@@ -32,15 +32,17 @@ import {
   validateInteraction,
 } from './utils/consolidator'
 import { emoteId, ensure, ensureInteraction, isEmpty, eventId } from './utils/helper'
-import { System } from '../types'
+import { SystemRemarkCall  } from '../types/calls'
 import { Context } from './utils/types'
 import logger, { logError } from './utils/logger'
 import { create, get } from './utils/entity'
 import { fetchMetadata } from './utils/metadata'
-import { DatabaseManager } from '@subsquid/hydra-common'
+import { Store} from '@subsquid/substrate-processor'
+import {updateCache} from './utils/cache'
+
 
 export async function handleRemark(context: Context): Promise<void> {
-  const remark = new System.RemarkCall(context.extrinsic).remark
+  const remark = new SystemRemarkCall(context).asV1020.remark
   const records = extractRemark(remark.toString(), context)
   await mainFrame(records, context)
 }
@@ -92,6 +94,7 @@ async function mainFrame(records: Records, context: Context): Promise<void> {
             `[SKIP] ${event}::${remark.value}::${remark.blockNumber}`
           )
       }
+      await updateCache(remark.timestamp,context.store)
     } catch (e) {
       logger.warn(
         `[MALFORMED] ${remark.blockNumber}::${hexToString(remark.value)}`
@@ -381,7 +384,7 @@ async function emote(remark: RemarkResult, { store }: Context) {
 async function handleMetadata(
   id: string,
   name: string,
-  store: DatabaseManager
+  store: Store
 ): Promise<Optional<Metadata>> {
   const meta = await get<Metadata>(store, Metadata, id)
   if (meta) {
@@ -408,7 +411,7 @@ async function handleMetadata(
 }
 
 
-async function createEvent(final: NFTEntity, interaction: RmrkEvent, remark: RemarkResult, meta: string, store: DatabaseManager) {
+async function createEvent(final: NFTEntity, interaction: RmrkEvent, remark: RemarkResult, meta: string, store: Store) {
   try {
     const newEventId = eventId(final.id, interaction)
     const event = create<Event>(Event, newEventId, eventFrom(interaction, remark, meta))
@@ -424,7 +427,7 @@ async function createEvent(final: NFTEntity, interaction: RmrkEvent, remark: Rem
 //   event,
 //   block,
 //   extrinsic,
-// }: EventContext & StoreContext): void {
+// }: EventContext ): void {
 
 //   const [from, to, value] = new Balances.TransferEvent(event).params
 //   const tip = extrinsic?.tip || 0n
@@ -456,7 +459,7 @@ async function createEvent(final: NFTEntity, interaction: RmrkEvent, remark: Rem
 // }
 
 // async function getOrCreate<T extends {id: string}>(
-//   store: DatabaseManager,
+//   store: Store,
 //   entityConstructor: EntityConstructor<T>,
 //   id: string
 // ): Promise<T> {

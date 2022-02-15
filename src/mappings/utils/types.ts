@@ -1,7 +1,7 @@
-import { Attribute, CollectionEvent, Interaction as RmrkEvent } from '../../generated/model'
-import { StoreContext, ExtrinsicContext } from '@subsquid/hydra-common'
+import { Attribute, CollectionEvent, Interaction as RmrkEvent } from '../../model/generated'
+import {ExtrinsicHandlerContext } from '@subsquid/substrate-processor'
 import { RemarkResult } from './extract'
-import { string } from '../../generated/marshal'
+
 
 export { RmrkEvent }
 
@@ -38,7 +38,7 @@ export function attributeFrom(attribute: MetadataAttribute): Attribute {
   })
 }
 
-export type Context = ExtrinsicContext & StoreContext
+export type Context = ExtrinsicHandlerContext 
 
 export type Optional<T> = T | null
 

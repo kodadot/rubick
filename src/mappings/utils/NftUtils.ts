@@ -6,7 +6,7 @@ export function isHex(text: string) {
 }
 
 export function hexToString(text: string) {
-  return Buffer.from(text.replace(/^0x/, ''), 'hex').toString()
+  return isHex(text) ? Buffer.from(text.replace(/^0x/, ''), 'hex').toString() : text 
 }
 
 class NFTUtils {

@@ -109,3 +109,35 @@ enum Interaction {
   CHANGEISSUER
   EMOTE
 }
+
+
+type Series @entity {
+  id: ID!
+  unique: Int!
+  uniqueCollectors: Int!
+  sold: Int! @index
+  total: Int!
+  averagePrice: Float
+  floorPrice: BigInt
+  buys: Int
+  volume: BigInt
+  name: String! @index
+  metadata: String
+  image: String
+}
+
+type Spotlight @entity {
+  id: ID!
+  collections: Int!
+  uniqueCollectors: Int!
+  unique: Int!
+  sold: Int! @index
+  total: Int!
+  average: Float 
+  volume: BigInt
+}
+
+type CacheStatus @entity {
+  id: ID!
+  lastBlockTimestamp: DateTime!
+}

@@ -15,6 +15,13 @@ export function ensure<T>(value: any): T {
   return value as T
 }
 
+export function camelCase(str: string): string {
+  return str.replace(/([_][a-z])/ig, ($1) => {
+    return $1.toUpperCase()
+      .replace('_', '')
+  })
+}
+
 export function isEmpty(obj: Record<string, any>) {
   for (const _ in obj) { return false; }
   return true;

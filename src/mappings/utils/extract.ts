@@ -1,10 +1,10 @@
 import { Vec } from '@polkadot/types';
 import { Call as TCall } from "@polkadot/types/interfaces";
 import { Event as TEvent } from '@polkadot/types/interfaces';
-import { ExtrinsicContext, SubstrateExtrinsic, SubstrateEvent } from '@subsquid/hydra-common'
+import { ExtrinsicHandlerContext, SubstrateExtrinsic, SubstrateEvent } from '@subsquid/substrate-processor'
 import logger from './logger';
 import { BatchArg } from './types';
-const PREFIXES = ['0x726d726b', '0x524d524b']
+const PREFIXES = ['0x726d726b', '0x524d524b', 'rmrk', 'RMRK']
 
 
  export type ExtraCall = BatchArg
@@ -49,7 +49,7 @@ const hasBatchFailed = (event: SubstrateEvent | TEvent): boolean => {
   return method.toString() === "BatchInterrupted" || method.toString() === "ExtrinsicFailed";
 }
 
- function toBaseCall(extrinsic: ExtrinsicContext): BaseCall {
+ function toBaseCall(extrinsic: ExtrinsicHandlerContext): BaseCall {
   const caller = extrinsic.extrinsic.signer.toString();
   const blockNumber = extrinsic.block.height.toString();
   const timestamp = new Date(extrinsic.block.timestamp);
@@ -82,7 +82,7 @@ const hasBatchFailed = (event: SubstrateEvent | TEvent): boolean => {
 
 type RemarkOrBatch = string | SubstrateExtrinsic;
 
- export function extractRemark(processed: RemarkOrBatch, extrinsic: ExtrinsicContext): RemarkResult[] {
+ export function extractRemark(processed: RemarkOrBatch, extrinsic: ExtrinsicHandlerContext): RemarkResult[] {
   if (typeof processed === 'string') {
     if (startsWithRemark(processed)) {
       return [toRemarkResult(processed, toBaseCall(extrinsic))]
