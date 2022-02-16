@@ -11,7 +11,7 @@ export const maxBuy = `SELECT
 
   export const floorList = `SELECT 
     date(e.timestamp), 
-    COALESCE(MIN(e.meta::bigint), 0) as value
+    COALESCE(MIN(e.meta::bigint), 0) as value,
     COUNT(e.*) as count
     FROM event e 
     LEFT JOIN nft_entity ne on ne.id = e.nft_id 
