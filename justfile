@@ -45,7 +45,7 @@ migrate:
 	@npx sqd db:migrate
 
 update NAME:
-	npx sqd db:create-migration -n "{{NAME}}"
+	npx sqd db:create-migration "{{NAME}}"
 
 test:
   npm run test:unit
