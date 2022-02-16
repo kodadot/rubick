@@ -49,3 +49,9 @@ update NAME:
 
 test:
   npm run test:unit
+
+release TAG:
+	npx sqd squid:release rubick@{{TAG}}
+
+kill TAG:
+	npx sqd squid:kill "rubick@{{TAG}}"
