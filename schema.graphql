@@ -37,6 +37,7 @@ type NFTEntity @entity {
   issuer: String
   sn: String
   id: ID!
+  hash: String! @index
   metadata: String
   currentOwner: String
   price: BigInt!

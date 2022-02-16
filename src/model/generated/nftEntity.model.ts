@@ -33,6 +33,10 @@ export class NFTEntity {
   @PrimaryColumn_()
   id!: string
 
+  @Index_()
+  @Column_("text", {nullable: false})
+  hash!: string
+
   @Column_("text", {nullable: true})
   metadata!: string | undefined | null
 
