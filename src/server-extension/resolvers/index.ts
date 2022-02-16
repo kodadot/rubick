@@ -3,6 +3,7 @@ import type {EntityManager} from "typeorm"
 import { CountResolver } from './count'
 import { SeriesResolver } from './series'
 import { SpotlightResolver } from './spotlight'
+import { CollectionChartResolver } from './collectionChart'
 
 @ObjectType()
 export class Hello {
@@ -28,6 +29,7 @@ export class HelloResolver {
 }
 
 export {
+  CollectionChartResolver,
   CountResolver,
   SeriesResolver,
   SpotlightResolver,
