@@ -5,7 +5,7 @@ import { EntityConstructor } from "./types";
 import { getOrCreate } from './entity';
 import { camelCase } from './helper';
 
-const DELAY_MIN: number = 10
+const DELAY_MIN: number = 60 // every 60 minutes
 const STATUS_ID: string = "0"
 
 enum Query {
