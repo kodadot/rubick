@@ -14,7 +14,7 @@
   "dependencies": {
     "@polkadot/types": "^6.8.1",
     "@subsquid/cli": "^0.1.2",
-    "@subsquid/graphql-server": "^0.1.4",
+    "@subsquid/graphql-server": "^0.1.5",
     "@subsquid/ss58": "^0.0.4",
     "@subsquid/substrate-processor": "^0.3.0",
     "@types/signale": "^1.4.2",
