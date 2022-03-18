@@ -4,6 +4,7 @@ import { CountResolver } from './count'
 import { SeriesResolver } from './series'
 import { SpotlightResolver } from './spotlight'
 import { CollectionChartResolver } from './collectionChart'
+import { CollectionEventResolver } from './collectionEvent'
 
 @ObjectType()
 export class Hello {
@@ -33,4 +34,5 @@ export {
   CountResolver,
   SeriesResolver,
   SpotlightResolver,
+  CollectionEventResolver,
 }
