@@ -10,7 +10,7 @@ export class CollectionEventResolver {
   constructor(private tx: () => Promise<EntityManager>) {}
 
   @Query(() => [EventEntity])
-  async collectionBuyEventById(
+  async collectionBuyEventStatsById(
     @Arg('id', { nullable: false }) id: string,
   ): Promise<EventEntity[]> {
     const result: EventEntity[] = await this.genericEventQuery(buyEvent, id)
