@@ -50,6 +50,9 @@ update NAME:
 test:
   npm run test:unit
 
+improve TAG:
+	npx sqd squid:update rubick@{{TAG}}
+
 release TAG:
 	npx sqd squid:release rubick@{{TAG}}
 
