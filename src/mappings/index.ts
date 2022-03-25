@@ -43,7 +43,7 @@ import md5 from 'md5'
 
 
 export async function handleRemark(context: Context): Promise<void> {
-  const remark = new SystemRemarkCall(context).asV1020.remark
+  const remark = new SystemRemarkCall(context).asLatest.remark
   const records = extractRemark(remark.toString(), context)
   await mainFrame(records, context)
 }
