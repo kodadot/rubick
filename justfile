@@ -58,3 +58,6 @@ release TAG:
 
 kill TAG:
 	npx sqd squid:kill "rubick@{{TAG}}"
+
+update-deps:
+	npx npm-check-updates -u
