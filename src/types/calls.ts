@@ -10,7 +10,7 @@ export class SystemRemarkCall {
    *  Make some on-chain remark.
    */
   get isV1020(): boolean {
-    return this.ctx._chain.getCallHash('system.remark') === '92bf52de53c90869d52bdcfb2cda31af9f36f74a1f69a308609cbab49a94ec38'
+    return this.ctx._chain.getCallHash('system.remark') === 'f4e9b5b7572eeae92978087ece9b4f57cb5cab4f16baf5625bb9ec4a432bad63'
   }
 
   /**
