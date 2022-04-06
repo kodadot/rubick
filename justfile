@@ -42,10 +42,10 @@ reset:
 	npx sqd db:migrate
 
 migrate:
-	@npx sqd db:migrate
+	npx sqd db:migrate
 
-update NAME:
-	npx sqd db:create-migration "{{NAME}}"
+update-db:
+	npx sqd db:create-migration Data
 
 test:
   npm run test:unit
@@ -60,4 +60,7 @@ kill TAG:
 	npx sqd squid:kill "rubick@{{TAG}}"
 
 update-deps:
-	npx npm-check-updates -u
+	npx taze
+
+exec:
+	docker exec -it rubick-db-1 psql -U postgres -d squid
