@@ -71,6 +71,7 @@ interface EventType {
   blockNumber: BigInt
   timestamp: DateTime!
   caller: String!
+  currentOwner: String # currentOwner
   interaction: Interaction!
   meta: String!
 }
@@ -80,6 +81,7 @@ type Event implements EventType @entity {
   blockNumber: BigInt
   timestamp: DateTime!
   caller: String!
+  currentOwner: String! # currentOwner
   interaction: Interaction!
   meta: String!
   nft: NFTEntity!
@@ -104,6 +106,7 @@ enum Interaction {
   MINT
   MINTNFT
   LIST
+  UNLIST
   BUY
   SEND
   CONSUME
