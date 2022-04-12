@@ -25,7 +25,7 @@ export function eventFrom(interaction: RmrkEvent,  { blockNumber, caller, timest
     interaction,
     blockNumber: BigInt(blockNumber),
     caller,
-    currentOwner: currentOwner ?? caller,
+    currentOwner: currentOwner || caller,
     timestamp,
     meta
   }
