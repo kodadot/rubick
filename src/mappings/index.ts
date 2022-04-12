@@ -300,7 +300,7 @@ async function list(remark: RemarkResult, { store }: Context) {
 
     logger.success(`[LIST] ${nft.id} from ${remark.caller}`)
     await store.save(nft)
-    const event = nft.price === 0n ? RmrkEvent.UNLIST : RmrkEvent.UNLIST
+    const event = nft.price === 0n ? RmrkEvent.UNLIST : RmrkEvent.LIST
     await createEvent(nft, event, remark, String(price), store)
   } catch (e) {
     logError(e, (e) =>
