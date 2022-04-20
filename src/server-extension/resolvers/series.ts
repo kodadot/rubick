@@ -11,7 +11,7 @@ enum OrderBy {
   total = 'total',
   average_price = 'average_price',
   floor_price = 'floor_price',
-  highest_sale = 'highest_sale'
+  highest_sale = 'highest_sale',
   buys = 'buys',
 }
 
