@@ -61,3 +61,6 @@ kill TAG:
 
 update-deps:
 	npx npm-check-updates -u
+
+exec:
+	docker exec -it rubick-db-1 psql -U postgres -d squid
