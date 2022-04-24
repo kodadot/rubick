@@ -205,14 +205,14 @@ async function send(remark: RemarkResult, { store }: Context) {
     )
     validateInteraction(nft, interaction)
     isOwnerOrElseError(nft, remark.caller)
-
+    const originalOwner = nft.currentOwner ?? undefined
     nft.currentOwner = interaction.metadata
     nft.price = BigInt(0)
     nft.updatedAt = remark.timestamp
 
     logger.success(`[SEND] ${nft.id} to ${interaction.metadata}`)
     await store.save(nft)
-    await createEvent(nft, RmrkEvent.SEND, remark, interaction.metadata || '', store)
+    await createEvent(nft, RmrkEvent.SEND, remark, interaction.metadata || '', store, originalOwner)
   } catch (e) {
     logError(e, (e) =>
       logger.error(`[SEND] ${e.message} ${JSON.stringify(interaction)}`)
@@ -237,13 +237,14 @@ async function buy(remark: RemarkResult, { store }: Context) {
     isPositiveOrElseError(nft.price, true)
     isBuyLegalOrElseError(nft, remark.extra || [])
     const originalPrice = nft.price
+    const originalOwner = nft.currentOwner ?? undefined
     nft.currentOwner = remark.caller
     nft.price = BigInt(0)
     nft.updatedAt = remark.timestamp
 
     logger.success(`[BUY] ${nft.id} from ${remark.caller}`)
     await store.save(nft)
-    await createEvent(nft, RmrkEvent.BUY, remark, String(originalPrice), store)
+    await createEvent(nft, RmrkEvent.BUY, remark, String(originalPrice), store, originalOwner)
   } catch (e) {
     logError(e, (e) =>
       logger.error(`[BUY] ${e.message} ${JSON.stringify(interaction)}`)
@@ -299,7 +300,8 @@ async function list(remark: RemarkResult, { store }: Context) {
 
     logger.success(`[LIST] ${nft.id} from ${remark.caller}`)
     await store.save(nft)
-    await createEvent(nft, RmrkEvent.LIST, remark, String(price), store)
+    const event = nft.price === 0n ? RmrkEvent.UNLIST : RmrkEvent.LIST
+    await createEvent(nft, event, remark, String(price), store)
   } catch (e) {
     logError(e, (e) =>
       logger.warn(`[LIST] ${e.message} ${JSON.stringify(interaction)}`)
@@ -413,7 +415,7 @@ async function handleMetadata(
 }
 
 
-async function createEvent(final: NFTEntity, interaction: RmrkEvent, remark: RemarkResult, meta: string, store: Store) {
+async function createEvent(final: NFTEntity, interaction: RmrkEvent, remark: RemarkResult, meta: string, store: Store, currentOwner?: string) {
   try {
     const newEventId = eventId(final.id, interaction)
     const event = create<Event>(Event, newEventId, eventFrom(interaction, remark, meta))

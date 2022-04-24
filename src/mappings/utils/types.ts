@@ -20,11 +20,12 @@ export function collectionEventFrom(interaction: RmrkEvent.MINT | RmrkEvent.CHAN
   })
 }
 
-export function eventFrom(interaction: RmrkEvent,  { blockNumber, caller, timestamp }: RemarkResult, meta: string): IEvent {
+export function eventFrom(interaction: RmrkEvent,  { blockNumber, caller, timestamp }: RemarkResult, meta: string, currentOwner?: string): IEvent {
   return {
     interaction,
     blockNumber: BigInt(blockNumber),
     caller,
+    currentOwner: currentOwner || caller,
     timestamp,
     meta
   }
@@ -46,6 +47,7 @@ export interface IEvent {
   interaction: RmrkEvent;
   blockNumber: bigint,
   caller: string,
+  currentOwner: string,
   timestamp: Date,
   meta: string;
 }

@@ -42,10 +42,10 @@ reset:
 	npx sqd db:migrate
 
 migrate:
-	@npx sqd db:migrate
+	npx sqd db:migrate
 
-update NAME:
-	npx sqd db:create-migration "{{NAME}}"
+update-db:
+	npx sqd db:create-migration Data
 
 test:
   npm run test:unit
