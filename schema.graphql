@@ -123,6 +123,7 @@ type Series @entity {
   total: Int!
   averagePrice: Float
   floorPrice: BigInt
+  highestSale: BigInt
   buys: Int
   volume: BigInt
   name: String! @index
@@ -137,7 +138,7 @@ type Spotlight @entity {
   unique: Int!
   sold: Int! @index
   total: Int!
-  average: Float 
+  average: Float
   volume: BigInt
 }
 

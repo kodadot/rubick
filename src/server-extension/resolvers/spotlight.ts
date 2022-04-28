@@ -31,14 +31,14 @@ export class SpotlightResolver {
     @Arg('orderDirection', { nullable: true, defaultValue: 'DESC' }) orderDirection: OrderDirection
   ): Promise<SpotlightEntity[]> {
     const query = `SELECT
-       issuer as id, COUNT(distinct collection_id) as collections, 
-       COUNT(distinct meta_id) as unique, AVG(price) as average, 
-       COUNT(*) as total, COUNT(distinct current_owner) as unique_collectors, 
-       SUM(CASE WHEN ne.issuer <> ne.current_owner THEN 1 ELSE 0 END) as sold, 
-       COALESCE(SUM(e.meta::bigint), 0) as volume 
+       issuer as id, COUNT(distinct collection_id) as collections,
+       COUNT(distinct meta_id) as unique, AVG(price) as average,
+       COUNT(*) as total, COUNT(distinct ne.current_owner) as unique_collectors,
+       SUM(CASE WHEN ne.issuer <> ne.current_owner THEN 1 ELSE 0 END) as sold,
+       COALESCE(SUM(e.meta::bigint), 0) as volume
       FROM nft_entity ne
       JOIN event e on e.nft_id = ne.id WHERE e.interaction = 'BUY'
-      GROUP BY issuer 
+      GROUP BY issuer
       ORDER BY ${orderBy} ${orderDirection}
       LIMIT $1 OFFSET $2`
     const manager = await this.tx()

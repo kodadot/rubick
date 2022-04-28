@@ -11,28 +11,29 @@ const STATUS_ID: string = "0"
 enum Query {
 
     series = `SELECT
-            ce.id, ce.name, ce.meta_id as metadata, me.image, 
-            COUNT(distinct ne.meta_id) as unique, 
-            COUNT(distinct ne.current_owner) as unique_collectors, 
-            COUNT(distinct ne.current_owner) as sold, 
-            COUNT(ne.*) as total, 
-            AVG(ne.price) as average_price, 
-            MIN(NULLIF(ne.price, 0)) as floor_price, 
-            COALESCE(SUM(e.meta::bigint), 0) as volume, 
-            COUNT(e.*) as buys 
-        FROM collection_entity ce 
-        LEFT JOIN metadata_entity me on ce.meta_id = me.id 
-        LEFT JOIN nft_entity ne on ce.id = ne.collection_id 
+            ce.id, ce.name, ce.meta_id as metadata, me.image,
+            COUNT(distinct ne.meta_id) as unique,
+            COUNT(distinct ne.current_owner) as unique_collectors,
+            COUNT(distinct ne.current_owner) as sold,
+            COUNT(ne.*) as total,
+            AVG(ne.price) as average_price,
+            MIN(NULLIF(ne.price, 0)) as floor_price,
+            COALESCE(MAX(e.meta :: bigint), 0) as highest_sale,
+            COALESCE(SUM(e.meta::bigint), 0) as volume,
+            COUNT(e.*) as buys
+        FROM collection_entity ce
+        LEFT JOIN metadata_entity me on ce.meta_id = me.id
+        LEFT JOIN nft_entity ne on ce.id = ne.collection_id
         JOIN event e on ne.id = e.nft_id
         WHERE e.interaction = 'BUY'
         GROUP BY ce.id, me.image, ce.name`,
 
     spotlight = `SELECT
-        issuer as id, COUNT(distinct collection_id) as collections, 
-        COUNT(distinct meta_id) as unique, AVG(price) as average, 
-        COUNT(*) as total, COUNT(distinct current_owner) as unique_collectors, 
-        SUM(CASE WHEN ne.issuer <> ne.current_owner THEN 1 ELSE 0 END) as sold, 
-        COALESCE(SUM(e.meta::bigint), 0) as volume 
+        issuer as id, COUNT(distinct collection_id) as collections,
+        COUNT(distinct meta_id) as unique, AVG(price) as average,
+        COUNT(*) as total, COUNT(distinct ne.current_owner) as unique_collectors,
+        SUM(CASE WHEN ne.issuer <> ne.current_owner THEN 1 ELSE 0 END) as sold,
+        COALESCE(SUM(e.meta::bigint), 0) as volume
     FROM nft_entity ne
     JOIN event e on e.nft_id = ne.id WHERE e.interaction = 'BUY'
     GROUP BY issuer`

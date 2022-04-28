@@ -29,6 +29,9 @@ export class Series {
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
   floorPrice!: bigint | undefined | null
 
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  highestPrice!: bigint | undefined | null
+
   @Column_("integer", {nullable: true})
   buys!: number | undefined | null
 

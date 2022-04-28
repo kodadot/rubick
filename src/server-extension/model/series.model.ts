@@ -23,6 +23,8 @@ export class SeriesEntity {
     @Field(() => BigInt, { nullable: true, defaultValue: 0n, name: 'floorPrice' })
     floor_price!: bigint
 
+    @Field(() => BigInt, { nullable: true, defaultValue: 0n, name: 'highestSale' })
+    highest_sale!: bigint
 
     @Field(() => Number, { nullable: true, defaultValue: 0 })
     buys!: number
