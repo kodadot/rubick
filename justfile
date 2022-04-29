@@ -59,6 +59,9 @@ release TAG:
 kill TAG:
 	npx sqd squid:kill "rubick@{{TAG}}"
 
+tail TAG:
+	npx sqd squid:tail rubick@{{TAG}} -f
+
 update-deps:
 	npx npm-check-updates -u
 
