@@ -30,7 +30,7 @@ enum Query {
     spotlight = `SELECT
         issuer as id, COUNT(distinct collection_id) as collections, 
         COUNT(distinct meta_id) as unique, AVG(price) as average, 
-        COUNT(*) as total, COUNT(distinct current_owner) as unique_collectors, 
+        COUNT(*) as total, COUNT(distinct ne.current_owner) as unique_collectors, 
         SUM(CASE WHEN ne.issuer <> ne.current_owner THEN 1 ELSE 0 END) as sold, 
         COALESCE(SUM(e.meta::bigint), 0) as volume 
     FROM nft_entity ne
