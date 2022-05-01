@@ -15,3 +15,12 @@ export class EventEntity {
     Object.assign(this, props);
 }
 }
+
+@ObjectType()
+export class HistoryEntity {
+  @Field(() => Date)
+  date!: Date
+
+  @Field(() => Number)
+  freq!: number
+}
