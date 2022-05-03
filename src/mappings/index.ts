@@ -418,7 +418,7 @@ async function handleMetadata(
 async function createEvent(final: NFTEntity, interaction: RmrkEvent, remark: RemarkResult, meta: string, store: Store, currentOwner?: string) {
   try {
     const newEventId = eventId(final.id, interaction)
-    const event = create<Event>(Event, newEventId, eventFrom(interaction, remark, meta))
+    const event = create<Event>(Event, newEventId, eventFrom(interaction, remark, meta, currentOwner))
     event.nft = final
     await store.save(event)
   } catch (e) {
