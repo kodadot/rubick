@@ -62,6 +62,9 @@ kill TAG:
 tail TAG:
 	npx sqd squid:tail rubick@{{TAG}} -f
 
+brutal TAG:
+	npx sqd squid:update rubick@{{TAG}} --hardReset
+
 update-deps:
 	npx npm-check-updates -u
 
