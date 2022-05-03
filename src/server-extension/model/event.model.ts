@@ -22,5 +22,5 @@ export class HistoryEntity {
   date!: Date
 
   @Field(() => Number)
-  freq!: number
+  count!: number
 }

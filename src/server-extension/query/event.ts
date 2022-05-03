@@ -14,4 +14,4 @@ JOIN collection_entity ce on ce.id = ne.collection_id
 JOIN event e on e.nft_id = ne.id
 WHERE e.interaction = 'BUY' and ce.id = $1 and e.timestamp >= NOW() - INTERVAL '365 DAY'
 GROUP BY ce.id, DATE(e.timestamp)
-ORDER BY ce.id`
+ORDER BY DATE(e.timestamp)`
