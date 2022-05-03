@@ -30,7 +30,7 @@ export class Series {
   floorPrice!: bigint | undefined | null
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
-  highestPrice!: bigint | undefined | null
+  highestSale!: bigint | undefined | null
 
   @Column_("integer", {nullable: true})
   buys!: number | undefined | null
