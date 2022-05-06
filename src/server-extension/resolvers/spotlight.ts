@@ -3,7 +3,7 @@ import type { EntityManager } from 'typeorm'
 import { NFTEntity } from '../../model/generated'
 import { HistoryEntity } from "../model/event.model";
 import { SpotlightEntity } from '../model/spotlight.model'
-import { spotlightSoldHistory } from "../query/event";
+import { spotlightSoldHistory } from "../query/spotlight";
 
 enum OrderBy {
   sold = 'sold',
