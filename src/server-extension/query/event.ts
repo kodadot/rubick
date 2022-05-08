@@ -8,7 +8,7 @@ export const buyEvent = `SELECT
 export const collectionEventHistory = `SELECT
 	ce.id as collection_id,
 	DATE(e.timestamp),
-	count(e) as freq
+	count(e)
 FROM nft_entity ne
 JOIN collection_entity ce on ce.id = ne.collection_id
 JOIN event e on e.nft_id = ne.id
