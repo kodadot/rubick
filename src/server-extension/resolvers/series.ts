@@ -22,9 +22,11 @@ enum OrderDirection {
   ASC = 'ASC',
 }
 
+type DateRange = '24 HOUR' | '7 DAY' | '14 DAY' | '30 DAY' | '90 DAY' | '180 DAY' | 'ALL DAY'
+
 @Resolver(of => SeriesEntity)
 export class SeriesResolver {
-  constructor(private tx: () => Promise<EntityManager>) {}
+  constructor(private tx: () => Promise<EntityManager>) { }
 
   // TODO: calculate score sold * (unique / total)
   @Query(() => [SeriesEntity])
@@ -32,8 +34,12 @@ export class SeriesResolver {
     @Arg('limit', { nullable: true, defaultValue: null }) limit: number,
     @Arg('offset', { nullable: true, defaultValue: null }) offset: string,
     @Arg('orderBy', { nullable: true, defaultValue: 'total' }) orderBy: OrderBy,
-    @Arg('orderDirection', { nullable: true, defaultValue: 'DESC' }) orderDirection: OrderDirection
+    @Arg('orderDirection', { nullable: true, defaultValue: 'DESC' }) orderDirection: OrderDirection,
+    @Arg('dateRange', { nullable: false, defaultValue: '7 DAY' }) dateRange: DateRange,
   ): Promise<SeriesEntity[]> {
+    const computedDateRange = dateRange === 'ALL DAY'
+      ? ''
+      : `AND e.timestamp >= NOW() - INTERVAL '${dateRange}'`
     const query = `SELECT
         ce.id, ce.name, ce.meta_id as metadata, me.image, 
         COUNT(distinct ne.meta_id) as unique, 
@@ -49,7 +55,7 @@ export class SeriesResolver {
       LEFT JOIN metadata_entity me on ce.meta_id = me.id 
       LEFT JOIN nft_entity ne on ce.id = ne.collection_id 
       JOIN event e on ne.id = e.nft_id
-      WHERE e.interaction = 'BUY'
+      WHERE e.interaction = 'BUY' ${computedDateRange}
       GROUP BY ce.id, me.image, ce.name 
       ORDER BY ${orderBy} ${orderDirection}
       LIMIT ${limit} OFFSET ${offset}`
