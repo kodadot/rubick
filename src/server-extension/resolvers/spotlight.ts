@@ -1,7 +1,9 @@
-import { Arg, Field, ObjectType, Query, Resolver } from 'type-graphql'
+import { Arg, Field, ObjectType, Query, Resolver, FieldResolver, Root } from 'type-graphql'
 import type { EntityManager } from 'typeorm'
 import { NFTEntity } from '../../model/generated'
+import { HistoryEntity } from "../model/event.model";
 import { SpotlightEntity } from '../model/spotlight.model'
+import { spotlightSoldHistory } from "../query/spotlight";
 
 enum OrderBy {
   sold = 'sold',
@@ -18,9 +20,9 @@ enum OrderDirection {
   ASC = 'ASC',
 }
 
-@Resolver()
+@Resolver(of => SpotlightEntity)
 export class SpotlightResolver {
-  constructor(private tx: () => Promise<EntityManager>) {}
+  constructor(private tx: () => Promise<EntityManager>) { }
 
   // TODO: calculate score sold * (unique / total)
   @Query(() => [SpotlightEntity])
@@ -46,5 +48,14 @@ export class SpotlightResolver {
       .query(query, [limit, offset])
 
     return result
+  }
+
+  @FieldResolver(() => [HistoryEntity])
+  async soldHistory(@Root() spotlight: SpotlightEntity) {
+
+    const manager = await this.tx()
+    return await manager
+      .getRepository(NFTEntity)
+      .query(spotlightSoldHistory, [spotlight.id])
   }
 }
