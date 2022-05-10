@@ -22,7 +22,7 @@ enum OrderDirection {
   ASC = 'ASC',
 }
 
-enum DataRange {
+enum DateRange {
   DAY = '24 HOUR',
   WEEK = '7 DAY',
   TWO_WEEK = '14 DAY',
@@ -75,12 +75,20 @@ export class SeriesResolver {
     return result
   }
 
-  @FieldResolver(() => [HistoryEntity])
-  async buyHistory(@Root() series: SeriesEntity) {
-
+  @Query(() => [HistoryEntity])
+  async seriesInsightBuyHistory(ids: string[]) {
     const manager = await this.tx()
-    return await manager
+    const result = await manager
       .getRepository(NFTEntity)
-      .query(collectionEventHistory, [series.id])
+      .query(collectionEventHistory, [ids])
   }
+
+  // @FieldResolver(() => [HistoryEntity])
+  // async buyHistory(@Root() series: SeriesEntity) {
+
+  //   const manager = await this.tx()
+  //   return await manager
+  //     .getRepository(NFTEntity)
+  //     .query(collectionEventHistory, [series.id])
+  // }
 }
