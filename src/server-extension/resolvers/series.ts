@@ -22,7 +22,15 @@ enum OrderDirection {
   ASC = 'ASC',
 }
 
-type DateRange = '24 HOUR' | '7 DAY' | '14 DAY' | '30 DAY' | '90 DAY' | '180 DAY' | 'ALL DAY'
+enum DataRange {
+  DAY = '24 HOUR',
+  WEEK = '7 DAY',
+  TWO_WEEK = '14 DAY',
+  MONTH = '30 DAY',
+  QUARTER = '90 DAY',
+  HALF_YEAR = '180 DAY',
+  ALL_DAY = 'ALL DAY'
+}
 
 @Resolver(of => SeriesEntity)
 export class SeriesResolver {
