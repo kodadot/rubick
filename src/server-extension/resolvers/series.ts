@@ -78,23 +78,18 @@ export class SeriesResolver {
 
   @Query(() => [HistoryEntity])
   async seriesInsightBuyHistory(
-    @Arg('ids', () => [String!], { nullable: false }) ids: CollectionIDs
-    // @Arg('dateRange', { nullable: false, defaultValue: '7 DAY' }) dateRange: DateRange,
+    @Arg('ids', () => [String!], { nullable: false }) ids: CollectionIDs,
+    @Arg('dateRange', { nullable: false, defaultValue: '7 DAY' }) dateRange: DateRange,
   ) {
     const idList = JSON.stringify(ids).replace(/\"/g, '\'').replace(/[\[|\]]/g, '')
+    const computedDateRange = dateRange === 'ALL DAY'
+      ? ''
+      : `AND e.timestamp >= NOW() - INTERVAL '${dateRange}'`
     const manager = await this.tx()
     const result = await manager
       .getRepository(NFTEntity)
-      .query(collectionEventHistory(idList))
+      .query(collectionEventHistory(idList, computedDateRange))
     return result
   }
 
-  // @FieldResolver(() => [HistoryEntity])
-  // async buyHistory(@Root() series: SeriesEntity) {
-
-  //   const manager = await this.tx()
-  //   return await manager
-  //     .getRepository(NFTEntity)
-  //     .query(collectionEventHistory, [series.id])
-  // }
 }
