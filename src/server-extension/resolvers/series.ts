@@ -32,6 +32,7 @@ enum DateRange {
   ALL_DAY = 'ALL DAY'
 }
 
+type CollectionIDs = string[]
 @Resolver(of => SeriesEntity)
 export class SeriesResolver {
   constructor(private tx: () => Promise<EntityManager>) { }
@@ -76,11 +77,16 @@ export class SeriesResolver {
   }
 
   @Query(() => [HistoryEntity])
-  async seriesInsightBuyHistory(ids: string[]) {
+  async seriesInsightBuyHistory(
+    @Arg('ids', () => [String!], { nullable: false }) ids: CollectionIDs
+    // @Arg('dateRange', { nullable: false, defaultValue: '7 DAY' }) dateRange: DateRange,
+  ) {
+    const idList = JSON.stringify(ids).replace(/\"/g, '\'').replace(/[\[|\]]/g, '')
     const manager = await this.tx()
     const result = await manager
       .getRepository(NFTEntity)
-      .query(collectionEventHistory, [ids])
+      .query(collectionEventHistory(idList))
+    return result
   }
 
   // @FieldResolver(() => [HistoryEntity])
