@@ -1,0 +1,24 @@
+{
+  "create resover": {
+    "prefix": "resolve",
+    "body": [
+      "import { Query, Resolver } from 'type-graphql'",
+      "import type { EntityManager } from 'typeorm'",
+      "import { NFTEntity, CollectionEntity } from '../../model/generated'",
+      "import { EntityConstructor } from '../../mappings/utils/types'",
+      "\n",
+      "@Resolver()",
+      "export class $1Resolver {",
+      "  constructor(private tx: () => Promise<EntityManager>) {}",
+      "\n",
+      "  @Query(() => Number)",
+      "  async totalCollections(): Promise<Number> {",
+      "    const manager = await this.tx()",
+      "    return await manager.getRepository(CollectionEntity).count()",
+      "  }",
+      "}",
+      "$2"
+    ],
+    "description": "Log output to console"
+  }
+}
