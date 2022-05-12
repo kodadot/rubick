@@ -24,3 +24,27 @@ export class HistoryEntity {
   @Field(() => Number)
   count!: number
 }
+
+@ObjectType()
+export class TokenEventEntity {
+  @Field(() => String, { nullable: false })
+  id!: string
+
+  @Field(() => String, { nullable: true })
+  name!: string
+  
+  @Field(() => Date, { nullable: false })
+  date!: Date
+
+  @Field(() => String, { nullable: true, defaultValue: '' })
+  meta!: string
+
+  @Field(() => String, { nullable: true, defaultValue: '' })
+  image!: string
+  
+  @Field(() => String, { nullable: false })
+  issuer!: string
+
+  @Field(() => String,{ nullable: false })
+  caller!: string
+}
