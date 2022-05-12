@@ -5,6 +5,7 @@ import { SeriesResolver } from './series'
 import { SpotlightResolver } from './spotlight'
 import { CollectionChartResolver } from './collectionChart'
 import { CollectionEventResolver } from './collectionEvent'
+import { NFTEventResolver } from './nftEvent'
 
 @ObjectType()
 export class Hello {
@@ -35,4 +36,5 @@ export {
   SeriesResolver,
   SpotlightResolver,
   CollectionEventResolver,
+  NFTEventResolver
 }
