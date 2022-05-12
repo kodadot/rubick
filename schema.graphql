@@ -129,6 +129,7 @@ type Series @entity {
   name: String! @index
   metadata: String
   image: String
+  emoteCount: Int
 }
 
 type Spotlight @entity {
