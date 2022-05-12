@@ -102,12 +102,17 @@ rm -rf src/types
 npm run typegen
 ```
 
-## Self-hosted indexer
+## Setting up the project for resolvers
 
-It is recommended to use a readily set up indexer if available. It takes some time for a freshly started indexer
-to get in sync with chain and catch the events.
+In case you just want to extend resolvers you don't index the whole project and just import the postgres database (last data 11.05.2022):
 
-Have a look at `./indexer/docker-compose.yml` for an example of how you can set up a self-hosted version.
+1. [Download the data](https://storage.googleapis.com/bright-meridian-316511-db-export/rubick.sql
+)
+2. `docker-compose up db`
+3. `docker exec -it rubick-db-1 psql -U postgres -d postgres -c "CREATE DATABASE rubick;"`
+4. `docker exec -i rubick-db-1 psql -U postgres -d squid < rubick.sql`
+
+⚠️ In case the command does not work, check if the container is called `rubick-db-1`.
 
 ## Misc
 
