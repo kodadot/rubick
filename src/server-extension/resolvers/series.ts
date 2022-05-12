@@ -1,7 +1,9 @@
-import { Arg, Query, Resolver } from 'type-graphql'
+import { Arg, Query, Resolver, FieldResolver, Root } from 'type-graphql'
 import type { EntityManager } from 'typeorm'
-import { NFTEntity } from '../../model/generated'
+import { NFTEntity, Interaction } from '../../model/generated'
 import { SeriesEntity } from '../model/series.model'
+import { HistoryEntity } from "../model/event.model";
+import { collectionEventHistory } from "../query/event";
 
 enum OrderBy {
   volume = 'volume',
@@ -20,7 +22,7 @@ enum OrderDirection {
   ASC = 'ASC',
 }
 
-@Resolver()
+@Resolver(of => SeriesEntity)
 export class SeriesResolver {
   constructor(private tx: () => Promise<EntityManager>) {}
 
@@ -57,5 +59,14 @@ export class SeriesResolver {
       .query(query)
 
     return result
+  }
+
+  @FieldResolver(() => [HistoryEntity])
+  async buyHistory(@Root() series: SeriesEntity) {
+
+    const manager = await this.tx()
+    return await manager
+      .getRepository(NFTEntity)
+      .query(collectionEventHistory, [series.id])
   }
 }
