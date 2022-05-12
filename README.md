@@ -108,7 +108,7 @@ In case you just want to extend resolvers you don't index the whole project and 
 
 1. [Download the data](https://storage.googleapis.com/bright-meridian-316511-db-export/rubick.sql)
 2. `docker-compose up db`
-3. `docker exec -it rubick-db-1 psql -U postgres -d postgres -c "CREATE DATABASE rubick;"`
+3. `docker exec -it rubick-db-1 psql -U postgres -d postgres -c "CREATE DATABASE squid;"`
 4. `docker exec -i rubick-db-1 psql -U postgres -d squid < rubick.sql`
 
 ⚠️ In case the command does not work, check if the container is called `rubick-db-1`.
