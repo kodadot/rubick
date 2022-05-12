@@ -106,8 +106,7 @@ npm run typegen
 
 In case you just want to extend resolvers you don't index the whole project and just import the postgres database (last data 11.05.2022):
 
-1. [Download the data](https://storage.googleapis.com/bright-meridian-316511-db-export/rubick.sql
-)
+1. [Download the data](https://storage.googleapis.com/bright-meridian-316511-db-export/rubick.sql)
 2. `docker-compose up db`
 3. `docker exec -it rubick-db-1 psql -U postgres -d postgres -c "CREATE DATABASE rubick;"`
 4. `docker exec -i rubick-db-1 psql -U postgres -d squid < rubick.sql`
