@@ -2,12 +2,8 @@ import { Arg, Field, ObjectType, Query, Resolver, FieldResolver, Root } from 'ty
 import type { EntityManager } from 'typeorm'
 import { NFTEntity } from '../../model/generated'
 import { PassionFeedEntity } from '../model/passion.model'
-
-
-const passionQuery = `SELECT DISTINCT ne.issuer as id
-FROM nft_entity ne
-WHERE ne.current_owner = $1
-AND ne.current_owner != ne.issuer`
+import { passionQuery } from "../query/nft";
+import { makeQuery } from "../utils";
 
 @Resolver()
 export class PassionFeedResolver {
@@ -17,9 +13,7 @@ export class PassionFeedResolver {
     async passionFeed(
         @Arg('account', { nullable: false, }) account: string
     ): Promise<[PassionFeedEntity]> {
-        const manager = await this.tx()
-        const result = await manager.getRepository(NFTEntity)
-            .query(passionQuery, [account])
+        const result: [PassionFeedEntity] = await makeQuery(this.tx, NFTEntity, passionQuery, [account])
 
         return result
     }
