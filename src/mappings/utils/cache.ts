@@ -20,10 +20,12 @@ enum Query {
             MIN(NULLIF(ne.price, 0)) as floor_price,
             COALESCE(MAX(e.meta :: bigint), 0) as highest_sale,
             COALESCE(SUM(e.meta::bigint), 0) as volume,
-            COUNT(e.*) as buys
+            COUNT(e.*) as buys,
+            COUNT(em.*) as emote_count
         FROM collection_entity ce
         LEFT JOIN metadata_entity me on ce.meta_id = me.id
         LEFT JOIN nft_entity ne on ce.id = ne.collection_id
+        LEFT JOIN emote em on ne.id = em.nft_id
         JOIN event e on ne.id = e.nft_id
         WHERE e.interaction = 'BUY'
         GROUP BY ce.id, me.image, ce.name`,

@@ -47,4 +47,7 @@ export class Series {
 
   @Column_("text", {nullable: true})
   image!: string | undefined | null
+
+  @Column_("integer", {nullable: true})
+  emoteCount!: number | undefined | null
 }
