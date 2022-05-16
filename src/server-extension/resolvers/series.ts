@@ -4,6 +4,7 @@ import { NFTEntity, Interaction } from '../../model/generated'
 import { SeriesEntity } from '../model/series.model'
 import { HistoryEntity } from "../model/event.model";
 import { collectionEventHistory } from "../query/event";
+import { makeQuery, toSqlInParams } from "../utils";
 
 enum OrderBy {
   volume = 'volume',
@@ -68,10 +69,7 @@ export class SeriesResolver {
       GROUP BY ce.id, me.image, ce.name 
       ORDER BY ${orderBy} ${orderDirection}
       LIMIT ${limit} OFFSET ${offset}`
-    const manager = await this.tx()
-    const result: SeriesEntity[] = await manager
-      .getRepository(NFTEntity)
-      .query(query)
+    const result: SeriesEntity[] = await makeQuery(this.tx, NFTEntity, query)
 
     return result
   }
@@ -81,7 +79,7 @@ export class SeriesResolver {
     @Arg('ids', () => [String!], { nullable: false }) ids: CollectionIDs,
     @Arg('dateRange', { nullable: false, defaultValue: '7 DAY' }) dateRange: DateRange,
   ) {
-    const idList = JSON.stringify(ids).replace(/\"/g, '\'').replace(/[\[|\]]/g, '')
+    const idList = toSqlInParams(ids)
     const computedDateRange = dateRange === 'ALL DAY'
       ? ''
       : `AND e.timestamp >= NOW() - INTERVAL '${dateRange}'`
