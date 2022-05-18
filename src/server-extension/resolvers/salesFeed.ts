@@ -12,7 +12,6 @@ export class SalesFeedResolver {
     @Query(() => [SaleNftEntity])
     async salesFeed(): Promise<[SaleNftEntity]> {
         const result: [SaleNftEntity] = await makeQuery(this.tx, NFTEntity, salesQuery)
-
         return result
     }
 }
