@@ -18,6 +18,9 @@ export class EventEntity {
 
 @ObjectType()
 export class HistoryEntity {
+  @Field(() => String)
+  id!: string
+
   @Field(() => Date)
   date!: Date
 

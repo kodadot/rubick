@@ -4,6 +4,7 @@ import { NFTEntity, Interaction } from '../../model/generated'
 import { SeriesEntity } from '../model/series.model'
 import { HistoryEntity } from "../model/event.model";
 import { collectionEventHistory } from "../query/event";
+import { makeQuery, toSqlInParams } from "../utils";
 
 enum OrderBy {
   volume = 'volume',
@@ -22,9 +23,20 @@ enum OrderDirection {
   ASC = 'ASC',
 }
 
+enum DateRange {
+  DAY = '24 HOUR',
+  WEEK = '7 DAY',
+  TWO_WEEK = '14 DAY',
+  MONTH = '30 DAY',
+  QUARTER = '90 DAY',
+  HALF_YEAR = '180 DAY',
+  ALL_DAY = 'ALL DAY'
+}
+
+type CollectionIDs = string[]
 @Resolver(of => SeriesEntity)
 export class SeriesResolver {
-  constructor(private tx: () => Promise<EntityManager>) {}
+  constructor(private tx: () => Promise<EntityManager>) { }
 
   // TODO: calculate score sold * (unique / total)
   @Query(() => [SeriesEntity])
@@ -32,8 +44,12 @@ export class SeriesResolver {
     @Arg('limit', { nullable: true, defaultValue: null }) limit: number,
     @Arg('offset', { nullable: true, defaultValue: null }) offset: string,
     @Arg('orderBy', { nullable: true, defaultValue: 'total' }) orderBy: OrderBy,
-    @Arg('orderDirection', { nullable: true, defaultValue: 'DESC' }) orderDirection: OrderDirection
+    @Arg('orderDirection', { nullable: true, defaultValue: 'DESC' }) orderDirection: OrderDirection,
+    @Arg('dateRange', { nullable: false, defaultValue: '7 DAY' }) dateRange: DateRange,
   ): Promise<SeriesEntity[]> {
+    const computedDateRange = dateRange === 'ALL DAY'
+      ? ''
+      : `AND e.timestamp >= NOW() - INTERVAL '${dateRange}'`
     const query = `SELECT
         ce.id, ce.name, ce.meta_id as metadata, me.image, 
         COUNT(distinct ne.meta_id) as unique, 
@@ -49,24 +65,29 @@ export class SeriesResolver {
       LEFT JOIN metadata_entity me on ce.meta_id = me.id 
       LEFT JOIN nft_entity ne on ce.id = ne.collection_id 
       JOIN event e on ne.id = e.nft_id
-      WHERE e.interaction = 'BUY'
+      WHERE e.interaction = 'BUY' ${computedDateRange}
       GROUP BY ce.id, me.image, ce.name 
       ORDER BY ${orderBy} ${orderDirection}
       LIMIT ${limit} OFFSET ${offset}`
-    const manager = await this.tx()
-    const result: SeriesEntity[] = await manager
-      .getRepository(NFTEntity)
-      .query(query)
+    const result: SeriesEntity[] = await makeQuery(this.tx, NFTEntity, query)
 
     return result
   }
 
-  @FieldResolver(() => [HistoryEntity])
-  async buyHistory(@Root() series: SeriesEntity) {
-
+  @Query(() => [HistoryEntity])
+  async seriesInsightBuyHistory(
+    @Arg('ids', () => [String!], { nullable: false }) ids: CollectionIDs,
+    @Arg('dateRange', { nullable: false, defaultValue: '7 DAY' }) dateRange: DateRange,
+  ) {
+    const idList = toSqlInParams(ids)
+    const computedDateRange = dateRange === 'ALL DAY'
+      ? ''
+      : `AND e.timestamp >= NOW() - INTERVAL '${dateRange}'`
     const manager = await this.tx()
-    return await manager
+    const result = await manager
       .getRepository(NFTEntity)
-      .query(collectionEventHistory, [series.id])
+      .query(collectionEventHistory(idList, computedDateRange))
+    return result
   }
+
 }

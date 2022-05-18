@@ -8,7 +8,7 @@ FROM
 WHERE
   e.interaction = 'BUY'
   and ne.issuer != ne.current_owner
-  and ne.issuer = $ 1
+  and ne.issuer = $1
   and e.timestamp >= NOW() - INTERVAL '30 DAY'
 GROUP BY
   ne.issuer,
