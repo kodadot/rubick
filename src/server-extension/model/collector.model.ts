@@ -12,6 +12,9 @@ export class CollectorEntity {
     unique_collectors!: number
     
     @Field(() => Number, { nullable: false })
+    collections!: number
+
+    @Field(() => Number, { nullable: false })
     unique!: number
 
     @Field(() => BigInt, { nullable: true,  })
