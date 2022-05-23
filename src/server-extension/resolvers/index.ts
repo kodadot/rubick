@@ -7,6 +7,7 @@ import { CollectionChartResolver } from './collectionChart'
 import { CollectionEventResolver } from './collectionEvent'
 import { PassionFeedResolver } from "./passionFeed";
 import { CollectorResolver } from "./collector";
+import { SalesFeedResolver } from "./salesFeed";
 
 @ObjectType()
 export class Hello {
@@ -38,5 +39,6 @@ export {
   SpotlightResolver,
   CollectionEventResolver,
   PassionFeedResolver,
-  CollectorResolver
+  CollectorResolver,
+  SalesFeedResolver,
 }
