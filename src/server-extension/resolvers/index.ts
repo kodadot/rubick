@@ -7,6 +7,8 @@ import { CollectionChartResolver } from './collectionChart'
 import { CollectionEventResolver } from './collectionEvent'
 import { PassionFeedResolver } from "./passionFeed";
 import { FlippingNFTsResolver } from "./flippingNfts";
+import { SalesFeedResolver } from "./salesFeed";
+
 
 @ObjectType()
 export class Hello {
@@ -39,4 +41,5 @@ export {
   CollectionEventResolver,
   PassionFeedResolver,
   FlippingNFTsResolver,
+  SalesFeedResolver,
 }
