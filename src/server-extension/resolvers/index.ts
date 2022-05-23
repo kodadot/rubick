@@ -6,6 +6,7 @@ import { SpotlightResolver } from './spotlight'
 import { CollectionChartResolver } from './collectionChart'
 import { CollectionEventResolver } from './collectionEvent'
 import { PassionFeedResolver } from "./passionFeed";
+import { FlippingNFTsResolver } from "./flippingNfts";
 
 @ObjectType()
 export class Hello {
@@ -37,4 +38,5 @@ export {
   SpotlightResolver,
   CollectionEventResolver,
   PassionFeedResolver,
+  FlippingNFTsResolver,
 }
