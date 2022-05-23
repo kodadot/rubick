@@ -3,28 +3,21 @@ FROM nft_entity ne
 WHERE ne.current_owner = $1
 AND ne.current_owner != ne.issuer`
 
-export const flippingQuery = `select
-ne.issuer as author,
-e.nft_id,
-ne.created_at as date,
-ne.price as current,
-count(e.*),
-s.floor_price,
-s.total,
-s.unique_collectors,
-s.emote_count
-from event e
-left join nft_entity ne on e.nft_id = ne.id
-left join series s on s.id = ne.collection_id
-where e.interaction = 'BUY' and ne.burned = 'false'
-group by
-author,
-e.nft_id,
-date,
-current,
-floor_price,
-s.total,
-s.unique_collectors,
-s.emote_count
-order by count desc
-limit 20`
+export const flippingQuery = `SELECT
+    ne.issuer AS author,
+    e.nft_id,
+    ne.created_at AS date,
+    ne.price AS current,
+    COUNT(e.*),
+    s.floor_price,
+    s.total,
+    s.unique_collectors,
+    s.emote_count
+FROM event e
+LEFT JOIN nft_entity ne ON e.nft_id = ne.id
+LEFT JOIN series s ON s.id = ne.collection_id
+WHERE e.interaction = 'BUY' AND ne.burned = 'false'
+GROUP BY author, e.nft_id, date, current, floor_price, s.total, s.unique_collectors, s.emote_count
+ORDER BY count DESC
+LIMIT $1
+OFFSET $2`
