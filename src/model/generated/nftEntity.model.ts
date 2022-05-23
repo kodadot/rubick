@@ -17,7 +17,7 @@ export class NFTEntity {
   @Column_("text", {nullable: true})
   instance!: string | undefined | null
 
-  @Column_("integer", {nullable: true})
+  @Column_("int4", {nullable: true})
   transferable!: number | undefined | null
 
   @Index_()
