@@ -26,7 +26,6 @@ enum OrderDirection {
 export class CollectorResolver {
   constructor(private tx: () => Promise<EntityManager>) {}
 
-  // TODO: calculate score sold * (unique / total)
   @Query(() => [CollectorEntity])
   async collectorTable(
     @Arg("limit", { nullable: true, defaultValue: 20 }) limit: number,
@@ -46,7 +45,7 @@ export class CollectorResolver {
     COALESCE(SUM(e.meta::bigint), 0) as volume,
     COALESCE(MAX(e.meta::bigint), 0) as max
   FROM nft_entity ne
-  JOIN event e on e.nft_id = ne.id WHERE e.interaction = 'BUY' AND e.caller = ne.current_owner
+  JOIN event e on e.nft_id = ne.id WHERE e.interaction = 'BUY'
   GROUP BY ne.current_owner
   ORDER BY ${orderBy} ${orderDirection}
   LIMIT $1 OFFSET $2`
