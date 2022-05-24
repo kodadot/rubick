@@ -1,4 +1,5 @@
 import { Field, ObjectType } from 'type-graphql';
+import {string} from '../../model/generated/marshal';
 
 @ObjectType()
 export class FlippingNFT {
@@ -11,11 +12,11 @@ export class FlippingNFT {
     @Field(() => Date, { nullable: false })
     date!: Date
 
-    // @Field(() => String)
-    // previous!: BigInt
+    @Field(() => String)
+    previous!: string
 
     @Field(() => String, { nullable: false })
-    current!: BigInt
+    current!: string
 
     @Field(() => BigInt, { nullable: true, defaultValue: 0n, name: 'floorPrice' })
     floor_price!: bigint
