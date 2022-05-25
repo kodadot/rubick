@@ -52,7 +52,7 @@ enum Query {
   FROM nft_entity ne
   JOIN event e on e.nft_id = ne.id WHERE e.interaction = 'BUY'
   GROUP BY ne.current_owner
-  LIMIT 20 OFFSET 0`,
+  LIMIT 100 OFFSET 0`,
 
 }
 
