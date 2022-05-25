@@ -1,6 +1,7 @@
 import {Field, ObjectType, Query, Resolver} from "type-graphql"
 import type {EntityManager} from "typeorm"
 import { CountResolver } from './count'
+import { EventResolver } from './event'
 import { SeriesResolver } from './series'
 import { SpotlightResolver } from './spotlight'
 import { CollectionChartResolver } from './collectionChart'
@@ -34,6 +35,7 @@ export class HelloResolver {
 export {
   CollectionChartResolver,
   CountResolver,
+  EventResolver,
   SeriesResolver,
   SpotlightResolver,
   CollectionEventResolver,
