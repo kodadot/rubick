@@ -1,10 +1,12 @@
 import { Field, ObjectType } from 'type-graphql';
-import {string} from '../../model/generated/marshal';
 
 @ObjectType()
 export class FlippingNFT {
     @Field(() => String, { nullable: false, name: 'nftId' })
     nft_id!: string
+
+    @Field(() => String, { nullable: false, name: 'collectionId' })
+    collection_id!: string
 
     @Field(() => String, { nullable: false })
     author!: string
@@ -29,6 +31,9 @@ export class FlippingNFT {
 
     @Field(() => Number, { nullable: false, name: 'owners' })
     unique_collectors!: number
+
+    @Field(() => String, { nullable: false })
+    distribution!: string
 
     @Field(() => BigInt, { name: 'emotes' })
     emote_count!: number
