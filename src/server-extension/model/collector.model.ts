@@ -5,7 +5,7 @@ export class CollectorEntity {
     @Field(() => String, { nullable: false })
     id!: string
 
-    @Field(() => Number, { nullable: false })
+    @Field(() => String, { nullable: false })
     name!: string
     
     @Field(() => Number, { nullable: false, name: 'uniqueCollectors' })
