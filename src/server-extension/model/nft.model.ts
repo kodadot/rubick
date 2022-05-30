@@ -23,8 +23,8 @@ export class FlippingNFT {
     @Field(() => BigInt, { nullable: true, defaultValue: 0n, name: 'floorPrice' })
     floor_price!: bigint
 
-    @Field(() => Number, { name: 'prevOwners' })
-    prev_owners!: number
+    @Field(() => Number, { name: 'previousOwner' })
+    previous_owners!: number
 
     @Field(() => Number, { nullable: false })
     total!: number

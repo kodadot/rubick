@@ -6,7 +6,7 @@ import { flippingQuery, previousPriceQuery } from "../query/nft";
 import { collectionsDistribution } from "../query/collection"
 import { makeQuery, toSqlInParams } from "../utils";
 
-type previousNft = {
+type PreviousNft = {
     nft_id: string,
     meta: string,
     rank: number,
@@ -31,7 +31,7 @@ export class FlippingNFTsResolver {
 
         const nfts = result.map(item => item.nft_id)
 
-        const prevNFTs: [previousNft] = (await makeQuery(
+        const prevNFTs: [PreviousNft] = (await makeQuery(
             this.tx,
             NFTEntity,
             previousPriceQuery(toSqlInParams(nfts))))
