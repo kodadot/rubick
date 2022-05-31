@@ -34,7 +34,7 @@ export class LastEventEntity {
   id!: String
 
   @Field(() => String, { nullable: false })
-  name!: String
+  value!: String
 
   @Field(() => String, { nullable: false })
   issuer!: String
@@ -51,11 +51,8 @@ export class LastEventEntity {
   @Field(() => String, { nullable: false, name: 'currentOwner'})
   current_owner!: String
 
-  @Field(() => String, { nullable: true, name: 'metadataId'})
-  metadata_id!: String
-
-  @Field(() => String, { nullable: true, name: 'metadataImage'})
-  metadata_image!: String
+  @Field(() => String, { nullable: true })
+  image!: String
 
   constructor(props: Partial<LastEventEntity>) {
     Object.assign(this, props);
