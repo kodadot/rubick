@@ -33,6 +33,6 @@ FROM event e
     LEFT join metadata_entity me on me.id = ne.metadata
 where
     e.interaction = $1
-    and ne.burned = false
+    AND ne.burned = false
 ORDER BY e.timestamp desc
 LIMIT $2 OFFSET $3`
