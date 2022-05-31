@@ -31,7 +31,7 @@ export const lastEventQuery = `SELECT
 FROM event e
     JOIN nft_entity ne on e.nft_id = ne.id
     LEFT join metadata_entity me on me.id = ne.metadata
-where
+WHERE
     e.interaction = $1
     AND ne.burned = false
 ORDER BY e.timestamp desc
