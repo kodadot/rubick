@@ -34,7 +34,7 @@ export class LastEventEntity {
   id!: String
 
   @Field(() => String, { nullable: false })
-  value!: String
+  name!: String
 
   @Field(() => String, { nullable: false })
   issuer!: String
@@ -46,7 +46,7 @@ export class LastEventEntity {
   metadata!: String
 
   @Field(() => String, { nullable: false })
-  meta!: String
+  value!: String
 
   @Field(() => String, { nullable: false, name: 'currentOwner'})
   current_owner!: String

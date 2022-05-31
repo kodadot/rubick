@@ -21,10 +21,10 @@ ORDER BY DATE(e.timestamp)`
 
 export const lastEventQuery = `SELECT
     DISTINCT ne.id as id,
-    ne.name as value,
+    ne.name as name,
     ne.issuer as issuer,
     ne.metadata as metadata,
-    (e.meta::bigint) as meta,
+    (e.meta::bigint) as value,
     e.timestamp,
     e.current_owner,
     me.image as image
