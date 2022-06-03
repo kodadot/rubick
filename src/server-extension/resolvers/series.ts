@@ -55,8 +55,9 @@ export class SeriesResolver {
         COUNT(distinct ne.meta_id) as unique, 
         COUNT(distinct ne.current_owner) as unique_collectors, 
         COUNT(distinct ne.current_owner) as sold, 
-        COUNT(ne.*) as total, 
-        AVG(ne.price) as average_price, 
+        COUNT(ne.*) as total,
+        COUNT(emote.*) as emoteCount,
+        AVG(ne.price) as average_price,
         MIN(NULLIF(ne.price, 0)) as floor_price, 
         COALESCE(MAX(e.meta::bigint), 0) as highest_sale,
         COALESCE(SUM(e.meta::bigint), 0) as volume, 
@@ -64,6 +65,7 @@ export class SeriesResolver {
       FROM collection_entity ce 
       LEFT JOIN metadata_entity me on ce.meta_id = me.id 
       LEFT JOIN nft_entity ne on ce.id = ne.collection_id 
+      LEFT JOIN emote on emote.nft_id = ne.id
       JOIN event e on ne.id = e.nft_id
       WHERE e.interaction = 'BUY' ${computedDateRange}
       GROUP BY ce.id, me.image, ce.name 
