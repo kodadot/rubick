@@ -70,3 +70,5 @@ update-deps:
 
 exec:
 	docker exec -it rubick-db-1 psql -U postgres -d squid
+
+check: codegen build
