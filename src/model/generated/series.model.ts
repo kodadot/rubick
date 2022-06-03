@@ -10,6 +10,9 @@ export class Series {
   @PrimaryColumn_()
   id!: string
 
+  @Column_("text", {nullable: true})
+  issuer!: string | undefined | null
+
   @Column_("int4", {nullable: false})
   unique!: number
 
