@@ -5,6 +5,9 @@ export class SeriesEntity {
     @Field(() => String, { nullable: false })
     id!: string
 
+    @Field(() => String, { nullable: false })
+    issuer!: string
+
     @Field(() => Number, { nullable: false })
     unique!: number
 

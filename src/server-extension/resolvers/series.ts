@@ -51,7 +51,7 @@ export class SeriesResolver {
       ? ''
       : `AND e.timestamp >= NOW() - INTERVAL '${dateRange}'`
     const query = `SELECT
-        ce.id, ce.name, ce.meta_id as metadata, me.image, 
+        ce.id, ce.name, ce.meta_id as metadata, me.image, ce.issuer, 
         COUNT(distinct ne.meta_id) as unique, 
         COUNT(distinct ne.current_owner) as unique_collectors, 
         COUNT(distinct ne.current_owner) as sold, 
