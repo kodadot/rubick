@@ -1,5 +1,5 @@
 import logger, { logError } from './logger';
-import { Series, Spotlight, CacheStatus } from "../../model/generated";
+import { Series, Spotlight, CacheStatus, Collector } from "../../model/generated";
 import { Store } from "@subsquid/substrate-processor";
 import { EntityConstructor } from "./types";
 import { getOrCreate } from './entity';
@@ -38,7 +38,22 @@ enum Query {
         COALESCE(SUM(e.meta::bigint), 0) as volume
     FROM nft_entity ne
     JOIN event e on e.nft_id = ne.id WHERE e.interaction = 'BUY'
-    GROUP BY issuer`
+    GROUP BY issuer`,
+
+    collector_whale = `SELECT
+    ne.current_owner as id, ne.current_owner as name, 
+    COUNT(distinct collection_id) as collections,
+    COUNT(distinct meta_id) as unique, 
+    AVG(e.meta::bigint) as average,
+    COUNT(*) as total, 
+    COUNT(ne.current_owner) as unique_collectors,
+    COALESCE(SUM(e.meta::bigint), 0) as volume,
+    COALESCE(MAX(e.meta::bigint), 0) as max
+  FROM nft_entity ne
+  JOIN event e on e.nft_id = ne.id WHERE e.interaction = 'BUY'
+  GROUP BY ne.current_owner
+  LIMIT 100 OFFSET 0`,
+
 }
 
 export async function updateCache(timestamp: Date, store: Store): Promise<void> {
@@ -49,7 +64,8 @@ export async function updateCache(timestamp: Date, store: Store): Promise<void> 
         try {
             await Promise.all([
                 updateEntityCache(store, Series, Query.series),
-                updateEntityCache(store, Spotlight, Query.spotlight)
+                updateEntityCache(store, Spotlight, Query.spotlight),
+                updateEntityCache(store, Collector, Query.collector_whale),
             ])
             lastUpdate.lastBlockTimestamp = timestamp;
             await store.save(lastUpdate)

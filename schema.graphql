@@ -143,6 +143,18 @@ type Spotlight @entity {
   volume: BigInt
 }
 
+type Collector @entity {
+  id: ID!
+  name: String!
+  unique: Int!
+  uniqueCollectors: Int!
+  collections: Int!
+  total: Int!
+  average: BigInt
+  volume: BigInt @index
+  max: BigInt
+}
+
 type CacheStatus @entity {
   id: ID!
   lastBlockTimestamp: DateTime!
