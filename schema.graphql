@@ -117,6 +117,7 @@ enum Interaction {
 
 type Series @entity {
   id: ID!
+  issuer: String,
   unique: Int!
   uniqueCollectors: Int!
   sold: Int! @index
