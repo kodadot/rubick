@@ -56,7 +56,7 @@ export class SeriesResolver {
         COUNT(distinct ne.current_owner) as unique_collectors, 
         COUNT(distinct ne.current_owner) as sold, 
         COUNT(ne.*) as total,
-        COUNT(emote.*) as emoteCount,
+        COUNT(emote.*) as emote_count,
         AVG(ne.price) as average_price,
         MIN(NULLIF(ne.price, 0)) as floor_price, 
         COALESCE(MAX(e.meta::bigint), 0) as highest_sale,

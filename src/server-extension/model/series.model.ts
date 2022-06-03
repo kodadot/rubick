@@ -20,6 +20,9 @@ export class SeriesEntity {
     @Field(() => Number, { nullable: false })
     total!: number
 
+    @Field(() => Number, { nullable: true, defaultValue: 0n, name: 'emoteCount' })
+    emote_count!: number
+
     @Field(() => BigInt, { nullable: true, defaultValue: 0n, name: 'averagePrice' })
     average_price!: bigint
 
