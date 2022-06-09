@@ -2,8 +2,8 @@ import { Field, ObjectType } from 'type-graphql';
 
 @ObjectType()
 export class HotNFTEntity {
-    @Field(() => String, { nullable: false })
-    timestamp!: string
+    @Field(() => Date, { nullable: false })
+    timestamp!: Date
 
     @Field(() => String, { nullable: true, defaultValue: 0n })
     meta!: string
