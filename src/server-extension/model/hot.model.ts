@@ -5,7 +5,7 @@ export class HotNFTEntity {
     @Field(() => Date, { nullable: false })
     timestamp!: Date
 
-    @Field(() => String, { nullable: true, defaultValue: 0n })
+    @Field(() => String, { nullable: true })
     meta!: string
 
     @Field(() => String, { nullable: false, name: "collectionName" })
