@@ -1,4 +1,3 @@
-
 import type { EntityManager, EntityTarget, Repository } from 'typeorm'
 
 export async function makeQuery<E, V>(txManager: () => Promise<EntityManager>, entity: EntityTarget<E>, query: string, args?: any[]): Promise<V> {

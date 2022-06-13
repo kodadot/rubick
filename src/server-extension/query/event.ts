@@ -36,3 +36,10 @@ WHERE
     AND ne.burned = false
 ORDER BY e.timestamp desc
 LIMIT $2 OFFSET $3`
+
+export const nftEventList = `SELECT e.meta, e.timestamp, ne.id, ne.name, me.image, ne.issuer, e.caller
+FROM event e
+LEFT JOIN nft_entity ne ON ne.id = e.nft_id
+LEFT JOIN metadata_entity me ON me.id = ne.meta_id
+WHERE e.interaction = $1
+LIMIT $2`
