@@ -50,7 +50,7 @@ enum Query {
     WHERE e.interaction = 'BUY'
     GROUP BY issuer
     ORDER BY sold DESC
-    LIMIT 360`,
+    LIMIT 400`,
 
     collector_whale = `SELECT
         ne.current_owner                 as id,
