@@ -25,8 +25,8 @@ export class Collector {
   @Column_("int4", {nullable: false})
   total!: number
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
-  average!: bigint | undefined | null
+  @Column_("numeric", {nullable: true})
+  average!: number | undefined | null
 
   @Index_()
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})

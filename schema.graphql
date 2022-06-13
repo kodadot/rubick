@@ -151,7 +151,7 @@ type Collector @entity {
   uniqueCollectors: Int!
   collections: Int!
   total: Int!
-  average: BigInt
+  average: Float
   volume: BigInt @index
   max: BigInt
 }
