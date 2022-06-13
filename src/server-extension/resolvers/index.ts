@@ -1,11 +1,14 @@
 import {Field, ObjectType, Query, Resolver} from "type-graphql"
 import type {EntityManager} from "typeorm"
 import { CountResolver } from './count'
+import { EventResolver } from './event'
 import { SeriesResolver } from './series'
 import { SpotlightResolver } from './spotlight'
 import { CollectionChartResolver } from './collectionChart'
 import { CollectionEventResolver } from './collectionEvent'
-import { NFTEventResolver } from './nftEvent'
+import { PassionFeedResolver } from "./passionFeed";
+import { SalesFeedResolver } from "./salesFeed";
+import { NFTEventResolver } from './nftEvent';
 
 @ObjectType()
 export class Hello {
@@ -33,8 +36,11 @@ export class HelloResolver {
 export {
   CollectionChartResolver,
   CountResolver,
+  EventResolver,
   SeriesResolver,
   SpotlightResolver,
   CollectionEventResolver,
-  NFTEventResolver
+  PassionFeedResolver,
+  SalesFeedResolver,
+  NFTEventResolver,
 }

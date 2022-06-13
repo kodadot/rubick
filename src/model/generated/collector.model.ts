@@ -2,26 +2,25 @@ import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, I
 import * as marshal from "./marshal"
 
 @Entity_()
-export class Spotlight {
-  constructor(props?: Partial<Spotlight>) {
+export class Collector {
+  constructor(props?: Partial<Collector>) {
     Object.assign(this, props)
   }
 
   @PrimaryColumn_()
   id!: string
 
+  @Column_("text", {nullable: false})
+  name!: string
+
   @Column_("int4", {nullable: false})
-  collections!: number
+  unique!: number
 
   @Column_("int4", {nullable: false})
   uniqueCollectors!: number
 
   @Column_("int4", {nullable: false})
-  unique!: number
-
-  @Index_()
-  @Column_("int4", {nullable: false})
-  sold!: number
+  collections!: number
 
   @Column_("int4", {nullable: false})
   total!: number
@@ -29,6 +28,10 @@ export class Spotlight {
   @Column_("numeric", {nullable: true})
   average!: number | undefined | null
 
+  @Index_()
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
   volume!: bigint | undefined | null
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  max!: bigint | undefined | null
 }

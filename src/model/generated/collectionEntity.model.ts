@@ -16,7 +16,7 @@ export class CollectionEntity {
   @Column_("text", {nullable: true})
   name!: string | undefined | null
 
-  @Column_("integer", {nullable: false})
+  @Column_("int4", {nullable: false})
   max!: number
 
   @Column_("text", {nullable: true})

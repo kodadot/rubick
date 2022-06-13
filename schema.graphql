@@ -117,6 +117,7 @@ enum Interaction {
 
 type Series @entity {
   id: ID!
+  issuer: String,
   unique: Int!
   uniqueCollectors: Int!
   sold: Int! @index
@@ -129,6 +130,7 @@ type Series @entity {
   name: String! @index
   metadata: String
   image: String
+  emoteCount: Int
 }
 
 type Spotlight @entity {
@@ -140,6 +142,18 @@ type Spotlight @entity {
   total: Int!
   average: Float
   volume: BigInt
+}
+
+type Collector @entity {
+  id: ID!
+  name: String!
+  unique: Int!
+  uniqueCollectors: Int!
+  collections: Int!
+  total: Int!
+  average: Float
+  volume: BigInt @index
+  max: BigInt
 }
 
 type CacheStatus @entity {
