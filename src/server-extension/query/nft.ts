@@ -23,7 +23,7 @@ where
     and e.timestamp >= NOW() - INTERVAL '7 DAY'
 ORDER BY e.timestamp desc`
 
-export const hotDashboardQuery = (dateRange: string) => `SELECT
+export const hotDashboardQuery = (dateRange: string): string => `SELECT
     e.timestamp,
     e.meta,
     ce.name as collection_name,
@@ -34,6 +34,6 @@ FROM
     LEFT JOIN collection_entity ce ON ne.collection_id = ce.id
 WHERE
     e.interaction = 'BUY'
-    AND e."timestamp" >= NOW() - INTERVAL '${dateRange}'
+    AND e.timestamp >= NOW() - INTERVAL '${dateRange}'
 ORDER BY
     e.timestamp`
