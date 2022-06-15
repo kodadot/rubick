@@ -27,3 +27,34 @@ export class HistoryEntity {
   @Field(() => Number)
   count!: number
 }
+
+@ObjectType()
+export class LastEventEntity {
+  @Field(() => String, { nullable: false })
+  id!: String
+
+  @Field(() => String, { nullable: false })
+  name!: String
+
+  @Field(() => String, { nullable: false })
+  issuer!: String
+
+  @Field(() => String, { nullable: false })
+  timestamp!: String
+
+  @Field(() => String, { nullable: false })
+  metadata!: String
+
+  @Field(() => String, { nullable: false })
+  value!: String
+
+  @Field(() => String, { nullable: false, name: 'currentOwner'})
+  current_owner!: String
+
+  @Field(() => String, { nullable: true })
+  image!: String
+
+  constructor(props: Partial<LastEventEntity>) {
+    Object.assign(this, props);
+  }
+}
