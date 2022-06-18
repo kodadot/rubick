@@ -39,8 +39,8 @@ export class LastEventEntity {
   @Field(() => String, { nullable: false })
   issuer!: String
 
-  @Field(() => String, { nullable: false })
-  timestamp!: String
+  @Field(() => Date, { nullable: false })
+  timestamp!: Date
 
   @Field(() => String, { nullable: false })
   metadata!: String
