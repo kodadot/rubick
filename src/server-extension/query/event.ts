@@ -24,15 +24,17 @@ export const lastEventQuery = `SELECT
     ne.name as name,
     ne.issuer as issuer,
     ne.metadata as metadata,
-    (e.meta::bigint) as value,
-    e.timestamp,
     e.current_owner,
-    me.image as image
+    me.image as image,
+    MAX(DATE(e.timestamp)) as timestamp,
+    MAX(e.meta::bigint) as value
+
 FROM event e
     JOIN nft_entity ne on e.nft_id = ne.id
     LEFT join metadata_entity me on me.id = ne.metadata
 WHERE
     e.interaction = $1
     AND ne.burned = false
-ORDER BY e.timestamp desc
+GROUP BY ne.id, me.id, e.current_owner, me.image
+ORDER BY MAX(DATE(e.timestamp)) desc
 LIMIT $2 OFFSET $3`
