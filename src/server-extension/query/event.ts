@@ -36,5 +36,5 @@ WHERE
     e.interaction = $1
     AND ne.burned = false
 GROUP BY ne.id, me.id, e.current_owner, me.image
-ORDER BY MAX(DATE(e.timestamp)) desc
+ORDER BY MAX(DATE(e.timestamp)) DESC
 LIMIT $2 OFFSET $3`
