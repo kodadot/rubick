@@ -26,7 +26,7 @@ export const lastEventQuery = `SELECT
     ne.metadata as metadata,
     e.current_owner,
     me.image as image,
-    MAX(DATE(e.timestamp)) as timestamp,
+    MAX(e.timestamp) as timestamp,
     MAX(e.meta::bigint) as value
 
 FROM event e
@@ -36,5 +36,5 @@ WHERE
     e.interaction = $1
     AND ne.burned = false
 GROUP BY ne.id, me.id, e.current_owner, me.image
-ORDER BY MAX(DATE(e.timestamp)) DESC
+ORDER BY MAX(e.timestamp) DESC
 LIMIT $2 OFFSET $3`
