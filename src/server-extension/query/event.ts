@@ -19,7 +19,7 @@ GROUP BY ce.id, DATE(e.timestamp)
 ORDER BY DATE(e.timestamp)`
 
 
-export const lastEventQuery = `SELECT
+export const lastEventQuery = (whereCondition: string) => `SELECT
     DISTINCT ne.id as id,
     ne.name as name,
     ne.issuer as issuer,
@@ -35,6 +35,7 @@ FROM event e
 WHERE
     e.interaction = $1
     AND ne.burned = false
+    ${whereCondition}
 GROUP BY ne.id, me.id, e.current_owner, me.image
 ORDER BY MAX(e.timestamp) DESC
 LIMIT $2 OFFSET $3`
