@@ -26,6 +26,9 @@ export class SpotlightEntity {
     @Field(() => Number, { nullable: false })
     total!: number
 
+    @Field(() => Number, { nullable: false })
+    score!: number
+
     constructor(props: Partial<SpotlightEntity>) {
         Object.assign(this, props);
     }
