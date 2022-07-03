@@ -142,6 +142,7 @@ type Spotlight @entity {
   total: Int!
   average: Float
   volume: BigInt
+  score: Float!
 }
 
 type Collector @entity {
