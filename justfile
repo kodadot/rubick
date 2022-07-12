@@ -60,7 +60,7 @@ kill TAG:
 	npx sqd squid:kill "rubick@{{TAG}}"
 
 tail TAG:
-	npx sqd squid:tail rubick@{{TAG}} -f
+	npx sqd squid logs click@{{TAG}} -f
 
 brutal TAG:
 	npx sqd squid:update rubick@{{TAG}} --hardReset
