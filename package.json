@@ -12,8 +12,8 @@
     "test:unit": "mocha -r ts-node/register tests/unit/**.spec.ts"
   },
   "dependencies": {
-    "@polkadot/types": "^8.5.1",
-    "@subsquid/cli": "^0.4.1",
+    "@polkadot/types": "^8.12.2",
+    "@subsquid/cli": "^0.5.1",
     "@subsquid/graphql-server": "^0.3.0",
     "@subsquid/ss58": "^0.1.0",
     "@subsquid/substrate-processor": "^0.8.0",
@@ -23,7 +23,7 @@
     "dotenv": "^16.0.1",
     "inflected": "^2.1.0",
     "md5": "^2.3.0",
-    "nanoid": "^3.3.4",
+    "nanoid": "3.3.4",
     "signale": "^1.4.0",
     "type-graphql": "^1.2.0-rc.1"
   },
@@ -37,7 +37,7 @@
     "@types/pg": "^8.6.5",
     "chai": "^4.3.6",
     "mocha": "^10.0.0",
-    "ts-node": "^10.8.0",
-    "typescript": "~4.7.2"
+    "ts-node": "^10.8.2",
+    "typescript": "~4.7.4"
   }
 }
