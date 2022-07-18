@@ -45,7 +45,7 @@ enum Query {
         COUNT(distinct ne.current_owner)                               as unique_collectors,
         SUM(CASE WHEN ne.issuer <> ne.current_owner THEN 1 ELSE 0 END) as sold,
         COALESCE(SUM(e.meta::bigint), 0)                               as volume,
-        SUM(CASE WHEN ne.issuer <> ne.current_owner THEN 1 ELSE 0 END) * COUNT(distinct meta_id) / COUNT(*) as score
+        SUM(CASE WHEN ne.issuer <> ne.current_owner THEN 1 ELSE 0 END) * COUNT(distinct meta_id) / COUNT(1) as score
     FROM nft_entity ne
         JOIN event e on e.nft_id = ne.id
     WHERE e.interaction = 'BUY'
