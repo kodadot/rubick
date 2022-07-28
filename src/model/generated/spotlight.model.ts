@@ -32,6 +32,6 @@ export class Spotlight {
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
   volume!: bigint | undefined | null
 
-  @Column_("numeric", {nullable: false})
-  score!: number
+  @Column_("numeric", {nullable: true})
+  score!: number | undefined | null
 }
