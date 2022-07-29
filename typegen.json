@@ -1,10 +1,12 @@
 {
   "outDir": "src/types",
-  "chainVersions": "kusamaVersions.json",
+  "specVersions": "https://kusama.archive.subsquid.io/graphql", 
   "typesBundle": "kusama",
-  "events": [
-  ],
+  "events": [],
   "calls": [
-    "system.remark"
-  ]
+    "System.remark",
+    "Utility.batch_all",
+    "Utility.batch"
+  ],
+  "storage": []
 }
