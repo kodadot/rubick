@@ -21,7 +21,7 @@ build:
 	npm run build
 
 codegen:
-	npx sqd codegen
+	npx squid-typeorm-codegen
 
 typegen: ksmVersion
 	npx squid-substrate-typegen typegen.json
@@ -30,22 +30,21 @@ ksmVersion: explore
 
 explore:
 	npx squid-substrate-metadata-explorer \
-		--chain wss://kusama-rpc.polkadot.io \
-		--archive https://kusama.indexer.gc.subsquid.io/v4/graphql \
-		--out kusamaVersions.json
+	--chain wss://kusama-rpc.polkadot.io \
+	--out kusamaVersions.jsonl
 
 bug: down up
 
 reset:
-	npx sqd db drop
-	npx sqd db create
-	npx sqd db:migrate
+	npx squid-typeorm-migration drop
+	npx squid-typeorm-migration create
+	npx squid-typeorm-migration migrate
 
 migrate:
-	npx sqd db:migrate
+	npx squid-typeorm-migration migrate
 
 update-db:
-	npx sqd db:create-migration Data
+	npx squid-typeorm-migration create-migration Data
 
 test:
   npm run test:unit
