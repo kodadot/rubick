@@ -1,6 +1,6 @@
 {
   "outDir": "src/types",
-  "specVersions": "https://kusama.archive.subsquid.io/graphql", 
+  "specVersions": "kusamaVersions.jsonl", 
   "typesBundle": "kusama",
   "events": [],
   "calls": [
