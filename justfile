@@ -24,13 +24,13 @@ codegen:
 	npx squid-typeorm-codegen
 
 typegen: ksmVersion
-	npx squid-substrate-typegen typegen.json
 
 ksmVersion: explore
 
 explore:
 	npx squid-substrate-metadata-explorer \
 	--chain wss://kusama-rpc.polkadot.io \
+	--archive https://kusama.archive.subsquid.io/graphql \
 	--out kusamaVersions.jsonl
 
 bug: down up
