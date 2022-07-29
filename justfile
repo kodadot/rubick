@@ -36,7 +36,7 @@ explore:
 bug: down up
 
 reset:
-	npx squid-typeorm-migration drop
+	npx sqd db drop
 	npx squid-typeorm-migration create
 	npx squid-typeorm-migration migrate
 
