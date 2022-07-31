@@ -2,7 +2,7 @@ process: build
 	node -r dotenv/config lib/processor.js
 
 serve:
-	npx squid-graphql-server
+	@npx squid-graphql-server
 
 up:
   docker compose up
@@ -23,9 +23,8 @@ build:
 codegen:
 	npx squid-typeorm-codegen
 
-typegen: ksmVersion
-
-ksmVersion: explore
+typegen:
+	npx squid-substrate-typegen typegen.json
 
 explore:
 	npx squid-substrate-metadata-explorer \
@@ -41,7 +40,7 @@ reset:
 	npx squid-typeorm-migration migrate
 
 migrate:
-	npx squid-typeorm-migration migrate
+	npx squid-typeorm-migration apply
 
 update-db:
 	npx squid-typeorm-migration create-migration Data
