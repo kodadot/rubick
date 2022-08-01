@@ -1,7 +1,10 @@
 import { Attribute, CollectionEvent, Interaction as RmrkEvent } from '../../model/generated'
-import {ExtrinsicHandlerContext } from '@subsquid/substrate-processor'
-import { RemarkResult } from './extract'
+import { CallHandlerContext } from '@subsquid/substrate-processor'
 
+import { RemarkResult } from './extract'
+import type { EntityManager } from 'typeorm'
+
+export type Store = EntityManager
 
 export { RmrkEvent }
 
@@ -39,9 +42,18 @@ export function attributeFrom(attribute: MetadataAttribute): Attribute {
   })
 }
 
-export type Context = ExtrinsicHandlerContext 
+export type Context = CallHandlerContext<Store> 
 
 export type Optional<T> = T | null
+export type UnwrapFunc<T> = (ctx: Context) => T;
+export type SanitizerFunc = (url: string) => string;
+export type CallWith<T> = BaseCall & T;
+
+export type BaseCall = {
+  caller: string;
+  blockNumber: string;
+  timestamp: Date;
+};
 
 export interface IEvent {
   interaction: RmrkEvent;
@@ -105,8 +117,6 @@ export type BatchArg = {
 export type SomethingWithMeta = {
   metadata: string
 }
-
-export type SanitizerFunc = (url: string) => string
 
 export type TokenMetadata = {
   name?: string
