@@ -6,7 +6,8 @@
   "calls": [
     "System.remark",
     "Utility.batch_all",
-    "Utility.batch"
+    "Utility.batch",
+    "Balances.transfer"
   ],
   "storage": []
 }

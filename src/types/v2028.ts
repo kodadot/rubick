@@ -1,5 +1,32 @@
 import type {Result} from './support'
 
+export type LookupSource = LookupSource_Id | LookupSource_Index | LookupSource_Raw | LookupSource_Address32 | LookupSource_Address20
+
+export interface LookupSource_Id {
+  __kind: 'Id'
+  value: Uint8Array
+}
+
+export interface LookupSource_Index {
+  __kind: 'Index'
+  value: number
+}
+
+export interface LookupSource_Raw {
+  __kind: 'Raw'
+  value: Uint8Array
+}
+
+export interface LookupSource_Address32 {
+  __kind: 'Address32'
+  value: Uint8Array
+}
+
+export interface LookupSource_Address20 {
+  __kind: 'Address20'
+  value: Uint8Array
+}
+
 export type Type_199 = Type_199_System | Type_199_Babe | Type_199_Timestamp | Type_199_Indices | Type_199_Balances | Type_199_Authorship | Type_199_Staking | Type_199_Offences | Type_199_Session | Type_199_Grandpa | Type_199_ImOnline | Type_199_AuthorityDiscovery | Type_199_Democracy | Type_199_Council | Type_199_TechnicalCommittee | Type_199_ElectionsPhragmen | Type_199_TechnicalMembership | Type_199_Treasury | Type_199_Claims | Type_199_Utility | Type_199_Identity | Type_199_Society | Type_199_Recovery | Type_199_Vesting | Type_199_Scheduler | Type_199_Proxy | Type_199_Multisig | Type_199_Bounties | Type_199_Tips
 
 export interface Type_199_System {
@@ -4438,33 +4465,6 @@ export interface KeyOwnerProof {
   session: number
   trieNodes: Uint8Array[]
   validatorCount: number
-}
-
-export type LookupSource = LookupSource_Id | LookupSource_Index | LookupSource_Raw | LookupSource_Address32 | LookupSource_Address20
-
-export interface LookupSource_Id {
-  __kind: 'Id'
-  value: Uint8Array
-}
-
-export interface LookupSource_Index {
-  __kind: 'Index'
-  value: number
-}
-
-export interface LookupSource_Raw {
-  __kind: 'Raw'
-  value: Uint8Array
-}
-
-export interface LookupSource_Address32 {
-  __kind: 'Address32'
-  value: Uint8Array
-}
-
-export interface LookupSource_Address20 {
-  __kind: 'Address20'
-  value: Uint8Array
 }
 
 export interface Header {
