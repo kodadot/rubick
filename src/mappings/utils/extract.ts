@@ -1,9 +1,5 @@
-import { Vec } from '@polkadot/types';
-import { Call as TCall } from "@polkadot/types/interfaces";
-import { Event as TEvent } from '@polkadot/types/interfaces';
-import { ExtrinsicHandlerContext, SubstrateExtrinsic, SubstrateEvent } from '@subsquid/substrate-processor'
-import logger from './logger';
-import { BatchArg } from './types';
+import { SubstrateExtrinsic } from '@subsquid/substrate-processor'
+import { BaseCall, BatchArg, CallWith, Context, UnwrapFunc } from './types'
 const PREFIXES = ['0x726d726b', '0x524d524b', 'rmrk', 'RMRK']
 
 
@@ -14,24 +10,19 @@ const PREFIXES = ['0x726d726b', '0x524d524b', 'rmrk', 'RMRK']
   extra?: ExtraCall[];
 }
 
- interface BaseCall {
-  caller: string;
-  blockNumber: string;
-  timestamp: Date;
-}
 
 export type Records = RemarkResult[]
 
  const startsWithRemark = (value: string, prefixes: string[] = PREFIXES): boolean => (prefixes.length < 1 || prefixes.some((word) => value.startsWith(word)))
 
- const isSystemRemark = (call: SubstrateExtrinsic | TCall, prefixes: string[] = PREFIXES): boolean =>
-  call.section === "system" &&
-  call.method === "remark" &&
-  startsWithRemark(call.args.toString(), prefixes)
+//  const isSystemRemark = (call: SubstrateExtrinsic | TCall, prefixes: string[] = PREFIXES): boolean =>
+//   call.section === "system" &&
+//   call.method === "remark" &&
+//   startsWithRemark(call.args.toString(), prefixes)
 
- const isUtilityBatch = (call: SubstrateExtrinsic) =>
-  call.section === "utility" &&
-  (call.method === "batch" || call.method === "batchAll");
+//  const isUtilityBatch = (call: SubstrateExtrinsic) =>
+//   call.section === "utility" &&
+//   (call.method === "batch" || call.method === "batchAll");
 
 const justArg = (batchArg: BatchArg): Record<string, any> => batchArg.args
 
@@ -44,19 +35,24 @@ const hasBatchArgRemark = (args: Record<string, any>): boolean => {
   return Boolean(call) && startsWithRemark(call, PREFIXES)
 }
 
-const hasBatchFailed = (event: SubstrateEvent | TEvent): boolean => {
-  const { method } = event;
-  return method.toString() === "BatchInterrupted" || method.toString() === "ExtrinsicFailed";
-}
+// const hasBatchFailed = (event: SubstrateEvent | TEvent): boolean => {
+//   const { method } = event;
+//   return method.toString() === "BatchInterrupted" || method.toString() === "ExtrinsicFailed";
+// }
 
- function toBaseCall(extrinsic: ExtrinsicHandlerContext): BaseCall {
-  const caller = extrinsic.extrinsic.signer.toString();
-  const blockNumber = extrinsic.block.height.toString();
-  const timestamp = new Date(extrinsic.block.timestamp);
+ function toBaseCall(context: Context): BaseCall {
+  const caller = context.extrinsic.signature?.address.toString()
+  const blockNumber = context.block.height.toString();
+  const timestamp = new Date(context.block.timestamp);
 
   return { caller, blockNumber, timestamp };
 }
 
+export function unwrap<T>(ctx: Context, unwrapFn: UnwrapFunc<T>): CallWith<T> {
+  const baseCall = toBaseCall(ctx);
+  const unwrapped = unwrapFn(ctx);
+  return { ...baseCall, ...unwrapped };
+}
 
  function toRemarkResult(value: string, base: BaseCall): RemarkResult {
   return {
@@ -82,24 +78,24 @@ const hasBatchFailed = (event: SubstrateEvent | TEvent): boolean => {
 
 type RemarkOrBatch = string | SubstrateExtrinsic;
 
- export function extractRemark(processed: RemarkOrBatch, extrinsic: ExtrinsicHandlerContext): RemarkResult[] {
+ export function extractRemark(processed: RemarkOrBatch, context: Context): RemarkResult[] {
   if (typeof processed === 'string') {
     if (startsWithRemark(processed)) {
-      return [toRemarkResult(processed, toBaseCall(extrinsic))]
+      return [toRemarkResult(processed, toBaseCall(context))]
     } else {
       return []
     }
     
   }
 
-  if (isUtilityBatch(processed)) {
-    if (hasBatchFailed(extrinsic.event)) {
-      logger.warn('[BATCH] failed', extrinsic.block.height.toString())
-      return [];
-    }
+  // if (isUtilityBatch(processed)) {
+  //   if (hasBatchFailed(extrinsic.event)) {
+  //     logger.warn('[BATCH] failed', extrinsic.block.height.toString())
+  //     return [];
+  //   }
 
-    return processBatch(processed.args[0].value as BatchArg[], toBaseCall(extrinsic));
-  }
+  //   return processBatch(processed.args[0].value as BatchArg[], toBaseCall(extrinsic));
+  // }
 
   return [];
 }
