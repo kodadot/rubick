@@ -18,6 +18,7 @@ import {
   RmrkEvent,
   RmrkInteraction,
   collectionEventFrom,
+  Store
 } from './utils/types'
 import NFTUtils, { hexToString } from './utils/NftUtils'
 import {
@@ -37,7 +38,6 @@ import { Context } from './utils/types'
 import logger, { logError } from './utils/logger'
 import { create, get } from './utils/entity'
 import { fetchMetadata } from './utils/metadata'
-import { Store} from '@subsquid/substrate-processor'
 import {updateCache} from './utils/cache'
 import md5 from 'md5'
 
