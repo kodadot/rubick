@@ -1,5 +1,10 @@
 import { nanoid } from 'nanoid'
 import { RmrkEvent, RmrkInteraction } from './types'
+import * as ss58 from '@subsquid/ss58';
+import { Chain, } from '@subsquid/substrate-processor/lib/chain'
+import { Call } from '../../types/support'
+import { encode } from '@subsquid/ss58'
+import { decodeHex } from '@subsquid/substrate-processor'
 
 export const trim = (text?: string) => (text || '').trim()
 
@@ -25,4 +30,14 @@ export function camelCase(str: string): string {
 export function isEmpty(obj: Record<string, any>) {
   for (const _ in obj) { return false; }
   return true;
+}
+
+export function addressOf(value: any): string {
+  return value
+  // return ss58.codec('kusama').encode(value)
+  // return encode(decodeHex(value))
+}
+
+export function metadataOf({ metadata }: { metadata: string }): string {
+  return metadata ?? '';
 }
