@@ -1,4 +1,8 @@
-import { SubstrateExtrinsic } from '@subsquid/substrate-processor'
+import { decodeHex, SubstrateCall, SubstrateExtrinsic } from '@subsquid/substrate-processor'
+import { BalancesTransferCall } from '../../types/calls'
+import { Call, CallContext, Chain } from '../../types/support'
+import { getBalancesTransfer } from './getters'
+import { addressOf } from './helper'
 import { BaseCall, BatchArg, CallWith, Context, UnwrapFunc } from './types'
 const PREFIXES = ['0x726d726b', '0x524d524b', 'rmrk', 'RMRK']
 
@@ -8,6 +12,11 @@ const PREFIXES = ['0x726d726b', '0x524d524b', 'rmrk', 'RMRK']
  export interface RemarkResult extends BaseCall {
   value: string;
   extra?: ExtraCall[];
+}
+
+type ArchiveCall = {
+  __kind: string,
+  value: any
 }
 
 
@@ -20,13 +29,23 @@ export type Records = RemarkResult[]
 //   call.method === "remark" &&
 //   startsWithRemark(call.args.toString(), prefixes)
 
-//  const isUtilityBatch = (call: SubstrateExtrinsic) =>
-//   call.section === "utility" &&
-//   (call.method === "batch" || call.method === "batchAll");
+const isUtilityBatch = (call?: SubstrateCall) => call && (call.name === 'Utility.batch_all' || call.name === 'Utility.batch')
+
+const filterTransfers = ({ __kind }: ArchiveCall) => __kind === 'Balances'
+
+const mapToSquidCall = (arg: ArchiveCall): Call => ({
+  name: arg.__kind + '.transfer',
+  args: arg.value
+})
+
+const mapToChainContext = (_chain: Chain) => (call: Call): CallContext => ({
+  call,
+  _chain
+})
+
+const toBalanceTransfer = (ctx: CallContext): BalancesTransferCall => new BalancesTransferCall(ctx)
 
 const justArg = (batchArg: BatchArg): Record<string, any> => batchArg.args
-
-const isSytemRemarkHex = ({ callIndex }: BatchArg): boolean => callIndex === '0x0001'
 
 const valueOfArg = (args: Record<string, any>): string => args.remark || args._remark
 
@@ -41,7 +60,8 @@ const hasBatchArgRemark = (args: Record<string, any>): boolean => {
 // }
 
  function toBaseCall(context: Context): BaseCall {
-  const caller = context.extrinsic.signature?.address.toString()
+  console.log(context.extrinsic.signature?.address)
+  const caller = context.extrinsic.signature?.address.value.toString() // todo: it's a public addr :)
   const blockNumber = context.block.height.toString();
   const timestamp = new Date(context.block.timestamp);
 
@@ -77,6 +97,19 @@ export function unwrap<T>(ctx: Context, unwrapFn: UnwrapFunc<T>): CallWith<T> {
 }
 
 type RemarkOrBatch = string | SubstrateExtrinsic;
+
+export function extractExtra(ctx: Context): BalancesTransferCall[] {
+  if (isUtilityBatch(ctx.call.parent)) {
+    const chainMapper = mapToChainContext(ctx._chain)
+    return ctx.call.parent?.args.calls
+    .filter(filterTransfers)
+    .map(mapToSquidCall)
+    .map(chainMapper)
+    .map(getBalancesTransfer)
+  }
+
+  return []
+}
 
  export function extractRemark(processed: RemarkOrBatch, context: Context): RemarkResult[] {
   if (typeof processed === 'string') {
