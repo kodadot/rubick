@@ -133,6 +133,11 @@ export type MetadataAttribute = {
   value: number | string
 }
 
+export type Transfer = {
+  to: any,
+  value: bigint
+}
+
 export enum DisplayType {
   null,
   'boost_number',
