@@ -106,6 +106,15 @@ export type EntityConstructor<T> = {
   new (...args: any[]): T;
 };
 
+export type ArchiveCall = {
+  __kind: string,
+  value: any
+}
+
+export type ArchiveCallWithOptionalValue = {
+  __kind: string,
+  value?: any
+}
 
 export type RmrkType = Collection | NFT | RmrkInteraction
 
