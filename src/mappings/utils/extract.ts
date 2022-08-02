@@ -1,9 +1,8 @@
-import { decodeHex, SubstrateCall, SubstrateExtrinsic } from '@subsquid/substrate-processor'
+import { SubstrateCall, SubstrateExtrinsic } from '@subsquid/substrate-processor'
 import { BalancesTransferCall } from '../../types/calls'
 import { Call, CallContext, Chain } from '../../types/support'
-import { getBalancesTransfer } from './getters'
 import { addressOf } from './helper'
-import { BaseCall, BatchArg, CallWith, Context, UnwrapFunc } from './types'
+import { ArchiveCall, BaseCall, BatchArg, CallWith, Context, Transfer, UnwrapFunc } from './types'
 const PREFIXES = ['0x726d726b', '0x524d524b', 'rmrk', 'RMRK']
 
 
@@ -12,11 +11,6 @@ const PREFIXES = ['0x726d726b', '0x524d524b', 'rmrk', 'RMRK']
  export interface RemarkResult extends BaseCall {
   value: string;
   extra?: ExtraCall[];
-}
-
-type ArchiveCall = {
-  __kind: string,
-  value: any
 }
 
 
@@ -43,7 +37,10 @@ const mapToChainContext = (_chain: Chain) => (call: Call): CallContext => ({
   _chain
 })
 
-const toBalanceTransfer = (ctx: CallContext): BalancesTransferCall => new BalancesTransferCall(ctx)
+const toBalanceTransfer = (call: Call): Transfer => {
+  const { dest, value } = call.args
+  return { to: addressOf(dest), value }
+}
 
 const justArg = (batchArg: BatchArg): Record<string, any> => batchArg.args
 
@@ -60,8 +57,7 @@ const hasBatchArgRemark = (args: Record<string, any>): boolean => {
 // }
 
  function toBaseCall(context: Context): BaseCall {
-  console.log(context.extrinsic.signature?.address)
-  const caller = context.extrinsic.signature?.address.value.toString() // todo: it's a public addr :)
+  const caller = addressOf(context.extrinsic.signature?.address)
   const blockNumber = context.block.height.toString();
   const timestamp = new Date(context.block.timestamp);
 
@@ -98,14 +94,12 @@ export function unwrap<T>(ctx: Context, unwrapFn: UnwrapFunc<T>): CallWith<T> {
 
 type RemarkOrBatch = string | SubstrateExtrinsic;
 
-export function extractExtra(ctx: Context): BalancesTransferCall[] {
+export function extractExtra(ctx: Context): Transfer[] {
   if (isUtilityBatch(ctx.call.parent)) {
-    const chainMapper = mapToChainContext(ctx._chain)
     return ctx.call.parent?.args.calls
     .filter(filterTransfers)
     .map(mapToSquidCall)
-    .map(chainMapper)
-    .map(getBalancesTransfer)
+    .map(toBalanceTransfer)
   }
 
   return []
