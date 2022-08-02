@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid'
-import { RmrkEvent, RmrkInteraction } from './types'
+import { ArchiveCall, ArchiveCallWithOptionalValue, RmrkEvent, RmrkInteraction } from './types'
 import * as ss58 from '@subsquid/ss58';
 import { Chain, } from '@subsquid/substrate-processor/lib/chain'
 import { Call } from '../../types/support'
@@ -32,10 +32,14 @@ export function isEmpty(obj: Record<string, any>) {
   return true;
 }
 
-export function addressOf(value: any): string {
-  return value
-  // return ss58.codec('kusama').encode(value)
-  // return encode(decodeHex(value))
+export function onlyValue(call: ArchiveCallWithOptionalValue): any {
+  return call?.value
+}
+
+//Uint8Array 
+export function addressOf(address: ArchiveCallWithOptionalValue | string): string {
+  const value = typeof address === 'string' ? address : onlyValue(address)
+  return ss58.codec('kusama').encode(decodeHex(value))
 }
 
 export function metadataOf({ metadata }: { metadata: string }): string {
