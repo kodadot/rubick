@@ -21,17 +21,7 @@ import {
   Store
 } from './utils/types'
 import NFTUtils, { hexToString } from './utils/NftUtils'
-import {
-  canOrElseError,
-  exists,
-  hasMeta,
-  isBurned,
-  isBuyLegalOrElseError,
-  isOwnerOrElseError,
-  isPositiveOrElseError,
-  isTransferable,
-  validateInteraction,
-} from './utils/consolidator'
+import { isBuyLegalOrElseError, isOwnerOrElseError, isPositiveOrElseError, validateInteraction, plsBe, real, isInteractive, plsNotBe, burned, withMeta } from './utils/consolidator'
 import { emoteId, ensure, ensureInteraction, isEmpty, eventId } from './utils/helper'
 import { SystemRemarkCall  } from '../types/calls'
 import { Context } from './utils/types'
@@ -48,15 +38,15 @@ export async function handleRemark(context: Context): Promise<void> {
   await mainFrame(records, context)
 }
 
-export async function handleBatch(context: Context): Promise<void> {
-  const records = extractRemark(context.extrinsic, context)
-  await mainFrame(records, context)
-}
+// export async function handleBatch(context: Context): Promise<void> {
+//   const records = extractRemark(context.extrinsic, context)
+//   await mainFrame(records, context)
+// }
 
-export async function handleBatchAll(context: Context): Promise<void> {
-  const records = extractRemark(context.extrinsic, context)
-  await mainFrame(records, context)
-}
+// export async function handleBatchAll(context: Context): Promise<void> {
+//   const records = extractRemark(context.extrinsic, context)
+//   await mainFrame(records, context)
+// }
 
 async function mainFrame(records: Records, context: Context): Promise<void> {
   for (const remark of records) {
@@ -108,13 +98,13 @@ async function mint(remark: RemarkResult, { store }: Context): Promise<void> {
   let collection: Optional<Collection> = null
   try {
     collection = NFTUtils.unwrap(remark.value) as Collection
-    canOrElseError<string>(exists, collection.id, true)
+    plsBe<string>(real, collection.id)
     const entity = await get<CollectionEntity>(
       store,
       CollectionEntity,
       collection.id
     )
-    canOrElseError<CollectionEntity>(exists, entity as CollectionEntity)
+    plsNotBe<CollectionEntity>(real, entity as CollectionEntity)
 
     const final = create<CollectionEntity>(CollectionEntity, collection.id, {})
 
@@ -152,11 +142,11 @@ async function mintNFT(
   let nft: Optional<NFT> = null
   try {
     nft = NFTUtils.unwrap(remark.value) as NFT
-    canOrElseError<string>(exists, nft.collection, true)
+    plsBe(real, nft.collection)
     const collection = ensure<CollectionEntity>(
       await get<CollectionEntity>(store, CollectionEntity, nft.collection)
     )
-    canOrElseError<CollectionEntity>(exists, collection, true)
+    plsBe(real, collection)
     isOwnerOrElseError(collection, remark.caller)
     const final = create<NFTEntity>(NFTEntity, collection.id, {})
     const id = getNftId(nft, remark.blockNumber)
@@ -231,9 +221,7 @@ async function buy(remark: RemarkResult, { store }: Context) {
     const nft = ensure<NFTEntity>(
       await get<NFTEntity>(store, NFTEntity, interaction.id)
     )
-    canOrElseError<NFTEntity>(exists, nft, true)
-    canOrElseError<NFTEntity>(isBurned, nft)
-    canOrElseError<NFTEntity>(isTransferable, nft, true)
+    isInteractive(nft)
     isPositiveOrElseError(nft.price, true)
     isBuyLegalOrElseError(nft, remark.extra || [])
     const originalPrice = nft.price
@@ -262,8 +250,8 @@ async function consume(remark: RemarkResult, { store }: Context) {
     const nft = ensure<NFTEntity>(
       await get<NFTEntity>(store, NFTEntity, interaction.id)
     )
-    canOrElseError<NFTEntity>(exists, nft, true)
-    canOrElseError<NFTEntity>(isBurned, nft)
+    plsBe<NFTEntity>(real, nft)
+    plsNotBe<NFTEntity>(burned, nft)
     isOwnerOrElseError(nft, remark.caller)
     nft.price = BigInt(0)
     nft.burned = true
@@ -318,11 +306,11 @@ async function changeIssuer(remark: RemarkResult, { store }: Context) {
     interaction = ensureInteraction(
       NFTUtils.unwrap(remark.value) as RmrkInteraction
     )
-    canOrElseError<RmrkInteraction>(hasMeta, interaction, true)
+    plsBe(withMeta, interaction)
     const collection = ensure<CollectionEntity>(
       await get<CollectionEntity>(store, CollectionEntity, interaction.id)
     )
-    canOrElseError<CollectionEntity>(exists, collection, true)
+    plsBe<CollectionEntity>(real, collection)
     isOwnerOrElseError(collection, remark.caller)
     collection.currentOwner = interaction.metadata
     collection.events?.push(
@@ -350,12 +338,12 @@ async function emote(remark: RemarkResult, { store }: Context) {
     interaction = ensureInteraction(
       NFTUtils.unwrap(remark.value) as RmrkInteraction
     )
-    canOrElseError<RmrkInteraction>(hasMeta, interaction, true)
+    plsBe(withMeta, interaction)
     const nft = ensure<NFTEntity>(
       await get<NFTEntity>(store, NFTEntity, interaction.id)
     )
-    canOrElseError<NFTEntity>(exists, nft, true)
-    canOrElseError<NFTEntity>(isBurned, nft)
+    plsBe<NFTEntity>(real, nft)
+    plsNotBe<NFTEntity>(burned, nft)
     const id = emoteId(interaction, remark.caller)
     let emote = await get<Emote>(store, Emote, interaction.id)
 
