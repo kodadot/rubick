@@ -7,7 +7,7 @@ import {
   Interaction,
 } from '../model/generated'
 
-import { extractRemark, Records, RemarkResult, unwrap } from './utils'
+import { unwrap } from './utils'
 import {
   attributeFrom,
   Collection,
@@ -102,7 +102,10 @@ async function mainFrame(remark: string, context: Context): Promise<void> {
       await updateCache(base.timestamp,context.store)
     } catch (e) {
       logger.warn(
-        `[MALFORMED] Block ${base.blockNumber},\nRMRK ${hexToString(base.value)}\n${(e as Error).message}`
+        `[MALFORMED]\n
+         [BLOCK] ${base.blockNumber}\n
+         [ERROR] ${(e as Error).message}\n
+         [RMRK] ${base.value}`
       )
     }
   }
