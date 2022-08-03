@@ -33,13 +33,19 @@ import { fetchMetadata } from './utils/metadata'
 import {updateCache} from './utils/cache'
 import md5 from 'md5'
 import { getCreateCollection, getCreateToken, getInteraction, getInteractionWithExtra } from './utils/getters'
-import { unwrapRemark } from '@kodadot1/minimark'
+import { unwrapRemark, isRemark } from '@kodadot1/minimark'
 
 
 export async function handleRemark(context: Context): Promise<void> {
   const { remark } = new SystemRemarkCall(context).asV1020
+  const value = remark.toString()
+
+  if (isRemark(value)) {
+    await mainFrame(remark.toString(), context)
+  } else {
+    logger.warn(`[NON RMRK VALUE] ${value}`)
+  }
   // const records = extractRemark(remark.toString(), context)
-  await mainFrame(remark.toString(), context)
 }
 
 // export async function handleBatch(context: Context): Promise<void> {
@@ -56,7 +62,7 @@ async function mainFrame(remark: string, context: Context): Promise<void> {
     const base = unwrap(context, (_: Context) => ({ value: remark }))
     try {
       const { interaction: event } = unwrapRemark<RmrkInteraction>(remark.toString())
-      logger.pending(`[${base.blockNumber}] Event ${event} `)
+      logger.pending(`[${event === RmrkEvent.MINT ? 'COLLECTION' : event}]: ${base.blockNumber}`)
 
       switch (event) {
         case RmrkEvent.MINT:
