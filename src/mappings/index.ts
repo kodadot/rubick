@@ -45,18 +45,7 @@ export async function handleRemark(context: Context): Promise<void> {
   } else {
     logger.warn(`[NON RMRK VALUE] ${value}`)
   }
-  // const records = extractRemark(remark.toString(), context)
 }
-
-// export async function handleBatch(context: Context): Promise<void> {
-//   const records = extractRemark(context.extrinsic, context)
-//   await mainFrame(records, context)
-// }
-
-// export async function handleBatchAll(context: Context): Promise<void> {
-//   const records = extractRemark(context.extrinsic, context)
-//   await mainFrame(records, context)
-// }
 
 async function mainFrame(remark: string, context: Context): Promise<void> {
     const base = unwrap(context, (_: Context) => ({ value: remark }))
@@ -133,7 +122,6 @@ async function mint(context: Context): Promise<void> {
     final.blockNumber = BigInt(blockNumber)
     final.metadata = collection.metadata
     final.createdAt = timestamp
-    // final.events = []
     // final.events = [collectionEventFrom(RmrkEvent.MINT, remark, '')]
 
     // logger.watch(`[MINT] ${final.events[0]}`)
@@ -149,8 +137,6 @@ async function mint(context: Context): Promise<void> {
     logError(e, (e) =>
       logger.error(`[COLLECTION] ${e.message}, ${JSON.stringify(collection)}`)
     )
-
-    // await logFail(JSON.stringify(collection), e.message, RmrkEvent.MINT)
   }
 }
 
@@ -159,7 +145,7 @@ async function mintNFT(
 ): Promise<void> {
   let nft: Optional<NFT> = null
   try {
-    const { value, caller, timestamp, blockNumber, version  } = unwrap(context, getCreateToken);
+    const { value, caller, timestamp, blockNumber } = unwrap(context, getCreateToken);
     nft = value
     plsBe(real, nft.collection)
     const collection = ensure<CollectionEntity>(
@@ -186,7 +172,6 @@ async function mintNFT(
     final.burned = false
     final.createdAt = timestamp
     final.updatedAt = timestamp
-    // final.events = [eventFrom(RmrkEvent.MINTNFT, remark, '')]
 
     if (final.metadata) {
       const metadata = await handleMetadata(final.metadata, final.name, context.store)
@@ -201,7 +186,6 @@ async function mintNFT(
     logError(e, (e) =>
       logger.error(`[MINT] ${e.message}, ${JSON.stringify(nft)}`)
     )
-    // await logFail(JSON.stringify(nft), e.message, RmrkEvent.MINTNFT)
   }
 }
 
@@ -209,7 +193,7 @@ async function send(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
 
   try {
-    const { value, caller, timestamp, blockNumber, version  } = unwrap(context, getInteraction);
+    const { value, caller, timestamp, blockNumber } = unwrap(context, getInteraction);
     interaction = value
 
     const nft = ensure<NFTEntity>(
@@ -229,7 +213,6 @@ async function send(context: Context) {
     logError(e, (e) =>
       logger.error(`[SEND] ${e.message} ${JSON.stringify(interaction)}`)
     )
-    // await logFail(JSON.stringify(interaction), e.message, RmrkEvent.SEND)
   }
 }
 
@@ -237,7 +220,7 @@ async function buy(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
 
   try {
-    const { value, caller, timestamp, blockNumber, version, extra  } = unwrap(context, getInteractionWithExtra);
+    const { value, caller, timestamp, blockNumber, extra } = unwrap(context, getInteractionWithExtra);
     interaction = value
 
     const nft = ensure<NFTEntity>(
@@ -266,7 +249,7 @@ async function consume(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
 
   try {
-    const { value, caller, timestamp, blockNumber, version } = unwrap(context, getInteraction);
+    const { value, caller, timestamp, blockNumber } = unwrap(context, getInteraction);
     interaction = value
     const nft = ensure<NFTEntity>(
       await get<NFTEntity>(context.store, NFTEntity, interaction.id)
@@ -285,8 +268,6 @@ async function consume(context: Context) {
     logError(e, (e) =>
       logger.warn(`[CONSUME] ${e.message} ${JSON.stringify(interaction)}`)
     )
-
-    // await logFail(JSON.stringify(interaction), e.message, RmrkEvent.CONSUME)
   }
 }
 
@@ -294,7 +275,7 @@ async function list(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
 
   try {
-    const { value, caller, timestamp, blockNumber, version } = unwrap(context, getInteraction);
+    const { value, caller, timestamp, blockNumber } = unwrap(context, getInteraction);
     interaction = value
     const nft = ensure<NFTEntity>(
       await get<NFTEntity>(context.store, NFTEntity, interaction.id)
@@ -314,8 +295,6 @@ async function list(context: Context) {
     logError(e, (e) =>
       logger.warn(`[LIST] ${e.message} ${JSON.stringify(interaction)}`)
     )
-
-    // await logFail(JSON.stringify(interaction), e.message, RmrkEvent.LIST)
   }
 }
 
@@ -346,7 +325,6 @@ async function changeIssuer(context: Context) {
     logError(e, (e) =>
       logger.warn(`[CHANGEISSUER] ${e.message} ${JSON.stringify(interaction)}`)
     )
-    // await logFail(JSON.stringify(interaction), e.message, RmrkEvent.CHANGEISSUER)
   }
 }
 
@@ -354,7 +332,7 @@ async function emote(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
 
   try {
-    const { value, caller, timestamp, blockNumber, version } = unwrap(context, getInteraction);
+    const { value, caller } = unwrap(context, getInteraction);
     interaction = value
     plsBe(withMeta, interaction)
     const nft = ensure<NFTEntity>(
@@ -382,13 +360,7 @@ async function emote(context: Context) {
     await context.store.save(emote)
   } catch (e) {
     logError(e, (e) => logger.warn(`[EMOTE] ${e.message}`))
-    // await logFail(JSON.stringify(interaction), e.message, RmrkEvent.EMOTE)
   }
-
-  // exists
-  // not burned
-  // transferable
-  // has meta
 }
 
 async function handleMetadata(
