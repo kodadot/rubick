@@ -370,10 +370,11 @@ async function handleMetadata(
   const partial: Partial<Metadata> = {
     id,
     description: metadata.description || '',
-    image: metadata.image,
-    animationUrl: metadata.animation_url,
+    image: metadata.image || metadata.thumbnailUri || metadata.mediaUri,
+    animationUrl: metadata.animation_url || metadata.mediaUri,
     attributes: metadata.attributes?.map(attributeFrom) || [],
     name: metadata.name || name,
+    type: metadata.type || '',
   }
 
   const final = create<Metadata>(Metadata, id, partial)

@@ -67,42 +67,8 @@ export interface IEvent<T = RmrkEvent> {
 
 export type RmrkInteraction = InteractionValue
 
-
-export interface Collection {
-  version: string;
-  name: string;
-  max: number;
-  issuer: string;
-  symbol: string;
-  id: string;
-  _id: string;
-  metadata: string;
-  blockNumber?: number;
-}
-
-// export type Collection = CreatedCollection
-// export type NFT = CreatedNFT
-
-export interface NFT {
-  name: string;
-  instance: string;
-  transferable: number;
-  collection: string;
-  sn: string;
-  _id: string;
-  id: string;
-  metadata: string;
-  currentOwner: string;
-  price?: string;
-  disabled?: boolean;
-  blockNumber?: number;
-}
-
-
-export interface RMRK {
-  event: RmrkEvent;
-  view: RmrkType;
-}
+export type Collection = CreatedCollection
+export type NFT = CreatedNFT
 
 export type EntityConstructor<T> = {
   new (...args: any[]): T;
@@ -136,6 +102,9 @@ export type TokenMetadata = {
   image: string
   animation_url?: string
   attributes?: MetadataAttribute[]
+  mediaUri?: string;
+  type?: string;
+  thumbnailUri?: string;
 }
 
 export type MetadataAttribute = {
