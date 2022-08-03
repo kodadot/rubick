@@ -5,7 +5,6 @@ import { addressOf } from './helper'
 import { ArchiveCall, BaseCall, BatchArg, CallWith, Context, Transfer, UnwrapFunc } from './types'
 const PREFIXES = ['0x726d726b', '0x524d524b', 'rmrk', 'RMRK']
 
-
  export type ExtraCall = BatchArg
 
  export interface RemarkResult extends BaseCall {
@@ -18,14 +17,16 @@ export type Records = RemarkResult[]
 
  const startsWithRemark = (value: string, prefixes: string[] = PREFIXES): boolean => (prefixes.length < 1 || prefixes.some((word) => value.startsWith(word)))
 
-//  const isSystemRemark = (call: SubstrateExtrinsic | TCall, prefixes: string[] = PREFIXES): boolean =>
-//   call.section === "system" &&
-//   call.method === "remark" &&
-//   startsWithRemark(call.args.toString(), prefixes)
+ const isSystemRemark = (call: ArchiveCall, prefixes: string[] = PREFIXES): boolean =>
+  call.__kind === 'System' &&
+  call.value.__kind === "remark" &&
+  startsWithRemark(call.value.remark, prefixes)
 
 const isUtilityBatch = (call?: SubstrateCall) => call && (call.name === 'Utility.batch_all' || call.name === 'Utility.batch')
 
-const filterTransfers = ({ __kind }: ArchiveCall) => __kind === 'Balances'
+const filterTransfers = ({ __kind, value }: ArchiveCall) => __kind === 'Balances' && value.__kind === 'transfer'
+
+const filterRemarks = (call: ArchiveCall) => isSystemRemark(call)
 
 const mapToSquidCall = (arg: ArchiveCall): Call => ({
   name: arg.__kind + '.transfer',
