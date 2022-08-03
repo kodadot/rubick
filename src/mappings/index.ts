@@ -1,39 +1,28 @@
 import {
   CollectionEntity,
-  Emote,
-  MetadataEntity as Metadata,
-  NFTEntity,
-  Event,
-  Interaction,
+  Emote, Event,
+  Interaction, MetadataEntity as Metadata,
+  NFTEntity
 } from '../model/generated'
 
+import { isRemark, unwrapRemark } from '@kodadot1/minimark'
+import md5 from 'md5'
+import { SystemRemarkCall } from '../types/calls'
 import { unwrap } from './utils'
+import { updateCache } from './utils/cache'
+import { burned, isBuyLegalOrElseError, isInteractive, isOwnerOrElseError, isPositiveOrElseError, plsBe, plsNotBe, real, validateInteraction, withMeta } from './utils/consolidator'
+import { create, get } from './utils/entity'
+import { getCreateCollection, getCreateToken, getInteraction, getInteractionWithExtra } from './utils/getters'
+import { emoteId, ensure, eventId, isEmpty } from './utils/helper'
+import logger, { logError } from './utils/logger'
+import { fetchMetadata } from './utils/metadata'
 import {
-  attributeFrom,
-  Collection,
-  eventFrom,
-  getNftId,
-  TokenMetadata,
-  NFT,
+  attributeFrom, BaseCall, Collection, Context, eventFrom,
+  getNftId, NFT,
   Optional,
   RmrkEvent,
-  RmrkInteraction,
-  collectionEventFrom,
-  Store,
-  BaseCall
+  RmrkInteraction, Store, TokenMetadata
 } from './utils/types'
-import NFTUtils, { hexToString } from './utils/NftUtils'
-import { isBuyLegalOrElseError, isOwnerOrElseError, isPositiveOrElseError, validateInteraction, plsBe, real, isInteractive, plsNotBe, burned, withMeta } from './utils/consolidator'
-import { emoteId, ensure, ensureInteraction, isEmpty, eventId } from './utils/helper'
-import { SystemRemarkCall  } from '../types/calls'
-import { Context } from './utils/types'
-import logger, { logError } from './utils/logger'
-import { create, get } from './utils/entity'
-import { fetchMetadata } from './utils/metadata'
-import {updateCache} from './utils/cache'
-import md5 from 'md5'
-import { getCreateCollection, getCreateToken, getInteraction, getInteractionWithExtra } from './utils/getters'
-import { unwrapRemark, isRemark } from '@kodadot1/minimark'
 
 
 export async function handleRemark(context: Context): Promise<void> {
