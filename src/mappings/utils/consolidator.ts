@@ -16,7 +16,7 @@ export function transferable({ transferable }: NFTEntity) {
 }
 
 export function withMeta(interaction: RmrkInteraction): interaction is RmrkInteraction  {
-  return !!interaction.metadata
+  return !!interaction.value
 }
 
 export function isOwner(entity: Entity, caller: string) {
