@@ -6,7 +6,7 @@ import {
   Event,
 } from '../model/generated'
 
-import { extractRemark, Records, RemarkResult } from './utils'
+import { extractRemark, Records, RemarkResult, unwrap } from './utils'
 import {
   attributeFrom,
   Collection,
@@ -30,12 +30,14 @@ import { create, get } from './utils/entity'
 import { fetchMetadata } from './utils/metadata'
 import {updateCache} from './utils/cache'
 import md5 from 'md5'
+import { getCreateCollection } from './utils/getters'
+import { unwrapRemark } from '@kodadot1/minimark'
 
 
 export async function handleRemark(context: Context): Promise<void> {
-  const remark = new SystemRemarkCall(context).asV1020.remark
-  const records = extractRemark(remark.toString(), context)
-  await mainFrame(records, context)
+  const { remark } = new SystemRemarkCall(context).asV1020
+  // const records = extractRemark(remark.toString(), context)
+  await mainFrame(remark.toString(), context)
 }
 
 // export async function handleBatch(context: Context): Promise<void> {
@@ -48,59 +50,56 @@ export async function handleRemark(context: Context): Promise<void> {
 //   await mainFrame(records, context)
 // }
 
-async function mainFrame(records: Records, context: Context): Promise<void> {
-  for (const remark of records) {
+async function mainFrame(remark: string, context: Context): Promise<void> {
+    const base = unwrap(context, (_: Context) => ({ value: remark }))
     try {
-      const decoded = hexToString(remark.value)
-      const event: RmrkEvent = NFTUtils.getAction(decoded)
-      logger.pending(`[${remark.blockNumber}] Event ${event} `)
+      const { interaction: event } = unwrapRemark<RmrkInteraction>(remark.toString())
+      logger.pending(`[${base.blockNumber}] Event ${event} `)
 
       switch (event) {
         case RmrkEvent.MINT:
-          await mint(remark, context)
+          await mint(context)
           break
         case RmrkEvent.MINTNFT:
-          await mintNFT(remark, context)
+          await mintNFT(context)
           break
         case RmrkEvent.SEND:
-          await send(remark, context)
+          await send(context)
           break
         case RmrkEvent.BUY:
-          await buy(remark, context)
+          await buy(context)
           break
         case RmrkEvent.CONSUME:
-          await consume(remark, context)
+          await consume(context)
           break
         case RmrkEvent.LIST:
-          await list(remark, context)
+          await list(context)
           break
         case RmrkEvent.CHANGEISSUER:
-          await changeIssuer(remark, context)
+          await changeIssuer(context)
           break
         case RmrkEvent.EMOTE:
-          await emote(remark, context)
+          await emote(context)
           break
         default:
-          logger.error(
-            `[SKIP] ${event}::${remark.value}::${remark.blockNumber}`
+          logger.start(
+            `[SKIP] ${event}::${base.value}::${base.blockNumber}`
           )
       }
-      await updateCache(remark.timestamp,context.store)
+      await updateCache(base.timestamp,context.store)
     } catch (e) {
       logger.warn(
-        `[MALFORMED] ${remark.blockNumber}::${hexToString(remark.value)}`
+        `[MALFORMED] Block ${base.blockNumber},\nRMRK ${hexToString(base.value)}\n${(e as Error).message}`
       )
     }
   }
-}
 
-async function mint(remark: RemarkResult, { store }: Context): Promise<void> {
-  let collection: Optional<Collection> = null
+async function mint(context: Context): Promise<void> {
   try {
-    collection = NFTUtils.unwrap(remark.value) as Collection
+    const { value: collection, caller, timestamp, blockNumber, version  } = unwrap(context, getCreateCollection);
     plsBe<string>(real, collection.id)
     const entity = await get<CollectionEntity>(
-      store,
+      context.store,
       CollectionEntity,
       collection.id
     )
@@ -110,18 +109,18 @@ async function mint(remark: RemarkResult, { store }: Context): Promise<void> {
 
     final.name = collection.name.trim()
     final.max = Number(collection.max) || 0
-    final.issuer = remark.caller
-    final.currentOwner = remark.caller
+    final.issuer = caller
+    final.currentOwner = caller
     final.symbol = collection.symbol.trim()
-    final.blockNumber = BigInt(remark.blockNumber)
+    final.blockNumber = BigInt(blockNumber)
     final.metadata = collection.metadata
-    final.createdAt = remark.timestamp
+    final.createdAt = timestamp
     // final.events = []
     final.events = [collectionEventFrom(RmrkEvent.MINT, remark, '')]
 
     // logger.watch(`[MINT] ${final.events[0]}`)
 
-    const metadata = await handleMetadata(final.metadata, final.name, store)
+    const metadata = await handleMetadata(final.metadata, final.name, context.store)
     final.meta = metadata
 
     logger.success(`[COLLECTION] ${final.id}`)
