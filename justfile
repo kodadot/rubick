@@ -36,6 +36,8 @@ bug: down up
 
 reset: migrate
 
+quickstart: migrate process
+
 migrate:
 	npx squid-typeorm-migration apply
 
