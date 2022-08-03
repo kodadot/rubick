@@ -165,8 +165,10 @@ async function mintNFT(
     )
     plsBe(real, collection)
     isOwnerOrElseError(collection, caller)
-    const final = create<NFTEntity>(NFTEntity, collection.id, {})
     const id = getNftId(nft, blockNumber)
+    // const entity = await get<NFTEntity>(context.store, NFTEntity, id)
+    // plsNotBe<NFTEntity>(real, entity as NFTEntity)
+    const final = create<NFTEntity>(NFTEntity, id, {})
     final.id = id
     final.hash = md5(id)
     final.issuer = caller
