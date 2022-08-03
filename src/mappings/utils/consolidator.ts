@@ -1,5 +1,6 @@
 import { BatchArg, ExtraCall, RmrkInteraction, Transfer } from './types'
 import { CollectionEntity, NFTEntity } from '../../model/generated'
+import { serializer } from './serializer'
 
 type Entity = CollectionEntity | NFTEntity
 
@@ -72,7 +73,7 @@ export function isBuyLegalOrElseError(entity: NFTEntity, extraCalls: Transfer[])
   const cb = canBuy(entity)
   const result = extraCalls.some(cb)
   if (!result) {
-    throw new ReferenceError(`[CONSOLIDATE ILLEGAL BUY] Entity: ${entity.id} CALLS: ${JSON.stringify(extraCalls)}`)
+    throw new ReferenceError(`[CONSOLIDATE ILLEGAL BUY] Entity: ${entity.id} CALLS: ${JSON.stringify(extraCalls, serializer)}`)
   }
 }
 
