@@ -3,6 +3,7 @@ import { CallHandlerContext } from '@subsquid/substrate-processor'
 
 import { RemarkResult } from './extract'
 import type { EntityManager } from 'typeorm'
+import type { CreatedNFT, CreatedCollection, InteractionValue } from '@kodadot1/minimark'
 
 export type Store = EntityManager
 
@@ -64,10 +65,12 @@ export interface IEvent {
   meta: string;
 }
 
-export interface RmrkInteraction {
-  id: string;
-  metadata?: string;
-}
+export type RmrkInteraction = InteractionValue
+
+// export interface RmrkInteraction {
+//   id: string;
+//   metadata?: string;
+// }
 
 export interface Collection {
   version: string;
@@ -80,6 +83,9 @@ export interface Collection {
   metadata: string;
   blockNumber?: number;
 }
+
+// export type Collection = CreatedCollection
+// export type NFT = CreatedNFT
 
 export interface NFT {
   name: string;
@@ -145,6 +151,15 @@ export type MetadataAttribute = {
 export type Transfer = {
   to: any,
   value: bigint
+}
+
+
+
+export type InteractionWithExtra = InteractionValue & ExtraCall
+
+export type ExtraCall = {
+  transfers: Transfer[]
+  remarkCount: number // kodadot/rubick#6
 }
 
 export enum DisplayType {
