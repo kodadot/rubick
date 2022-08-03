@@ -32,7 +32,7 @@ import { create, get } from './utils/entity'
 import { fetchMetadata } from './utils/metadata'
 import {updateCache} from './utils/cache'
 import md5 from 'md5'
-import { getCreateCollection, getCreateToken, getInteraction } from './utils/getters'
+import { getCreateCollection, getCreateToken, getInteraction, getInteractionWithExtra } from './utils/getters'
 import { unwrapRemark } from '@kodadot1/minimark'
 
 
@@ -216,28 +216,28 @@ async function send(context: Context) {
   }
 }
 
-async function buy(remark: RemarkResult, { store }: Context) {
+async function buy(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
 
   try {
-    interaction = ensureInteraction(
-      NFTUtils.unwrap(remark.value) as RmrkInteraction
-    )
+    const { value, caller, timestamp, blockNumber, version, extra  } = unwrap(context, getInteractionWithExtra);
+    interaction = value
+
     const nft = ensure<NFTEntity>(
-      await get<NFTEntity>(store, NFTEntity, interaction.id)
+      await get<NFTEntity>(context.store, NFTEntity, interaction.id)
     )
     isInteractive(nft)
     isPositiveOrElseError(nft.price, true)
-    isBuyLegalOrElseError(nft, remark.extra || [])
+    isBuyLegalOrElseError(nft, extra || [])
     const originalPrice = nft.price
     const originalOwner = nft.currentOwner ?? undefined
-    nft.currentOwner = remark.caller
+    nft.currentOwner = caller
     nft.price = BigInt(0)
-    nft.updatedAt = remark.timestamp
+    nft.updatedAt = timestamp
 
-    logger.success(`[BUY] ${nft.id} from ${remark.caller}`)
-    await store.save(nft)
-    await createEvent(nft, RmrkEvent.BUY, remark, String(originalPrice), store, originalOwner)
+    logger.success(`[BUY] ${nft.id} from ${caller}`)
+    await context.store.save(nft)
+    await createEvent(nft, RmrkEvent.BUY, { blockNumber, caller, timestamp }, String(originalPrice), context.store, originalOwner)
   } catch (e) {
     logError(e, (e) =>
       logger.error(`[BUY] ${e.message} ${JSON.stringify(interaction)}`)
