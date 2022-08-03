@@ -1,4 +1,4 @@
-import { BatchArg, RmrkInteraction } from './types'
+import { BatchArg, ExtraCall, RmrkInteraction } from './types'
 import { CollectionEntity, NFTEntity } from '../../model/generated'
 
 type Entity = CollectionEntity | NFTEntity
@@ -72,5 +72,12 @@ export function isBuyLegalOrElseError(entity: NFTEntity, extraCalls: BatchArg[])
   const result = extraCalls.some(canBuy(entity))
   if (!result) {
     throw new ReferenceError(`[CONSOLIDATE ILLEGAL BUY] Entity: ${entity.id} CALLS: ${JSON.stringify(extraCalls)}`)
+  }
+}
+
+// kodadot/rubick#6
+function paperCut({id}: NFTEntity, { remarkCount }: ExtraCall) {
+  if (remarkCount > 1) {
+    throw new ReferenceError(`[CONSOLIDATE] Entity: ${id} should have only one remark per batch, got: ${remarkCount}`)
   }
 }
