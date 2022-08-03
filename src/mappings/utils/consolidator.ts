@@ -1,4 +1,4 @@
-import { BatchArg, ExtraCall, RmrkInteraction } from './types'
+import { BatchArg, ExtraCall, RmrkInteraction, Transfer } from './types'
 import { CollectionEntity, NFTEntity } from '../../model/generated'
 
 type Entity = CollectionEntity | NFTEntity
@@ -66,10 +66,11 @@ export function isPositiveOrElseError(entity: bigint | number, excludeZero?: boo
 }
 
 export const isBalanceTransfer = ({ callIndex }: BatchArg): boolean => callIndex === '0x0400'
-const canBuy = (nft: NFTEntity) => (call: BatchArg) => isBalanceTransfer(call) && isOwner(nft, call.args.dest.id) && BigInt(call.args.value) >= BigInt(nft.price ?? 0)
+const canBuy = (nft: NFTEntity) => ({ to, value }: Transfer) => isOwner(nft, to) && BigInt(value) >= BigInt(nft.price ?? 0)
 
-export function isBuyLegalOrElseError(entity: NFTEntity, extraCalls: BatchArg[]) {
-  const result = extraCalls.some(canBuy(entity))
+export function isBuyLegalOrElseError(entity: NFTEntity, extraCalls: Transfer[]) {
+  const cb = canBuy(entity)
+  const result = extraCalls.some(cb)
   if (!result) {
     throw new ReferenceError(`[CONSOLIDATE ILLEGAL BUY] Entity: ${entity.id} CALLS: ${JSON.stringify(extraCalls)}`)
   }
