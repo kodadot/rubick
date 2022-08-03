@@ -1,10 +1,7 @@
-import { nanoid } from 'nanoid'
-import { ArchiveCall, ArchiveCallWithOptionalValue, RmrkEvent, RmrkInteraction } from './types'
-import * as ss58 from '@subsquid/ss58';
-import { Chain, } from '@subsquid/substrate-processor/lib/chain'
-import { Call } from '../../types/support'
-import { encode } from '@subsquid/ss58'
+import * as ss58 from '@subsquid/ss58'
 import { decodeHex } from '@subsquid/substrate-processor'
+import { nanoid } from 'nanoid'
+import { ArchiveCallWithOptionalValue, RmrkEvent, RmrkInteraction } from './types'
 export { isEmpty } from '@kodadot1/minimark'
 
 export const trim = (text?: string) => (text || '').trim()
