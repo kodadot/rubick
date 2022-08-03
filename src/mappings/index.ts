@@ -115,7 +115,6 @@ async function mint(context: Context): Promise<void> {
   try {
     const { value, caller, timestamp, blockNumber, version  } = unwrap(context, getCreateCollection);
     collection = value
-    logger.pending(`[COLECTTION++]: ${blockNumber}`);
     plsBe<string>(real, collection.id)
     const entity = await get<CollectionEntity>(
       context.store,
@@ -189,8 +188,10 @@ async function mintNFT(
     final.updatedAt = timestamp
     // final.events = [eventFrom(RmrkEvent.MINTNFT, remark, '')]
 
-    const metadata = await handleMetadata(final.metadata, final.name, context.store)
-    final.meta = metadata
+    if (final.metadata) {
+      const metadata = await handleMetadata(final.metadata, final.name, context.store)
+      final.meta = metadata
+    }
 
     logger.success(`[MINT] ${final.id}`)
     await context.store.save(final)
