@@ -4,6 +4,7 @@ import {
   MetadataEntity as Metadata,
   NFTEntity,
   Event,
+  Interaction,
 } from '../model/generated'
 
 import { extractRemark, Records, RemarkResult, unwrap } from './utils'
@@ -18,7 +19,8 @@ import {
   RmrkEvent,
   RmrkInteraction,
   collectionEventFrom,
-  Store
+  Store,
+  BaseCall
 } from './utils/types'
 import NFTUtils, { hexToString } from './utils/NftUtils'
 import { isBuyLegalOrElseError, isOwnerOrElseError, isPositiveOrElseError, validateInteraction, plsBe, real, isInteractive, plsNotBe, burned, withMeta } from './utils/consolidator'
@@ -30,7 +32,7 @@ import { create, get } from './utils/entity'
 import { fetchMetadata } from './utils/metadata'
 import {updateCache} from './utils/cache'
 import md5 from 'md5'
-import { getCreateCollection } from './utils/getters'
+import { getCreateCollection, getCreateToken, getInteraction } from './utils/getters'
 import { unwrapRemark } from '@kodadot1/minimark'
 
 
@@ -95,8 +97,11 @@ async function mainFrame(remark: string, context: Context): Promise<void> {
   }
 
 async function mint(context: Context): Promise<void> {
+  let collection: Optional<Collection> = null
   try {
-    const { value: collection, caller, timestamp, blockNumber, version  } = unwrap(context, getCreateCollection);
+    const { value, caller, timestamp, blockNumber, version  } = unwrap(context, getCreateCollection);
+    collection = value
+    logger.pending(`[COLECTTION++]: ${blockNumber}`);
     plsBe<string>(real, collection.id)
     const entity = await get<CollectionEntity>(
       context.store,
@@ -116,15 +121,17 @@ async function mint(context: Context): Promise<void> {
     final.metadata = collection.metadata
     final.createdAt = timestamp
     // final.events = []
-    final.events = [collectionEventFrom(RmrkEvent.MINT, remark, '')]
+    // final.events = [collectionEventFrom(RmrkEvent.MINT, remark, '')]
 
     // logger.watch(`[MINT] ${final.events[0]}`)
 
-    const metadata = await handleMetadata(final.metadata, final.name, context.store)
-    final.meta = metadata
+    if (final.metadata) {
+      const metadata = await handleMetadata(final.metadata, final.name, context.store)
+      final.meta = metadata
+    }
 
     logger.success(`[COLLECTION] ${final.id}`)
-    await store.save(final)
+    await context.store.save(final)
   } catch (e) {
     logError(e, (e) =>
       logger.error(`[COLLECTION] ${e.message}, ${JSON.stringify(collection)}`)
@@ -135,25 +142,25 @@ async function mint(context: Context): Promise<void> {
 }
 
 async function mintNFT(
-  remark: RemarkResult,
-  { store }: Context
+  context: Context
 ): Promise<void> {
   let nft: Optional<NFT> = null
   try {
-    nft = NFTUtils.unwrap(remark.value) as NFT
+    const { value, caller, timestamp, blockNumber, version  } = unwrap(context, getCreateToken);
+    nft = value
     plsBe(real, nft.collection)
     const collection = ensure<CollectionEntity>(
-      await get<CollectionEntity>(store, CollectionEntity, nft.collection)
+      await get<CollectionEntity>(context.store, CollectionEntity, nft.collection)
     )
     plsBe(real, collection)
-    isOwnerOrElseError(collection, remark.caller)
+    isOwnerOrElseError(collection, caller)
     const final = create<NFTEntity>(NFTEntity, collection.id, {})
-    const id = getNftId(nft, remark.blockNumber)
+    const id = getNftId(nft, blockNumber)
     final.id = id
     final.hash = md5(id)
-    final.issuer = remark.caller
-    final.currentOwner = remark.caller
-    final.blockNumber = BigInt(remark.blockNumber)
+    final.issuer = caller
+    final.currentOwner = caller
+    final.blockNumber = BigInt(blockNumber)
     final.name = nft.name
     final.instance = nft.instance
     final.transferable = nft.transferable
@@ -162,16 +169,16 @@ async function mintNFT(
     final.metadata = nft.metadata
     final.price = BigInt(0)
     final.burned = false
-    final.createdAt = remark.timestamp
-    final.updatedAt = remark.timestamp
+    final.createdAt = timestamp
+    final.updatedAt = timestamp
     // final.events = [eventFrom(RmrkEvent.MINTNFT, remark, '')]
 
-    const metadata = await handleMetadata(final.metadata, final.name, store)
+    const metadata = await handleMetadata(final.metadata, final.name, context.store)
     final.meta = metadata
 
     logger.success(`[MINT] ${final.id}`)
-    await store.save(final)
-    await createEvent(final, RmrkEvent.MINTNFT, remark, '', store)
+    await context.store.save(final)
+    await createEvent(final, RmrkEvent.MINTNFT, { blockNumber, caller, timestamp }, '', context.store)
 
   } catch (e) {
     logError(e, (e) =>
@@ -181,27 +188,26 @@ async function mintNFT(
   }
 }
 
-async function send(remark: RemarkResult, { store }: Context) {
+async function send(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
 
   try {
-    interaction = ensureInteraction(
-      NFTUtils.unwrap(remark.value) as RmrkInteraction
-    )
+    const { value, caller, timestamp, blockNumber, version  } = unwrap(context, getInteraction);
+    interaction = value
 
     const nft = ensure<NFTEntity>(
-      await get<NFTEntity>(store, NFTEntity, interaction.id)
+      await get<NFTEntity>(context.store, NFTEntity, interaction.id)
     )
     validateInteraction(nft, interaction)
-    isOwnerOrElseError(nft, remark.caller)
+    isOwnerOrElseError(nft, caller)
     const originalOwner = nft.currentOwner ?? undefined
-    nft.currentOwner = interaction.metadata
+    nft.currentOwner = interaction.value
     nft.price = BigInt(0)
-    nft.updatedAt = remark.timestamp
+    nft.updatedAt = timestamp
 
-    logger.success(`[SEND] ${nft.id} to ${interaction.metadata}`)
-    await store.save(nft)
-    await createEvent(nft, RmrkEvent.SEND, remark, interaction.metadata || '', store, originalOwner)
+    logger.success(`[SEND] ${nft.id} to ${interaction.value}`)
+    await context.store.save(nft)
+    await createEvent(nft, RmrkEvent.SEND, { blockNumber, caller, timestamp }, interaction.value || '', context.store, originalOwner)
   } catch (e) {
     logError(e, (e) =>
       logger.error(`[SEND] ${e.message} ${JSON.stringify(interaction)}`)
@@ -239,26 +245,25 @@ async function buy(remark: RemarkResult, { store }: Context) {
   }
 }
 
-async function consume(remark: RemarkResult, { store }: Context) {
+async function consume(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
 
   try {
-    interaction = ensureInteraction(
-      NFTUtils.unwrap(remark.value) as RmrkInteraction
-    )
+    const { value, caller, timestamp, blockNumber, version } = unwrap(context, getInteraction);
+    interaction = value
     const nft = ensure<NFTEntity>(
-      await get<NFTEntity>(store, NFTEntity, interaction.id)
+      await get<NFTEntity>(context.store, NFTEntity, interaction.id)
     )
     plsBe<NFTEntity>(real, nft)
     plsNotBe<NFTEntity>(burned, nft)
-    isOwnerOrElseError(nft, remark.caller)
+    isOwnerOrElseError(nft, caller)
     nft.price = BigInt(0)
     nft.burned = true
-    nft.updatedAt = remark.timestamp
+    nft.updatedAt = timestamp
 
-    logger.success(`[CONSUME] ${nft.id} from ${remark.caller}`)
-    await store.save(nft)
-    await createEvent(nft, RmrkEvent.CONSUME, remark, '', store)
+    logger.success(`[CONSUME] ${nft.id} from ${caller}`)
+    await context.store.save(nft)
+    await createEvent(nft, RmrkEvent.CONSUME, { blockNumber, caller, timestamp }, '', context.store)
   } catch (e) {
     logError(e, (e) =>
       logger.warn(`[CONSUME] ${e.message} ${JSON.stringify(interaction)}`)
@@ -268,27 +273,26 @@ async function consume(remark: RemarkResult, { store }: Context) {
   }
 }
 
-async function list(remark: RemarkResult, { store }: Context) {
+async function list(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
 
   try {
-    interaction = ensureInteraction(
-      NFTUtils.unwrap(remark.value) as RmrkInteraction
-    )
+    const { value, caller, timestamp, blockNumber, version } = unwrap(context, getInteraction);
+    interaction = value
     const nft = ensure<NFTEntity>(
-      await get<NFTEntity>(store, NFTEntity, interaction.id)
+      await get<NFTEntity>(context.store, NFTEntity, interaction.id)
     )
     validateInteraction(nft, interaction)
-    isOwnerOrElseError(nft, remark.caller)
-    const price = BigInt(interaction.metadata || '0')
+    isOwnerOrElseError(nft, caller)
+    const price = BigInt(interaction.value || '0')
     isPositiveOrElseError(price)
     nft.price = price
-    nft.updatedAt = remark.timestamp
+    nft.updatedAt = timestamp
 
-    logger.success(`[LIST] ${nft.id} from ${remark.caller}`)
-    await store.save(nft)
+    logger.success(`[LIST] ${nft.id} from ${caller}`)
+    await context.store.save(nft)
     const event = nft.price === 0n ? RmrkEvent.UNLIST : RmrkEvent.LIST
-    await createEvent(nft, event, remark, String(price), store)
+    await createEvent(nft, event, { blockNumber, caller, timestamp }, String(price), context.store)
   } catch (e) {
     logError(e, (e) =>
       logger.warn(`[LIST] ${e.message} ${JSON.stringify(interaction)}`)
@@ -298,30 +302,29 @@ async function list(remark: RemarkResult, { store }: Context) {
   }
 }
 
-async function changeIssuer(remark: RemarkResult, { store }: Context) {
+async function changeIssuer(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
 
   try {
-    interaction = ensureInteraction(
-      NFTUtils.unwrap(remark.value) as RmrkInteraction
-    )
+    const { value, caller } = unwrap(context, getInteraction);
+    interaction = value
     plsBe(withMeta, interaction)
     const collection = ensure<CollectionEntity>(
-      await get<CollectionEntity>(store, CollectionEntity, interaction.id)
+      await get<CollectionEntity>(context.store, CollectionEntity, interaction.id)
     )
     plsBe<CollectionEntity>(real, collection)
-    isOwnerOrElseError(collection, remark.caller)
-    collection.currentOwner = interaction.metadata
-    collection.events?.push(
-      collectionEventFrom(
-        RmrkEvent.CHANGEISSUER,
-        remark,
-        ensure<string>(interaction.metadata)
-      )
-    )
+    isOwnerOrElseError(collection, caller)
+    collection.currentOwner = interaction.value
+    // collection.events?.push(
+    //   collectionEventFrom(
+    //     RmrkEvent.CHANGEISSUER,
+    //     remark,
+    //     ensure<string>(interaction.metadata)
+    //   )
+    // )
 
-    logger.success(`[CHANGEISSUER] ${collection.id} from ${remark.caller}`)
-    await store.save(collection)
+    logger.success(`[CHANGEISSUER] ${collection.id} from ${caller}`)
+    await context.store.save(collection)
   } catch (e) {
     logError(e, (e) =>
       logger.warn(`[CHANGEISSUER] ${e.message} ${JSON.stringify(interaction)}`)
@@ -330,37 +333,36 @@ async function changeIssuer(remark: RemarkResult, { store }: Context) {
   }
 }
 
-async function emote(remark: RemarkResult, { store }: Context) {
+async function emote(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
 
   try {
-    interaction = ensureInteraction(
-      NFTUtils.unwrap(remark.value) as RmrkInteraction
-    )
+    const { value, caller, timestamp, blockNumber, version } = unwrap(context, getInteraction);
+    interaction = value
     plsBe(withMeta, interaction)
     const nft = ensure<NFTEntity>(
-      await get<NFTEntity>(store, NFTEntity, interaction.id)
+      await get<NFTEntity>(context.store, NFTEntity, interaction.id)
     )
     plsBe<NFTEntity>(real, nft)
     plsNotBe<NFTEntity>(burned, nft)
-    const id = emoteId(interaction, remark.caller)
-    let emote = await get<Emote>(store, Emote, interaction.id)
+    const id = emoteId(interaction, caller)
+    let emote = await get<Emote>(context.store, Emote, interaction.id)
 
     if (emote) {
-      await store.remove(emote)
+      await context.store.remove(emote)
       return
     }
 
     emote = create<Emote>(Emote, id, {
       id,
-      caller: remark.caller,
-      value: interaction.metadata,
+      caller,
+      value: interaction.value,
     })
 
     emote.nft = nft
 
-    logger.success(`[EMOTE] ${nft.id} from ${remark.caller}`)
-    await store.save(emote)
+    logger.success(`[EMOTE] ${nft.id} from ${caller}`)
+    await context.store.save(emote)
   } catch (e) {
     logError(e, (e) => logger.warn(`[EMOTE] ${e.message}`))
     // await logFail(JSON.stringify(interaction), e.message, RmrkEvent.EMOTE)
@@ -402,10 +404,10 @@ async function handleMetadata(
 }
 
 
-async function createEvent(final: NFTEntity, interaction: RmrkEvent, remark: RemarkResult, meta: string, store: Store, currentOwner?: string) {
+async function createEvent(final: NFTEntity, interaction: Interaction, call: BaseCall, meta: string, store: Store, currentOwner?: string) {
   try {
     const newEventId = eventId(final.id, interaction)
-    const event = create<Event>(Event, newEventId, eventFrom(interaction, remark, meta, currentOwner))
+    const event = create<Event>(Event, newEventId, eventFrom(interaction, call, meta, currentOwner))
     event.nft = final
     await store.save(event)
   } catch (e) {
@@ -413,56 +415,4 @@ async function createEvent(final: NFTEntity, interaction: RmrkEvent, remark: Rem
   }
   
 }
-// export async function balancesTransfer({
-//   store,
-//   event,
-//   block,
-//   extrinsic,
-// }: EventContext ): void {
 
-//   const [from, to, value] = new Balances.TransferEvent(event).params
-//   const tip = extrinsic?.tip || 0n
-
-//   const fromAcc = await getOrCreate(store, Account, from.toHex())
-//   fromAcc.wallet = from.toHuman()
-//   fromAcc.balance = fromAcc.balance || 0n
-//   fromAcc.balance -= value.toBigInt()
-//   fromAcc.balance -= tip
-//   await store.save(fromAcc)
-
-//   const toAcc = await getOrCreate(store, Account, to.toHex())
-//   toAcc.wallet = to.toHuman()
-//   toAcc.balance = toAcc.balance || 0n
-//   toAcc.balance += value.toBigInt()
-//   await store.save(toAcc)
-
-//   const hbFrom = new HistoricalBalance()
-//   hbFrom.account = fromAcc;
-//   hbFrom.balance = fromAcc.balance;
-//   hbFrom.timestamp = new Date(block.timestamp)
-//   await store.save(hbFrom)
-
-//   const hbTo = new HistoricalBalance()
-//   hbTo.account = toAcc;
-//   hbTo.balance = toAcc.balance;
-//   hbTo.timestamp = new Date(block.timestamp)
-//   await store.save(hbTo)
-// }
-
-// async function getOrCreate<T extends {id: string}>(
-//   store: Store,
-//   entityConstructor: EntityConstructor<T>,
-//   id: string
-// ): Promise<T> {
-
-//   let e = await store.get(entityConstructor, {
-//     where: { id },
-//   })
-
-//   if (e == null) {
-//     e = new entityConstructor()
-//     e.id = id
-//   }
-
-//   return e
-// }
