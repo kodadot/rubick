@@ -80,9 +80,9 @@ async function mainFrame(remark: string, context: Context): Promise<void> {
       await updateCache(base.timestamp,context.store)
     } catch (e) {
       logger.warn(
-        `[MALFORMED]\n
-         [BLOCK] ${base.blockNumber}\n
-         [ERROR] ${(e as Error).message}\n
+        `[MALFORMED]
+         [BLOCK] ${base.blockNumber}
+         [ERROR] ${(e as Error).message}
          [RMRK] ${base.value}`
       )
     }
