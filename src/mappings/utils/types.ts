@@ -150,8 +150,9 @@ export type Transfer = {
 }
 
 
-
-export type InteractionWithExtra = InteractionValue & ExtraCall
+export type InteractionExtra<T = Transfer[]> = {
+  extra: T
+}
 
 export type ExtraCall = {
   transfers: Transfer[]
