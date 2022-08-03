@@ -1,13 +1,27 @@
 import { BalancesTransferCall, SystemRemarkCall } from '../../types/calls'
-import { Context, Transfer } from './types'
+import { Collection, Context, NFT, Transfer } from './types'
 import { CallContext } from '../../types/support'
-import { addressOf, onlyValue } from './helper'
+import { addressOf, ensureInteraction, onlyValue } from './helper'
 import { unwrapRemark, UnwrappedRemark, InteractionValue } from '@kodadot1/minimark'
 
-export function getRemark<T = InteractionValue>(ctx: Context): UnwrappedRemark<T | InteractionValue> {
+function getRemark<T = InteractionValue>(ctx: Context): UnwrappedRemark<T | InteractionValue> {
   const { remark } = new SystemRemarkCall(ctx).asV1020
   return unwrapRemark<T>(remark.toString())
 }
+
+export function getCreateCollection(ctx: Context): UnwrappedRemark<Collection> {
+  return getRemark<any>(ctx) as UnwrappedRemark<Collection>
+}
+
+export function getCreateToken(ctx: Context): UnwrappedRemark<NFT> {
+  return getRemark<any>(ctx) as UnwrappedRemark<NFT>
+}
+
+export function getInteraction(ctx: Context): UnwrappedRemark<InteractionValue> {
+  const { value, ...rest } = getRemark<InteractionValue>(ctx)
+  return { ...rest, value: ensureInteraction(value) }
+}
+
 // export function getBalancesTransfer(ctx: CallContext): Transfer {
 //   const transfer = new BalancesTransferCall(ctx)
 
