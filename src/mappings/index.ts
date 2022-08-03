@@ -61,8 +61,13 @@ export async function handleRemark(context: Context): Promise<void> {
 async function mainFrame(remark: string, context: Context): Promise<void> {
     const base = unwrap(context, (_: Context) => ({ value: remark }))
     try {
-      const { interaction: event } = unwrapRemark<RmrkInteraction>(remark.toString())
+      const { interaction: event, version } = unwrapRemark<RmrkInteraction>(remark.toString())
       logger.pending(`[${event === RmrkEvent.MINT ? 'COLLECTION' : event}]: ${base.blockNumber}`)
+
+      if (version === '2.0.0') {
+        logger.star(`[RMRK::2.0.0] is not supported, please help us to make it awesome ${remark}`)
+        return;
+      }
 
       switch (event) {
         case RmrkEvent.MINT:
