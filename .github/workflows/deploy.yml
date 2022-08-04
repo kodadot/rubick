@@ -1,0 +1,21 @@
+name: deploy
+on:
+  push:
+    branches:
+      - "release/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: install @subsquid/cli
+        run: npm install -g @subsquid/cli
+      - run: |
+          BRANCH=${{ github.ref_name }}
+          echo $BRANCH
+      # - run: sqd auth -k ${{ secrets.DEPLOYMENT_KEY }}
+      # - run: sqd squid release test-rubick@v0 -v
