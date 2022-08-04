@@ -24,7 +24,7 @@ jobs:
       - name: deploy subsquid
         id: deploy
         continue-on-error: true
-        run: sqd squid release test-rubick@${{ env.VERSION }} -v
+        run: sqd squid release ${{ github.event.repository.name }}@${{ env.VERSION }} -v
       - name: update subsquid
         if: steps.deploy.outcome == 'failure'
-        run: sqd squid update test-rubick@${{ env.VERSION }} -v
+        run: sqd squid update ${{ github.event.repository.name }}@${{ env.VERSION }} -v
