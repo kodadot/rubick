@@ -6,7 +6,7 @@ import * as mappings from './mappings'
 const processor = new SubstrateProcessor(new Database())
 
 processor.setTypesBundle('kusama');
-processor.setBatchSize(500);
+processor.setBatchSize(50);
 processor.setBlockRange({from:5756453});
 processor.setDataSource({
     archive: lookupArchive("kusama", { release: "FireSquid" }),
