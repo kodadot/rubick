@@ -173,6 +173,7 @@ async function mintNFT(
     final.metadata = nft.metadata
     final.price = BigInt(0)
     final.burned = false
+    final.emoteCount = 0
     final.createdAt = remark.timestamp
     final.updatedAt = remark.timestamp
     // final.events = [eventFrom(RmrkEvent.MINTNFT, remark, '')]
@@ -358,12 +359,14 @@ async function emote(remark: RemarkResult, { store }: Context) {
     canOrElseError<NFTEntity>(isBurned, nft)
     const id = emoteId(interaction, remark.caller)
     let emote = await get<Emote>(store, Emote, interaction.id)
-
+    nft.emoteCount = nft.emoteCount || 0
     if (emote) {
+      nft.emoteCount -= 1
       await store.remove(emote)
       return
     }
 
+    nft.emoteCount += 1
     emote = create<Emote>(Emote, id, {
       id,
       caller: remark.caller,

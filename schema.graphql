@@ -45,6 +45,7 @@ type NFTEntity @entity {
   blockNumber: BigInt
   events: [Event!] @derivedFrom(field: "nft")
   emotes: [Emote!] @derivedFrom(field: "nft")
+  emoteCount: Int!
   meta: MetadataEntity
   createdAt: DateTime!
   updatedAt: DateTime!

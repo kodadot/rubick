@@ -13,16 +13,16 @@ export class Collector {
   @Column_("text", {nullable: false})
   name!: string
 
-  @Column_("int4", {nullable: false})
+  @Column_("integer", {nullable: false})
   unique!: number
 
-  @Column_("int4", {nullable: false})
+  @Column_("integer", {nullable: false})
   uniqueCollectors!: number
 
-  @Column_("int4", {nullable: false})
+  @Column_("integer", {nullable: false})
   collections!: number
 
-  @Column_("int4", {nullable: false})
+  @Column_("integer", {nullable: false})
   total!: number
 
   @Column_("numeric", {nullable: true})
