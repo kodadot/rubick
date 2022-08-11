@@ -1,5 +1,5 @@
-import { Store } from '@subsquid/substrate-processor'
-import { EntityConstructor } from './types'
+import { Store, EntityConstructor } from './types'
+import { FindOptionsWhere } from 'typeorm'
 
 export type EntityWithId = {
   id: string
@@ -48,10 +48,9 @@ export async function get<T extends EntityWithId>(
   store: Store,
   entityConstructor: EntityConstructor<T>,
   id: string
-): Promise<T | undefined> {
-  return store.get<T>(entityConstructor, {
-    where: { id },
-  })
+): Promise<T | null> {
+  const where: FindOptionsWhere<T> = { id } as FindOptionsWhere<T>
+  return store.findOneBy<T>(entityConstructor, where)
 }
 
 export function create<T extends EntityWithId>(
