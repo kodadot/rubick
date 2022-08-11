@@ -111,9 +111,6 @@ async function mint(context: Context): Promise<void> {
     final.blockNumber = BigInt(blockNumber)
     final.metadata = collection.metadata
     final.createdAt = timestamp
-    // final.events = [collectionEventFrom(RmrkEvent.MINT, remark, '')]
-
-    // logger.watch(`[MINT] ${final.events[0]}`)
 
     if (final.metadata) {
       const metadata = await handleMetadata(final.metadata, final.name, context.store)
@@ -143,7 +140,7 @@ async function mintNFT(
     plsBe(real, collection)
     isOwnerOrElseError(collection, caller)
     const id = getNftId(nft, blockNumber)
-    // const entity = await get<NFTEntity>(context.store, NFTEntity, id)
+    // const entity = await get<NFTEntity>(context.store, NFTEntity, id) // TODO: check if exists
     // plsNotBe<NFTEntity>(real, entity as NFTEntity)
     const final = create<NFTEntity>(NFTEntity, id, {})
     final.id = id
@@ -300,13 +297,6 @@ async function changeIssuer(context: Context) {
     plsBe<CollectionEntity>(real, collection)
     isOwnerOrElseError(collection, caller)
     collection.currentOwner = interaction.value
-    // collection.events?.push(
-    //   collectionEventFrom(
-    //     RmrkEvent.CHANGEISSUER,
-    //     remark,
-    //     ensure<string>(interaction.metadata)
-    //   )
-    // )
 
     logger.success(`[CHANGEISSUER] ${collection.id} from ${caller}`)
     await context.store.save(collection)
