@@ -322,7 +322,6 @@ async function emote(context: Context) {
     plsNotBe<NFTEntity>(burned, nft)
     const id = emoteId(interaction, caller)
     let emote = await get<Emote>(context.store, Emote, interaction.id)
-    nft.emoteCount = nft.emoteCount || 0
 
     if (emote) {
       nft.emoteCount -= 1
