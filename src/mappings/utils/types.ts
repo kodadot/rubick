@@ -114,7 +114,7 @@ export type MetadataAttribute = {
 }
 
 export type Transfer = {
-  to: any,
+  to: string,
   value: bigint
 }
 
