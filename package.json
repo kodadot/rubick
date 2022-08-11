@@ -1,5 +1,6 @@
 {
-  "name": "hydra-template",
+  "name": "@kodadot1/rubick",
+  "version": "0.0.7",
   "private": true,
   "scripts": {
     "build": "rm -rf lib && tsc",
