@@ -11,7 +11,7 @@ export class Emote {
   id!: string
 
   @Index_()
-  @ManyToOne_(() => NFTEntity, {nullable: false})
+  @ManyToOne_(() => NFTEntity, {nullable: true})
   nft!: NFTEntity
 
   @Column_("text", {nullable: false})

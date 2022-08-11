@@ -1,7 +1,11 @@
 import { Attribute, CollectionEvent, Interaction as RmrkEvent } from '../../model/generated'
-import {ExtrinsicHandlerContext } from '@subsquid/substrate-processor'
-import { RemarkResult } from './extract'
+import { CallHandlerContext } from '@subsquid/substrate-processor'
 
+import { RemarkResult } from './extract'
+import type { EntityManager } from 'typeorm'
+import type { CreatedNFT, CreatedCollection, InteractionValue } from '@kodadot1/minimark'
+
+export type Store = EntityManager
 
 export { RmrkEvent }
 
@@ -20,14 +24,14 @@ export function collectionEventFrom(interaction: RmrkEvent.MINT | RmrkEvent.CHAN
   })
 }
 
-export function eventFrom(interaction: RmrkEvent,  { blockNumber, caller, timestamp }: RemarkResult, meta: string, currentOwner?: string): IEvent {
+export function eventFrom<T>(interaction: T, { blockNumber, caller, timestamp }: BaseCall, meta: string, currentOwner?: string): IEvent<T> {
   return {
     interaction,
     blockNumber: BigInt(blockNumber),
     caller,
-    currentOwner: currentOwner || caller,
+    currentOwner: currentOwner ?? caller,
     timestamp,
-    meta
+    meta,
   }
 }
 
@@ -39,12 +43,21 @@ export function attributeFrom(attribute: MetadataAttribute): Attribute {
   })
 }
 
-export type Context = ExtrinsicHandlerContext 
+export type Context = CallHandlerContext<Store> 
 
 export type Optional<T> = T | null
+export type UnwrapFunc<T> = (ctx: Context) => T;
+export type SanitizerFunc = (url: string) => string;
+export type CallWith<T> = BaseCall & T;
 
-export interface IEvent {
-  interaction: RmrkEvent;
+export type BaseCall = {
+  caller: string;
+  blockNumber: string;
+  timestamp: Date;
+};
+
+export interface IEvent<T = RmrkEvent> {
+  interaction: T;
   blockNumber: bigint,
   caller: string,
   currentOwner: string,
@@ -52,48 +65,24 @@ export interface IEvent {
   meta: string;
 }
 
-export interface RmrkInteraction {
-  id: string;
-  metadata?: string;
-}
+export type RmrkInteraction = InteractionValue
 
-export interface Collection {
-  version: string;
-  name: string;
-  max: number;
-  issuer: string;
-  symbol: string;
-  id: string;
-  _id: string;
-  metadata: string;
-  blockNumber?: number;
-}
-
-export interface NFT {
-  name: string;
-  instance: string;
-  transferable: number;
-  collection: string;
-  sn: string;
-  _id: string;
-  id: string;
-  metadata: string;
-  currentOwner: string;
-  price?: string;
-  disabled?: boolean;
-  blockNumber?: number;
-}
-
-
-export interface RMRK {
-  event: RmrkEvent;
-  view: RmrkType;
-}
+export type Collection = CreatedCollection
+export type NFT = CreatedNFT
 
 export type EntityConstructor<T> = {
   new (...args: any[]): T;
 };
 
+export type ArchiveCall = {
+  __kind: string,
+  value: any
+}
+
+export type ArchiveCallWithOptionalValue = {
+  __kind: string,
+  value?: any
+}
 
 export type RmrkType = Collection | NFT | RmrkInteraction
 
@@ -106,8 +95,6 @@ export type SomethingWithMeta = {
   metadata: string
 }
 
-export type SanitizerFunc = (url: string) => string
-
 export type TokenMetadata = {
   name?: string
   description: string
@@ -115,12 +102,30 @@ export type TokenMetadata = {
   image: string
   animation_url?: string
   attributes?: MetadataAttribute[]
+  mediaUri?: string;
+  type?: string;
+  thumbnailUri?: string;
 }
 
 export type MetadataAttribute = {
   display_type?: DisplayType
   trait_type?: string
   value: number | string
+}
+
+export type Transfer = {
+  to: string,
+  value: bigint
+}
+
+
+export type InteractionExtra<T = Transfer[]> = {
+  extra: T
+}
+
+export type ExtraCall = {
+  transfers: Transfer[]
+  remarkCount: number // kodadot/rubick#6
 }
 
 export enum DisplayType {

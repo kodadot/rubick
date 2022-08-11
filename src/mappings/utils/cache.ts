@@ -1,6 +1,6 @@
 import logger, { logError } from './logger';
 import { Series, Spotlight, CacheStatus, Collector } from "../../model/generated";
-import { Store } from "@subsquid/substrate-processor";
+import { Store } from "./types";
 import { EntityConstructor } from "./types";
 import { getOrCreate } from './entity';
 import { camelCase } from './helper';

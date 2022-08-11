@@ -17,11 +17,11 @@ export class NFTEntity {
   @Column_("text", {nullable: true})
   instance!: string | undefined | null
 
-  @Column_("integer", {nullable: true})
+  @Column_("int4", {nullable: true})
   transferable!: number | undefined | null
 
   @Index_()
-  @ManyToOne_(() => CollectionEntity, {nullable: false})
+  @ManyToOne_(() => CollectionEntity, {nullable: true})
   collection!: CollectionEntity
 
   @Column_("text", {nullable: true})
@@ -58,7 +58,7 @@ export class NFTEntity {
   @OneToMany_(() => Emote, e => e.nft)
   emotes!: Emote[]
 
-  @Column_("integer", {nullable: false})
+  @Column_("int4", {nullable: false})
   emoteCount!: number
 
   @Index_()

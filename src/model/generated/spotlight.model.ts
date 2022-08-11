@@ -10,20 +10,20 @@ export class Spotlight {
   @PrimaryColumn_()
   id!: string
 
-  @Column_("integer", {nullable: false})
+  @Column_("int4", {nullable: false})
   collections!: number
 
-  @Column_("integer", {nullable: false})
+  @Column_("int4", {nullable: false})
   uniqueCollectors!: number
 
-  @Column_("integer", {nullable: false})
+  @Column_("int4", {nullable: false})
   unique!: number
 
   @Index_()
-  @Column_("integer", {nullable: false})
+  @Column_("int4", {nullable: false})
   sold!: number
 
-  @Column_("integer", {nullable: false})
+  @Column_("int4", {nullable: false})
   total!: number
 
   @Column_("numeric", {nullable: true})

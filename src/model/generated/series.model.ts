@@ -13,17 +13,17 @@ export class Series {
   @Column_("text", {nullable: true})
   issuer!: string | undefined | null
 
-  @Column_("integer", {nullable: false})
+  @Column_("int4", {nullable: false})
   unique!: number
 
-  @Column_("integer", {nullable: false})
+  @Column_("int4", {nullable: false})
   uniqueCollectors!: number
 
   @Index_()
-  @Column_("integer", {nullable: false})
+  @Column_("int4", {nullable: false})
   sold!: number
 
-  @Column_("integer", {nullable: false})
+  @Column_("int4", {nullable: false})
   total!: number
 
   @Column_("numeric", {nullable: true})
@@ -35,7 +35,7 @@ export class Series {
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
   highestSale!: bigint | undefined | null
 
-  @Column_("integer", {nullable: true})
+  @Column_("int4", {nullable: true})
   buys!: number | undefined | null
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
@@ -51,6 +51,6 @@ export class Series {
   @Column_("text", {nullable: true})
   image!: string | undefined | null
 
-  @Column_("integer", {nullable: true})
+  @Column_("int4", {nullable: true})
   emoteCount!: number | undefined | null
 }

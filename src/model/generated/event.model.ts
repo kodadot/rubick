@@ -31,6 +31,6 @@ export class Event {
   meta!: string
 
   @Index_()
-  @ManyToOne_(() => NFTEntity, {nullable: false})
+  @ManyToOne_(() => NFTEntity, {nullable: true})
   nft!: NFTEntity
 }
