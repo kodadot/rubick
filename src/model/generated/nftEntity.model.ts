@@ -22,7 +22,7 @@ export class NFTEntity {
   transferable!: number | undefined | null
 
   @Index_()
-  @ManyToOne_(() => CollectionEntity, {nullable: true})
+  @ManyToOne_(() => CollectionEntity, {nullable: false})
   collection!: CollectionEntity
 
   @Column_("text", {nullable: true})
