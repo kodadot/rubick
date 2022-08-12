@@ -1,4 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, OneToMany as OneToMany_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, OneToMany as OneToMany_, ManyToOne as ManyToOne_} from "typeorm"
 import * as marshal from "./marshal"
 import {NFTEntity} from "./nftEntity.model"
 import {CollectionEvent} from "./_collectionEvent"
@@ -13,6 +13,7 @@ export class CollectionEntity {
   @Column_("text", {nullable: true})
   version!: string | undefined | null
 
+  @Index_()
   @Column_("text", {nullable: true})
   name!: string | undefined | null
 
