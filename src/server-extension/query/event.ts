@@ -26,6 +26,7 @@ export const lastEventQuery = (whereCondition: string) => `SELECT
     ne.metadata as metadata,
     e.current_owner,
     me.image as image,
+    me.animation_url,
     MAX(e.timestamp) as timestamp,
     MAX(e.meta::bigint) as value
 
