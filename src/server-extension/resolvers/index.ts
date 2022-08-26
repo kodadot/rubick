@@ -1,13 +1,15 @@
-import {Field, ObjectType, Query, Resolver} from "type-graphql"
-import type {EntityManager} from "typeorm"
-import { CountResolver } from './count'
-import { EventResolver } from './event'
-import { SeriesResolver } from './series'
-import { SpotlightResolver } from './spotlight'
+import { Field, ObjectType, Query, Resolver } from 'type-graphql'
+import type { EntityManager } from 'typeorm'
+
 import { CollectionChartResolver } from './collectionChart'
 import { CollectionEventResolver } from './collectionEvent'
-import { PassionFeedResolver } from "./passionFeed";
-import { SalesFeedResolver } from "./salesFeed";
+import { CountResolver } from './count'
+import { EmoteResolver } from './emote'
+import { EventResolver } from './event'
+import { PassionFeedResolver } from './passionFeed'
+import { SalesFeedResolver } from './salesFeed'
+import { SeriesResolver } from './series'
+import { SpotlightResolver } from './spotlight'
 
 @ObjectType()
 export class Hello {
@@ -41,4 +43,5 @@ export {
   CollectionEventResolver,
   PassionFeedResolver,
   SalesFeedResolver,
+  EmoteResolver,
 }
