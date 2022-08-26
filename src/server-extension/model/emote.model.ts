@@ -12,3 +12,17 @@ export class EmoteCountEntity {
         Object.assign(this, props);
     }
 }
+
+// @ObjectType()
+// export class Kokot extends Map<string, number> {
+// }
+
+@ObjectType()
+export class EmoteCountMapEntity {
+    @Field(() => String, { nullable: false })
+    counts!: string
+
+    constructor(props: Partial<EmoteCountMapEntity>) {
+        Object.assign(this, props);
+    }
+}
