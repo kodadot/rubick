@@ -3,9 +3,12 @@ export const buyEvent = `SELECT
     COALESCE(MAX(e.meta::bigint), 0) as max
     FROM event e
     LEFT JOIN nft_entity ne on ne.id = e.nft_id
-    WHERE e.interaction = 'BUY' AND ne.collection_id = $1;`
+    WHERE e.interaction = 'BUY' AND ne.collection_id = $1;`;
 
-export const collectionEventHistory = (idList: string, dateRange: string) => `SELECT
+export const collectionEventHistory = (
+  idList: string,
+  dateRange: string
+) => `SELECT
 	ce.id as id,
 	DATE(e.timestamp),
 	count(e)
@@ -16,8 +19,7 @@ WHERE e.interaction = 'BUY'
 and ce.id in (${idList})
 ${dateRange}
 GROUP BY ce.id, DATE(e.timestamp)
-ORDER BY DATE(e.timestamp)`
-
+ORDER BY DATE(e.timestamp)`;
 
 export const lastEventQuery = (whereCondition: string) => `SELECT
     DISTINCT ne.id as id,
@@ -28,15 +30,18 @@ export const lastEventQuery = (whereCondition: string) => `SELECT
     me.image as image,
     me.animation_url,
     MAX(e.timestamp) as timestamp,
-    MAX(e.meta::bigint) as value
+    MAX(e.meta::bigint) as value,
+    ne.collection_id as collection_id,
+    ce.name as collection_name
 
 FROM event e
     JOIN nft_entity ne on e.nft_id = ne.id
     LEFT join metadata_entity me on me.id = ne.metadata
+    LEFT JOIN collection_entity ce on ne.collection_id = ce.id
 WHERE
     e.interaction = $1
     AND ne.burned = false
     ${whereCondition}
-GROUP BY ne.id, me.id, e.current_owner, me.image
+GROUP BY ne.id, me.id, e.current_owner, me.image, ce.name
 ORDER BY MAX(e.timestamp) DESC
-LIMIT $2 OFFSET $3`
+LIMIT $2 OFFSET $3`;
