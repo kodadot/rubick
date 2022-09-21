@@ -15,7 +15,7 @@ migrate:
 
 
 migration:
-	@npx sqd db:create-migration Data
+	@npx squid-typeorm-migration apply
 
 
 build:

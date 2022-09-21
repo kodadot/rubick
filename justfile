@@ -38,6 +38,9 @@ reset: migrate
 
 quickstart: migrate process
 
+prod TAG:
+	gh pr create --base release-{{TAG}}
+
 migrate:
 	npx squid-typeorm-migration apply
 
