@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@kodadot1/minimark": "^0.0.1-rc.10",
+    "@polkadot/types": "^9.4.1",
     "@subsquid/archive-registry": "1.0.14",
     "@subsquid/cli": "^0.7.1",
     "@subsquid/graphql-server": "^3.2.0",
