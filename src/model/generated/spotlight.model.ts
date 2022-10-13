@@ -26,7 +26,7 @@ export class Spotlight {
   @Column_("int4", {nullable: false})
   total!: number
 
-  @Column_("numeric", {nullable: true})
+  @Column_("numeric", {transformer: marshal.floatTransformer, nullable: true})
   average!: number | undefined | null
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
