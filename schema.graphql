@@ -27,6 +27,9 @@ type CollectionEntity @entity {
   blockNumber: BigInt
   meta: MetadataEntity
   createdAt: DateTime!
+  updatedAt: DateTime!
+  totalItems: Int!
+  totalAvailableItems: Int!
 }
 
 type NFTEntity @entity {

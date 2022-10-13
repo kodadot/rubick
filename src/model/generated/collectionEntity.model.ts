@@ -50,4 +50,13 @@ export class CollectionEntity {
 
   @Column_("timestamp with time zone", {nullable: false})
   createdAt!: Date
+
+  @Column_("timestamp with time zone", {nullable: false})
+  updatedAt!: Date
+
+  @Column_("int4", {nullable: false})
+  totalItems!: number
+
+  @Column_("int4", {nullable: false})
+  totalAvailableItems!: number
 }
