@@ -1,19 +1,22 @@
-module.exports = class Data1659362991998 {
-  name = 'Data1659362991998'
+module.exports = class Data1665672985384 {
+  name = 'Data1665672985384'
 
   async up(db) {
     await db.query(`CREATE TABLE "remark_entity" ("id" character varying NOT NULL, "value" text NOT NULL, "caller" text NOT NULL, "block_number" text NOT NULL, "interaction" text, CONSTRAINT "PK_47fe6cc1a357ef713548bfb9c9c" PRIMARY KEY ("id"))`)
     await db.query(`CREATE TABLE "failed_entity" ("id" character varying NOT NULL, "value" text NOT NULL, "reason" text NOT NULL, "interaction" text, CONSTRAINT "PK_df628d98d9ba1555d905ee20d6b" PRIMARY KEY ("id"))`)
-    await db.query(`CREATE TABLE "event" ("id" character varying NOT NULL, "block_number" numeric, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "caller" text NOT NULL, "current_owner" text NOT NULL, "interaction" character varying(12) NOT NULL, "meta" text NOT NULL, "nft_id" character varying NOT NULL, CONSTRAINT "PK_30c2f3bbaf6d34a55f8ae6e4614" PRIMARY KEY ("id"))`)
+    await db.query(`CREATE TABLE "event" ("id" character varying NOT NULL, "block_number" numeric, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "caller" text NOT NULL, "current_owner" text NOT NULL, "interaction" character varying(12) NOT NULL, "meta" text NOT NULL, "nft_id" character varying, CONSTRAINT "PK_30c2f3bbaf6d34a55f8ae6e4614" PRIMARY KEY ("id"))`)
     await db.query(`CREATE INDEX "IDX_9380d479563e5a664759359470" ON "event" ("nft_id") `)
-    await db.query(`CREATE TABLE "emote" ("id" character varying NOT NULL, "caller" text NOT NULL, "value" text NOT NULL, "nft_id" character varying NOT NULL, CONSTRAINT "PK_c08d432f6b22ef550be511163ac" PRIMARY KEY ("id"))`)
+    await db.query(`CREATE TABLE "emote" ("id" character varying NOT NULL, "caller" text NOT NULL, "value" text NOT NULL, "nft_id" character varying, CONSTRAINT "PK_c08d432f6b22ef550be511163ac" PRIMARY KEY ("id"))`)
     await db.query(`CREATE INDEX "IDX_463234b85d428ddde1bce27182" ON "emote" ("nft_id") `)
     await db.query(`CREATE TABLE "metadata_entity" ("id" character varying NOT NULL, "name" text, "description" text, "image" text, "attributes" jsonb, "animation_url" text, "type" text, CONSTRAINT "PK_2cb9d5d4ae99d9a27497bf8d2e8" PRIMARY KEY ("id"))`)
-    await db.query(`CREATE TABLE "nft_entity" ("name" text, "instance" text, "transferable" integer, "issuer" text, "sn" text, "id" character varying NOT NULL, "hash" text NOT NULL, "metadata" text, "current_owner" text, "price" numeric NOT NULL, "burned" boolean NOT NULL, "block_number" numeric, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL, "collection_id" character varying NOT NULL, "meta_id" character varying, CONSTRAINT "PK_ed09c6a38c0f0a867d5a7b63f0d" PRIMARY KEY ("id"))`)
+    await db.query(`CREATE TABLE "nft_entity" ("name" text, "instance" text, "transferable" integer, "issuer" text, "sn" text, "id" character varying NOT NULL, "hash" text NOT NULL, "metadata" text, "current_owner" text, "price" numeric NOT NULL, "burned" boolean NOT NULL, "block_number" numeric, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL, "total_emotes" integer NOT NULL, "collection_id" character varying, "meta_id" character varying, CONSTRAINT "PK_ed09c6a38c0f0a867d5a7b63f0d" PRIMARY KEY ("id"))`)
+    await db.query(`CREATE INDEX "IDX_54ca209d76ebe11ccc3c4e75d1" ON "nft_entity" ("name") `)
     await db.query(`CREATE INDEX "IDX_4b98bf4d630de0037475b9bbb7" ON "nft_entity" ("collection_id") `)
     await db.query(`CREATE INDEX "IDX_16e57ac8478b6ea1f383e3eb03" ON "nft_entity" ("hash") `)
+    await db.query(`CREATE INDEX "IDX_0a42c2c09b35a7535045d4a2f4" ON "nft_entity" ("current_owner") `)
     await db.query(`CREATE INDEX "IDX_2bfc45b91959a14ab8b2d734cd" ON "nft_entity" ("meta_id") `)
     await db.query(`CREATE TABLE "collection_entity" ("version" text, "name" text, "max" integer NOT NULL, "issuer" text, "symbol" text, "id" character varying NOT NULL, "metadata" text, "current_owner" text, "events" jsonb, "block_number" numeric, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "meta_id" character varying, CONSTRAINT "PK_5d44e140c4fcb3d961f9e83405f" PRIMARY KEY ("id"))`)
+    await db.query(`CREATE INDEX "IDX_b0d709797451c6237e8ec0fee8" ON "collection_entity" ("name") `)
     await db.query(`CREATE INDEX "IDX_014542183f297493eab0cd8bdf" ON "collection_entity" ("meta_id") `)
     await db.query(`CREATE TABLE "series" ("id" character varying NOT NULL, "issuer" text, "unique" integer NOT NULL, "unique_collectors" integer NOT NULL, "sold" integer NOT NULL, "total" integer NOT NULL, "average_price" numeric, "floor_price" numeric, "highest_sale" numeric, "buys" integer, "volume" numeric, "name" text NOT NULL, "metadata" text, "image" text, "emote_count" integer, CONSTRAINT "PK_e725676647382eb54540d7128ba" PRIMARY KEY ("id"))`)
     await db.query(`CREATE INDEX "IDX_e9b94c49c07399bfa4bb6ab1a7" ON "series" ("sold") `)
@@ -39,10 +42,13 @@ module.exports = class Data1659362991998 {
     await db.query(`DROP INDEX "public"."IDX_463234b85d428ddde1bce27182"`)
     await db.query(`DROP TABLE "metadata_entity"`)
     await db.query(`DROP TABLE "nft_entity"`)
+    await db.query(`DROP INDEX "public"."IDX_54ca209d76ebe11ccc3c4e75d1"`)
     await db.query(`DROP INDEX "public"."IDX_4b98bf4d630de0037475b9bbb7"`)
     await db.query(`DROP INDEX "public"."IDX_16e57ac8478b6ea1f383e3eb03"`)
+    await db.query(`DROP INDEX "public"."IDX_0a42c2c09b35a7535045d4a2f4"`)
     await db.query(`DROP INDEX "public"."IDX_2bfc45b91959a14ab8b2d734cd"`)
     await db.query(`DROP TABLE "collection_entity"`)
+    await db.query(`DROP INDEX "public"."IDX_b0d709797451c6237e8ec0fee8"`)
     await db.query(`DROP INDEX "public"."IDX_014542183f297493eab0cd8bdf"`)
     await db.query(`DROP TABLE "series"`)
     await db.query(`DROP INDEX "public"."IDX_e9b94c49c07399bfa4bb6ab1a7"`)
