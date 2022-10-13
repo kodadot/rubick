@@ -1,5 +1,5 @@
-module.exports = class Data1665672985384 {
-  name = 'Data1665672985384'
+module.exports = class Data1665674885066 {
+  name = 'Data1665674885066'
 
   async up(db) {
     await db.query(`CREATE TABLE "remark_entity" ("id" character varying NOT NULL, "value" text NOT NULL, "caller" text NOT NULL, "block_number" text NOT NULL, "interaction" text, CONSTRAINT "PK_47fe6cc1a357ef713548bfb9c9c" PRIMARY KEY ("id"))`)
@@ -9,7 +9,7 @@ module.exports = class Data1665672985384 {
     await db.query(`CREATE TABLE "emote" ("id" character varying NOT NULL, "caller" text NOT NULL, "value" text NOT NULL, "nft_id" character varying, CONSTRAINT "PK_c08d432f6b22ef550be511163ac" PRIMARY KEY ("id"))`)
     await db.query(`CREATE INDEX "IDX_463234b85d428ddde1bce27182" ON "emote" ("nft_id") `)
     await db.query(`CREATE TABLE "metadata_entity" ("id" character varying NOT NULL, "name" text, "description" text, "image" text, "attributes" jsonb, "animation_url" text, "type" text, CONSTRAINT "PK_2cb9d5d4ae99d9a27497bf8d2e8" PRIMARY KEY ("id"))`)
-    await db.query(`CREATE TABLE "nft_entity" ("name" text, "instance" text, "transferable" integer, "issuer" text, "sn" text, "id" character varying NOT NULL, "hash" text NOT NULL, "metadata" text, "current_owner" text, "price" numeric NOT NULL, "burned" boolean NOT NULL, "block_number" numeric, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL, "total_emotes" integer NOT NULL, "collection_id" character varying, "meta_id" character varying, CONSTRAINT "PK_ed09c6a38c0f0a867d5a7b63f0d" PRIMARY KEY ("id"))`)
+    await db.query(`CREATE TABLE "nft_entity" ("name" text, "instance" text, "transferable" integer, "issuer" text, "sn" text, "id" character varying NOT NULL, "hash" text NOT NULL, "metadata" text, "current_owner" text, "price" numeric NOT NULL, "burned" boolean NOT NULL, "block_number" numeric, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL, "emote_count" integer NOT NULL, "collection_id" character varying, "meta_id" character varying, CONSTRAINT "PK_ed09c6a38c0f0a867d5a7b63f0d" PRIMARY KEY ("id"))`)
     await db.query(`CREATE INDEX "IDX_54ca209d76ebe11ccc3c4e75d1" ON "nft_entity" ("name") `)
     await db.query(`CREATE INDEX "IDX_4b98bf4d630de0037475b9bbb7" ON "nft_entity" ("collection_id") `)
     await db.query(`CREATE INDEX "IDX_16e57ac8478b6ea1f383e3eb03" ON "nft_entity" ("hash") `)

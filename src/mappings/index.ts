@@ -158,7 +158,7 @@ async function mintNFT(
     final.burned = false
     final.createdAt = timestamp
     final.updatedAt = timestamp
-    final.totalEmotes = 0
+    final.emoteCount = 0
 
     if (final.metadata) {
       const metadata = await handleMetadata(final.metadata, final.name, context.store)
@@ -325,7 +325,7 @@ async function emote(context: Context) {
     nft.updatedAt = timestamp
 
     if (emote) {
-      nft.totalEmotes -= 1
+      nft.emoteCount -= 1
       await context.store.remove(emote)
       await context.store.save(nft)
       return
@@ -338,7 +338,7 @@ async function emote(context: Context) {
     })
 
     emote.nft = nft
-    nft.totalEmotes += 1
+    nft.emoteCount += 1
 
     logger.success(`[EMOTE] ${nft.id} from ${caller}`)
     await context.store.save(emote)

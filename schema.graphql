@@ -48,7 +48,7 @@ type NFTEntity @entity {
   meta: MetadataEntity
   createdAt: DateTime!
   updatedAt: DateTime!
-  totalEmotes: Int!
+  emoteCount: Int!
 }
 
 type MetadataEntity @entity {

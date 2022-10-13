@@ -71,5 +71,5 @@ export class NFTEntity {
   updatedAt!: Date
 
   @Column_("int4", {nullable: false})
-  totalEmotes!: number
+  emoteCount!: number
 }
