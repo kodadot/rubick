@@ -113,7 +113,7 @@ async function mint(context: Context): Promise<void> {
     final.createdAt = timestamp
     final.updatedAt = timestamp
     final.totalItems = 0
-		final.totalAvailableItems = 0
+    final.totalAvailableItems = 0
 
     if (final.metadata) {
       const metadata = await handleMetadata(final.metadata, final.name, context.store)
@@ -255,8 +255,8 @@ async function consume(context: Context) {
     nft.burned = true
     nft.updatedAt = timestamp
     plsBe(real, nft.collection)
-		const collection = ensure<CollectionEntity>(await get<CollectionEntity>(context.store, CollectionEntity, nft.collection.toString()))
-		plsBe(real, collection)
+    const collection = ensure<CollectionEntity>(await get<CollectionEntity>(context.store, CollectionEntity, nft.collection.toString()))
+    plsBe(real, collection)
     collection.updatedAt = timestamp
     collection.totalAvailableItems -= 1
 
