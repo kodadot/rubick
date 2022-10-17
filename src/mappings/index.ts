@@ -161,6 +161,7 @@ async function mintNFT(
     final.burned = false
     final.createdAt = timestamp
     final.updatedAt = timestamp
+    final.emoteCount = 0
 
     collection.updatedAt = timestamp
     collection.totalItems += 1 
@@ -325,7 +326,7 @@ async function emote(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
 
   try {
-    const { value, caller } = unwrap(context, getInteraction);
+    const { value, caller, timestamp } = unwrap(context, getInteraction);
     interaction = value
     plsBe(withMeta, interaction)
     const nft = ensure<NFTEntity>(
@@ -335,9 +336,12 @@ async function emote(context: Context) {
     plsNotBe<NFTEntity>(burned, nft)
     const id = emoteId(interaction, caller)
     let emote = await get<Emote>(context.store, Emote, interaction.id)
+    nft.updatedAt = timestamp
 
     if (emote) {
+      nft.emoteCount -= 1
       await context.store.remove(emote)
+      await context.store.save(nft)
       return
     }
 
@@ -348,9 +352,11 @@ async function emote(context: Context) {
     })
 
     emote.nft = nft
+    nft.emoteCount += 1
 
     logger.success(`[EMOTE] ${nft.id} from ${caller}`)
     await context.store.save(emote)
+    await context.store.save(nft)
   } catch (e) {
     logError(e, (e) => logger.warn(`[EMOTE] ${e.message}`))
   }
