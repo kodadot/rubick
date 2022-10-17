@@ -1,8 +1,7 @@
 import { isRemark, unwrapRemark } from '@kodadot1/minimark'
 import { SystemRemarkCall } from '../types/calls'
-import { updateCache } from './utils/cache'
 import logger from './utils/logger'
-import { Context, RmrkInteraction } from './utils/types'
+import { RmrkInteraction, Context } from './utils/types'
 
 import { mainFrame as mainFrameV1 } from './v1'
 import { mainFrame as mainFrameV2 } from './v2'
@@ -19,16 +18,16 @@ export async function handleRemark(context: Context): Promise<void> {
 }
 
 export async function versionRouter(value: string, context: Context): Promise<void> {
-  const { interaction: event, version } = unwrapRemark<RmrkInteraction>(value)
-  // logger.pending(`[${event === RmrkEvent.MINT ? 'COLLECTION' : event}]: ${base.blockNumber}`)
+  const { interaction: event, version } = unwrapRemark<RmrkInteraction>(value.toString())
+  logger.pending(`[${event}]::${version}`)
 
   if (version === '2.0.0') {
     await mainFrameV2(value, context)
   }
 
   await mainFrameV1(value, context)
-
-  await updateCache(new Date(), context.store)
+  // TODO: use data from the base or something
+  // await updateCache(new Date(), context.store)
 }
 
 
