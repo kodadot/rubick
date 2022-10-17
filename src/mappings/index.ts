@@ -112,8 +112,8 @@ async function mint(context: Context): Promise<void> {
     final.metadata = collection.metadata
     final.createdAt = timestamp
     final.updatedAt = timestamp
-    final.totalItems = 0
-    final.totalAvailableItems = 0
+    final.nftCount = 0
+    final.supply = 0
 
     if (final.metadata) {
       const metadata = await handleMetadata(final.metadata, final.name, context.store)
@@ -164,8 +164,8 @@ async function mintNFT(
     final.emoteCount = 0
 
     collection.updatedAt = timestamp
-    collection.totalItems += 1 
-    collection.totalAvailableItems += 1 
+    collection.nftCount += 1 
+    collection.supply += 1 
 
     if (final.metadata) {
       const metadata = await handleMetadata(final.metadata, final.name, context.store)
@@ -230,8 +230,14 @@ async function buy(context: Context) {
     nft.price = BigInt(0)
     nft.updatedAt = timestamp
 
+    plsBe(real, nft.collection)
+    const collection = ensure<CollectionEntity>(await get<CollectionEntity>(context.store, CollectionEntity, nft.collection.toString()))
+    plsBe(real, collection)
+    collection.updatedAt = timestamp
+    
     logger.success(`[BUY] ${nft.id} from ${caller}`)
     await context.store.save(nft)
+    await context.store.save(collection)
     await createEvent(nft, RmrkEvent.BUY, { blockNumber, caller, timestamp }, String(originalPrice), context.store, originalOwner)
   } catch (e) {
     logError(e, (e) =>
@@ -259,7 +265,7 @@ async function consume(context: Context) {
     const collection = ensure<CollectionEntity>(await get<CollectionEntity>(context.store, CollectionEntity, nft.collection.toString()))
     plsBe(real, collection)
     collection.updatedAt = timestamp
-    collection.totalAvailableItems -= 1
+    collection.supply -= 1
 
     logger.success(`[CONSUME] ${nft.id} from ${caller}`)
     await context.store.save(nft)

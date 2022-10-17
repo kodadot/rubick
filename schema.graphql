@@ -28,8 +28,8 @@ type CollectionEntity @entity {
   meta: MetadataEntity
   createdAt: DateTime!
   updatedAt: DateTime!
-  totalItems: Int!
-  totalAvailableItems: Int!
+  nftCount: Int!
+  supply: Int!
 }
 
 type NFTEntity @entity {

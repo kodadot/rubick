@@ -55,8 +55,8 @@ export class CollectionEntity {
   updatedAt!: Date
 
   @Column_("int4", {nullable: false})
-  totalItems!: number
+  nftCount!: number
 
   @Column_("int4", {nullable: false})
-  totalAvailableItems!: number
+  supply!: number
 }
