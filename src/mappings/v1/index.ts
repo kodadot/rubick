@@ -7,10 +7,12 @@ import {
 
 import { isRemark, unwrapRemark } from '@kodadot1/minimark'
 import md5 from 'md5'
+import { real, burned, plsBe, plsNotBe } from '@kodadot1/metasquid/dist/consolidator'
 import { SystemRemarkCall } from '../../types/calls'
 import { unwrap } from '../utils'
 import { updateCache } from '../utils/cache'
-import { burned, isBuyLegalOrElseError, isInteractive, isOwnerOrElseError, isPositiveOrElseError, plsBe, plsNotBe, real, validateInteraction, withMeta } from '../utils/consolidator'
+import { isBuyLegalOrElseError, isInteractive, isOwnerOrElseError, isPositiveOrElseError, validateInteraction, withMeta } from '../utils/consolidator'
+
 import { create, get } from '../utils/entity'
 import { getCreateCollection, getCreateToken, getInteraction, getInteractionWithExtra } from '../utils/getters'
 import { emoteId, ensure, eventId, isEmpty } from '../utils/helper'
