@@ -2,15 +2,10 @@ import { BatchArg, ExtraCall, RmrkInteraction, Transfer } from './types'
 import { CollectionEntity, NFTEntity } from '../../model/generated'
 import { serializer } from './serializer'
 
+import { real, burned, plsBe, plsNotBe } from '@kodadot1/metasquid/dist/consolidator'
+
 type Entity = CollectionEntity | NFTEntity
 
-export function real<T>(entity: T | undefined): boolean {
-  return !!entity;
-}
-
-export function burned({ burned }: NFTEntity): boolean {
-  return burned;
-}
 
 export function transferable({ transferable }: NFTEntity) {
   return !!transferable
@@ -32,20 +27,6 @@ export function isIssuer(entity: Entity, caller: string) {
 export function isOwnerOrElseError(entity: Entity, caller: string) {
   if (!isOwner(entity, caller)) {
     throw new ReferenceError(`[CONSOLIDATE Bad Owner] Entity: ${entity.issuer} Caller: ${caller}`)
-  }
-}
-
-export function plsBe<T>(callback: (arg: T) => boolean, entity: T): void {
-  return needTo(callback, entity, true);
-}
-
-export function plsNotBe<T>(callback: (arg: T) => boolean, entity: T): void {
-  return needTo(callback, entity, false);
-}
-
-export function needTo<T>(callback: (arg: T) => boolean, entity: T, positive = true): void {
-  if (positive ? !callback(entity) : callback(entity)) {
-    throw new ReferenceError(`[PROBLEM] Entity needs ${positive ? '' : 'not'}to be ${callback.name}`);
   }
 }
 
