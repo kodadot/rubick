@@ -19,20 +19,24 @@ GROUP BY ce.id, DATE(e.timestamp)
 ORDER BY DATE(e.timestamp)`
 
 
-export const lastEventQuery = `SELECT
+export const lastEventQuery = (whereCondition: string) => `SELECT
     DISTINCT ne.id as id,
     ne.name as name,
     ne.issuer as issuer,
     ne.metadata as metadata,
-    (e.meta::bigint) as value,
-    e.timestamp,
     e.current_owner,
-    me.image as image
+    me.image as image,
+    me.animation_url,
+    MAX(e.timestamp) as timestamp,
+    MAX(e.meta::bigint) as value
+
 FROM event e
     JOIN nft_entity ne on e.nft_id = ne.id
     LEFT join metadata_entity me on me.id = ne.metadata
 WHERE
     e.interaction = $1
     AND ne.burned = false
-ORDER BY e.timestamp desc
+    ${whereCondition}
+GROUP BY ne.id, me.id, e.current_owner, me.image
+ORDER BY MAX(e.timestamp) DESC
 LIMIT $2 OFFSET $3`

@@ -1,4 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, ManyToOne as ManyToOne_, OneToMany as OneToMany_} from "typeorm"
 import * as marshal from "./marshal"
 import {CollectionEntity} from "./collectionEntity.model"
 import {Event} from "./event.model"
@@ -11,6 +11,7 @@ export class NFTEntity {
     Object.assign(this, props)
   }
 
+  @Index_()
   @Column_("text", {nullable: true})
   name!: string | undefined | null
 
@@ -40,6 +41,7 @@ export class NFTEntity {
   @Column_("text", {nullable: true})
   metadata!: string | undefined | null
 
+  @Index_()
   @Column_("text", {nullable: true})
   currentOwner!: string | undefined | null
 

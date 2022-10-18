@@ -15,7 +15,7 @@ type FailedEntity @entity {
 
 type CollectionEntity @entity {
   version: String
-  name: String
+  name: String @index
   max: Int!
   issuer: String
   symbol: String
@@ -30,7 +30,7 @@ type CollectionEntity @entity {
 }
 
 type NFTEntity @entity {
-  name: String
+  name: String @index
   instance: String
   transferable: Int
   collection: CollectionEntity!
@@ -39,7 +39,7 @@ type NFTEntity @entity {
   id: ID!
   hash: String! @index
   metadata: String
-  currentOwner: String
+  currentOwner: String @index
   price: BigInt!
   burned: Boolean!
   blockNumber: BigInt

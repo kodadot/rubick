@@ -39,8 +39,8 @@ export class LastEventEntity {
   @Field(() => String, { nullable: false })
   issuer!: String
 
-  @Field(() => String, { nullable: false })
-  timestamp!: String
+  @Field(() => Date, { nullable: false })
+  timestamp!: Date
 
   @Field(() => String, { nullable: false })
   metadata!: String
@@ -53,6 +53,9 @@ export class LastEventEntity {
 
   @Field(() => String, { nullable: true })
   image!: String
+
+  @Field(() => String, {nullable: true, name: 'animationUrl'})
+  animation_url!: string | undefined | null
 
   constructor(props: Partial<LastEventEntity>) {
     Object.assign(this, props);

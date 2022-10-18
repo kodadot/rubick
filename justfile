@@ -2,7 +2,7 @@ process: build
 	node -r dotenv/config lib/processor.js
 
 serve:
-	npx squid-graphql-server
+	@npx squid-graphql-server
 
 up:
   docker compose up
@@ -21,31 +21,28 @@ build:
 	npm run build
 
 codegen:
-	npx sqd codegen
+	npx squid-typeorm-codegen
 
-typegen: ksmVersion
+typegen:
 	npx squid-substrate-typegen typegen.json
-
-ksmVersion: explore
 
 explore:
 	npx squid-substrate-metadata-explorer \
-		--chain wss://kusama-rpc.polkadot.io \
-		--archive https://kusama.indexer.gc.subsquid.io/v4/graphql \
-		--out kusamaVersions.json
+	--chain wss://kusama-rpc.polkadot.io \
+	--archive https://kusama.archive.subsquid.io/graphql \
+	--out kusamaVersions.jsonl
 
 bug: down up
 
-reset:
-	npx sqd db drop
-	npx sqd db create
-	npx sqd db:migrate
+reset: migrate
+
+quickstart: migrate process
 
 migrate:
-	npx sqd db:migrate
+	npx squid-typeorm-migration apply
 
 update-db:
-	npx sqd db:create-migration Data
+	npx squid-typeorm-migration generate
 
 test:
   npm run test:unit
@@ -60,7 +57,7 @@ kill TAG:
 	npx sqd squid:kill "rubick@{{TAG}}"
 
 tail TAG:
-	npx sqd squid:tail rubick@{{TAG}} -f
+	npx sqd squid logs rubick@{{TAG}} -f
 
 brutal TAG:
 	npx sqd squid:update rubick@{{TAG}} --hardReset

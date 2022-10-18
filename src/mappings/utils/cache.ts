@@ -1,6 +1,6 @@
 import logger, { logError } from './logger';
 import { Series, Spotlight, CacheStatus, Collector } from "../../model/generated";
-import { Store } from "@subsquid/substrate-processor";
+import { Store } from "./types";
 import { EntityConstructor } from "./types";
 import { getOrCreate } from './entity';
 import { camelCase } from './helper';
@@ -11,37 +11,46 @@ const STATUS_ID: string = "0"
 enum Query {
 
     series = `SELECT
-            ce.id, ce.name, ce.meta_id as metadata, me.image, ce.issuer,
-            COUNT(distinct ne.meta_id) as unique,
-            COUNT(distinct ne.current_owner) as unique_collectors,
-            COUNT(distinct ne.current_owner) as sold,
-            COUNT(ne.*) as total,
-            AVG(ne.price) as average_price,
-            MIN(NULLIF(ne.price, 0)) as floor_price,
-            COALESCE(MAX(e.meta :: bigint), 0) as highest_sale,
-            COALESCE(SUM(e.meta::bigint), 0) as volume,
-            COUNT(e.*) as buys,
-            COUNT(em.*) as emote_count
-        FROM collection_entity ce
+        ce.id,
+        ce.name,
+        ce.meta_id                         as metadata,
+        me.image,
+        ce.issuer,
+        COUNT(distinct ne.meta_id)         as unique,
+        COUNT(distinct ne.current_owner)   as unique_collectors,
+        COUNT(distinct ne.current_owner)   as sold,
+        COUNT(ne.*)                        as total,
+        AVG(ne.price)                      as average_price,
+        MIN(NULLIF(ne.price, 0))           as floor_price,
+        COALESCE(MAX(e.meta :: bigint), 0) as highest_sale,
+        COALESCE(SUM(e.meta::bigint), 0)   as volume,
+        COUNT(e.*)                         as buys,
+        COUNT(em.*)                        as emote_count
+    FROM collection_entity ce
         LEFT JOIN metadata_entity me on ce.meta_id = me.id
         LEFT JOIN nft_entity ne on ce.id = ne.collection_id
         LEFT JOIN emote em on ne.id = em.nft_id
         JOIN event e on ne.id = e.nft_id
-        WHERE e.interaction = 'BUY'
-        GROUP BY ce.id, me.image, ce.name`,
+    WHERE e.interaction = 'BUY'
+    GROUP BY ce.id, me.image, ce.name
+    ORDER BY volume DESC
+    LIMIT 450`,
 
     spotlight = `SELECT
-        issuer as id,
-        COUNT(distinct collection_id) as collections,
-        COUNT(distinct meta_id) as unique,
-        AVG(price) as average,
-        COUNT(*) as total,
-        COUNT(distinct ne.current_owner) as unique_collectors,
+        issuer                                                         as id,
+        COUNT(distinct collection_id)                                  as collections,
+        COUNT(distinct meta_id)                                        as unique,
+        AVG(price)                                                     as average,
+        COUNT(*)                                                       as total,
+        COUNT(distinct ne.current_owner)                               as unique_collectors,
         SUM(CASE WHEN ne.issuer <> ne.current_owner THEN 1 ELSE 0 END) as sold,
-        COALESCE(SUM(e.meta::bigint), 0) as volume
+        COALESCE(SUM(e.meta::bigint), 0)                               as volume
     FROM nft_entity ne
-    JOIN event e on e.nft_id = ne.id WHERE e.interaction = 'BUY'
-    GROUP BY issuer`,
+        JOIN event e on e.nft_id = ne.id
+    WHERE e.interaction = 'BUY'
+    GROUP BY issuer
+    ORDER BY sold DESC
+    LIMIT 400`,
 
     collector_whale = `SELECT
         ne.current_owner                 as id,

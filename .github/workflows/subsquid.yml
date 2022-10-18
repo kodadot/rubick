@@ -1,0 +1,30 @@
+name: subsquid
+on:
+  push:
+    branches:
+      - "release-**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: install @subsquid/cli
+        run: npm install --location=global @subsquid/cli
+      - name: auth subsquid
+        run: |
+          BRANCH=${{ github.ref_name }}
+          PREFIX="release-"
+          VERSION=${BRANCH/#$PREFIX}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          sqd auth -k ${{ secrets.DEPLOYMENT_KEY }}
+      - name: deploy subsquid
+        id: deploy
+        continue-on-error: true
+        run: sqd squid release ${{ github.event.repository.name }}@${{ env.VERSION }} -v
+      - name: update subsquid
+        if: steps.deploy.outcome == 'failure'
+        run: sqd squid update ${{ github.event.repository.name }}@${{ env.VERSION }} -v

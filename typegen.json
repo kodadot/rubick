@@ -1,10 +1,13 @@
 {
   "outDir": "src/types",
-  "chainVersions": "kusamaVersions.json",
+  "specVersions": "kusamaVersions.jsonl", 
   "typesBundle": "kusama",
-  "events": [
-  ],
+  "events": [],
   "calls": [
-    "system.remark"
-  ]
+    "System.remark",
+    "Utility.batch_all",
+    "Utility.batch",
+    "Balances.transfer"
+  ],
+  "storage": []
 }
