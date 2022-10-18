@@ -392,7 +392,7 @@ async function handleMetadata(
 async function createEvent(final: NFTEntity, interaction: Interaction, call: BaseCall, meta: string, store: Store, currentOwner?: string) {
   try {
     const newEventId = eventId(final.id, interaction)
-    const event = create<Event>(Event, newEventId, eventFrom(interaction, call, meta, currentOwner))
+    const event = create<Event>(Event, newEventId, eventFrom(interaction, call, meta, currentOwner) as Partial<Event>)
     event.nft = final
     await store.save(event)
   } catch (e) {

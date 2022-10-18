@@ -21,7 +21,7 @@ export function withMeta(interaction: RmrkInteraction): interaction is RmrkInter
 }
 
 export function isOwner(entity: Entity, caller: string) {
-  return entity.currentOwner === caller
+  return entity.currentOwner?.id === caller
 }
 
 export function isIssuer(entity: Entity, caller: string) {

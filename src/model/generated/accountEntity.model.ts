@@ -1,8 +1,8 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, OneToMany as OneToMany_} from "typeorm"
-import {CollectionEntity} from "./collectionEntity.model"
-import {NFTEntity} from "./nftEntity.model"
-import {Event} from "./event.model"
 import {Emote} from "./emote.model"
+import {Event} from "./event.model"
+import {NFTEntity} from "./nftEntity.model"
+import {CollectionEntity} from "./collectionEntity.model"
 
 @Entity_()
 export class AccountEntity {
@@ -13,21 +13,6 @@ export class AccountEntity {
   @PrimaryColumn_()
   id!: string
 
-  @Column_("int4", {nullable: false})
-  lastUpdateBlock!: number
-
-  @OneToMany_(() => CollectionEntity, e => e.currentOwner)
-  collections!: CollectionEntity[]
-
-  @OneToMany_(() => NFTEntity, e => e.currentOwner)
-  nfts!: NFTEntity[]
-
-  @OneToMany_(() => Event, e => e.caller)
-  events!: Event[]
-
-  @OneToMany_(() => Emote, e => e.caller)
-  emotes!: Emote[]
-
   @Column_("text", {nullable: true})
   avatar!: string | undefined | null
 
@@ -36,4 +21,19 @@ export class AccountEntity {
 
   @Column_("text", {nullable: true})
   background!: string | undefined | null
+
+  @Column_("int4", {nullable: false})
+  lastUpdateBlock!: number
+
+  @OneToMany_(() => Emote, e => e.caller)
+  emotes!: Emote[]
+
+  @OneToMany_(() => Event, e => e.caller)
+  events!: Event[]
+
+  @OneToMany_(() => NFTEntity, e => e.currentOwner)
+  nfts!: NFTEntity[]
+
+  @OneToMany_(() => CollectionEntity, e => e.currentOwner)
+  collections!: CollectionEntity[]
 }

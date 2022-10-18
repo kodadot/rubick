@@ -1,13 +1,13 @@
 type AccountEntity @entity {
   id: ID!
-  lastUpdateBlock: Int!
-  collections: [CollectionEntity!] @derivedFrom(field: "currentOwner")
-  nfts: [NFTEntity!] @derivedFrom(field: "currentOwner")
-  events: [Event!] @derivedFrom(field: "caller")
-  emotes: [Emote!] @derivedFrom(field: "caller")
   avatar: String
   handle: String
   background: String
+  lastUpdateBlock: Int!
+  emotes: [Emote!] @derivedFrom(field: "caller")
+  events: [Event!] @derivedFrom(field: "caller")
+  nfts: [NFTEntity!] @derivedFrom(field: "currentOwner")
+  collections: [CollectionEntity!] @derivedFrom(field: "currentOwner")
 }
 
 type RemarkEntity @entity {
