@@ -1,5 +1,6 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
+import {AccountEntity} from "./accountEntity.model"
 import {Interaction} from "./_interaction"
 import {NFTEntity} from "./nftEntity.model"
 
@@ -18,11 +19,13 @@ export class Event {
   @Column_("timestamp with time zone", {nullable: false})
   timestamp!: Date
 
-  @Column_("text", {nullable: false})
-  caller!: string
+  @Index_()
+  @ManyToOne_(() => AccountEntity, {nullable: true})
+  caller!: AccountEntity | undefined | null
 
-  @Column_("text", {nullable: false})
-  currentOwner!: string
+  @Index_()
+  @ManyToOne_(() => AccountEntity, {nullable: true})
+  currentOwner!: AccountEntity | undefined | null
 
   @Column_("varchar", {length: 12, nullable: false})
   interaction!: Interaction

@@ -1,4 +1,5 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
+import {AccountEntity} from "./accountEntity.model"
 
 @Entity_()
 export class RemarkEntity {
@@ -12,8 +13,9 @@ export class RemarkEntity {
   @Column_("text", {nullable: false})
   value!: string
 
-  @Column_("text", {nullable: false})
-  caller!: string
+  @Index_()
+  @ManyToOne_(() => AccountEntity, {nullable: true})
+  caller!: AccountEntity | undefined | null
 
   @Column_("text", {nullable: false})
   blockNumber!: string

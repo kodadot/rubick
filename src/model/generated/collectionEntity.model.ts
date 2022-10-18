@@ -1,5 +1,6 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, OneToMany as OneToMany_, ManyToOne as ManyToOne_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, ManyToOne as ManyToOne_, OneToMany as OneToMany_} from "typeorm"
 import * as marshal from "./marshal"
+import {AccountEntity} from "./accountEntity.model"
 import {NFTEntity} from "./nftEntity.model"
 import {CollectionEvent} from "./_collectionEvent"
 import {MetadataEntity} from "./metadataEntity.model"
@@ -32,8 +33,9 @@ export class CollectionEntity {
   @Column_("text", {nullable: true})
   metadata!: string | undefined | null
 
-  @Column_("text", {nullable: true})
-  currentOwner!: string | undefined | null
+  @Index_()
+  @ManyToOne_(() => AccountEntity, {nullable: true})
+  currentOwner!: AccountEntity | undefined | null
 
   @OneToMany_(() => NFTEntity, e => e.collection)
   nfts!: NFTEntity[]

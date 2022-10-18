@@ -1,7 +1,19 @@
+type AccountEntity @entity {
+  id: ID!
+  lastUpdateBlock: Int!
+  collections: [CollectionEntity!] @derivedFrom(field: "currentOwner")
+  nfts: [NFTEntity!] @derivedFrom(field: "currentOwner")
+  events: [Event!] @derivedFrom(field: "caller")
+  emotes: [Emote!] @derivedFrom(field: "caller")
+  avatar: String
+  handle: String
+  background: String
+}
+
 type RemarkEntity @entity {
   id: ID! #id is a required field
   value: String!
-  caller: String!
+  caller: AccountEntity
   blockNumber: String!
   interaction: String
 }
@@ -21,7 +33,7 @@ type CollectionEntity @entity {
   symbol: String
   id: ID!
   metadata: String
-  currentOwner: String
+  currentOwner: AccountEntity
   nfts: [NFTEntity!] @derivedFrom(field: "collection")
   events: [CollectionEvent!]
   blockNumber: BigInt
@@ -39,7 +51,7 @@ type NFTEntity @entity {
   id: ID!
   hash: String! @index
   metadata: String
-  currentOwner: String @index
+  currentOwner: AccountEntity @index
   price: BigInt!
   burned: Boolean!
   blockNumber: BigInt
@@ -71,8 +83,8 @@ interface EventType {
   id: ID!
   blockNumber: BigInt
   timestamp: DateTime!
-  caller: String!
-  currentOwner: String # currentOwner
+  caller: AccountEntity
+  currentOwner: AccountEntity # currentOwner
   interaction: Interaction!
   meta: String!
 }
@@ -81,8 +93,8 @@ type Event implements EventType @entity {
   id: ID!
   blockNumber: BigInt
   timestamp: DateTime!
-  caller: String!
-  currentOwner: String! # currentOwner
+  caller: AccountEntity
+  currentOwner: AccountEntity # currentOwner
   interaction: Interaction!
   meta: String!
   nft: NFTEntity!
@@ -91,7 +103,7 @@ type Event implements EventType @entity {
 type CollectionEvent @jsonField {
   blockNumber: String
   timestamp: DateTime
-  caller: String!
+  caller: AccountEntity
   interaction: String!
   meta: String!
 }
@@ -99,7 +111,7 @@ type CollectionEvent @jsonField {
 type Emote @entity {
   id: ID!
   nft: NFTEntity!
-  caller: String!
+  caller: AccountEntity
   value: String!
 }
 
