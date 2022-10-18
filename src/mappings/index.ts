@@ -1,9 +1,11 @@
 import {
+  // AccountEntity,
   CollectionEntity,
   Emote, Event,
   Interaction, MetadataEntity as Metadata,
   NFTEntity
 } from '../model/generated'
+import { getOrCreate } from './utils/entity'
 
 import { isRemark, unwrapRemark } from '@kodadot1/minimark'
 import md5 from 'md5'
@@ -23,6 +25,7 @@ import {
   RmrkEvent,
   RmrkInteraction, Store, TokenMetadata
 } from './utils/types'
+import { AccountEntity } from '../model/generated/accountEntity.model'
 
 
 export async function handleRemark(context: Context): Promise<void> {
@@ -100,17 +103,17 @@ async function mint(context: Context): Promise<void> {
       collection.id
     )
     plsNotBe<CollectionEntity>(real, entity as CollectionEntity)
-
+    
+    const account = await getOrCreate(context.store, AccountEntity, caller, { id: caller, lastUpdateBlock: context.block.height })
     const final = create<CollectionEntity>(CollectionEntity, collection.id, {})
-
     final.name = collection.name.trim()
     final.max = Number(collection.max) || 0
     final.issuer = caller
-    final.currentOwner = caller
     final.symbol = collection.symbol.trim()
     final.blockNumber = BigInt(blockNumber)
     final.metadata = collection.metadata
     final.createdAt = timestamp
+    final.currentOwner = account
 
     if (final.metadata) {
       const metadata = await handleMetadata(final.metadata, final.name, context.store)
@@ -139,6 +142,7 @@ async function mintNFT(
     )
     plsBe(real, collection)
     isOwnerOrElseError(collection, caller)
+    const account = await getOrCreate(context.store, AccountEntity, caller, { id: caller, lastUpdateBlock: context.block.height })
     const id = getNftId(nft, blockNumber)
     // const entity = await get<NFTEntity>(context.store, NFTEntity, id) // TODO: check if exists
     // plsNotBe<NFTEntity>(real, entity as NFTEntity)
@@ -146,7 +150,7 @@ async function mintNFT(
     final.id = id
     final.hash = md5(id)
     final.issuer = caller
-    final.currentOwner = caller
+    final.currentOwner = account
     final.blockNumber = BigInt(blockNumber)
     final.name = nft.name
     final.instance = nft.instance
@@ -188,14 +192,16 @@ async function send(context: Context) {
     )
     validateInteraction(nft, interaction)
     isOwnerOrElseError(nft, caller)
-    const originalOwner = nft.currentOwner ?? undefined
-    nft.currentOwner = interaction.value
+    // const originalOwner = nft.currentOwner ?? undefined
+    const originalOwner = await getOrCreate(context.store, AccountEntity, nft.currentOwner?.id || '', { id: nft.currentOwner?.id, lastUpdateBlock: context.block.height })
+    const account = await getOrCreate(context.store, AccountEntity, interaction.value || '', { id: interaction.value, lastUpdateBlock: context.block.height })
+    nft.currentOwner = account
     nft.price = BigInt(0)
     nft.updatedAt = timestamp
 
     logger.success(`[SEND] ${nft.id} to ${interaction.value}`)
     await context.store.save(nft)
-    await createEvent(nft, RmrkEvent.SEND, { blockNumber, caller, timestamp }, interaction.value || '', context.store, originalOwner)
+    await createEvent(nft, RmrkEvent.SEND, { blockNumber, caller, timestamp }, interaction.value || '', context.store, originalOwner.id)
   } catch (e) {
     logError(e, (e) =>
       logger.error(`[SEND] ${e.message} ${JSON.stringify(interaction)}`)
@@ -217,14 +223,16 @@ async function buy(context: Context) {
     isPositiveOrElseError(nft.price, true)
     isBuyLegalOrElseError(nft, extra || [])
     const originalPrice = nft.price
-    const originalOwner = nft.currentOwner ?? undefined
-    nft.currentOwner = caller
+    // const originalOwner = nft.currentOwner ?? undefined
+    const originalOwner = await getOrCreate(context.store, AccountEntity, nft.currentOwner?.id || '', { id: nft.currentOwner?.id, lastUpdateBlock: context.block.height })
+    const account = await getOrCreate(context.store, AccountEntity, caller, { id: caller, lastUpdateBlock: context.block.height })
+    nft.currentOwner = account
     nft.price = BigInt(0)
     nft.updatedAt = timestamp
 
     logger.success(`[BUY] ${nft.id} from ${caller}`)
     await context.store.save(nft)
-    await createEvent(nft, RmrkEvent.BUY, { blockNumber, caller, timestamp }, String(originalPrice), context.store, originalOwner)
+    await createEvent(nft, RmrkEvent.BUY, { blockNumber, caller, timestamp }, String(originalPrice), context.store, originalOwner.id)
   } catch (e) {
     logError(e, (e) =>
       logger.error(`[BUY] ${e.message} ${JSON.stringify(interaction)}`)
@@ -297,7 +305,8 @@ async function changeIssuer(context: Context) {
     )
     plsBe<CollectionEntity>(real, collection)
     isOwnerOrElseError(collection, caller)
-    collection.currentOwner = interaction.value
+    const account = await getOrCreate(context.store, AccountEntity, interaction.value || '', { id: interaction.value || '', lastUpdateBlock: context.block.height })
+    collection.currentOwner = account
 
     logger.success(`[CHANGEISSUER] ${collection.id} from ${caller}`)
     await context.store.save(collection)
@@ -323,6 +332,7 @@ async function emote(context: Context) {
     const id = emoteId(interaction, caller)
     let emote = await get<Emote>(context.store, Emote, interaction.id)
     nft.updatedAt = timestamp
+    const account = await getOrCreate(context.store, AccountEntity, caller, { id: caller, lastUpdateBlock: context.block.height })
 
     if (emote) {
       nft.emoteCount -= 1
@@ -333,7 +343,7 @@ async function emote(context: Context) {
 
     emote = create<Emote>(Emote, id, {
       id,
-      caller,
+      caller: account,
       value: interaction.value,
     })
 
@@ -382,7 +392,7 @@ async function handleMetadata(
 async function createEvent(final: NFTEntity, interaction: Interaction, call: BaseCall, meta: string, store: Store, currentOwner?: string) {
   try {
     const newEventId = eventId(final.id, interaction)
-    const event = create<Event>(Event, newEventId, eventFrom(interaction, call, meta, currentOwner))
+    const event = create<Event>(Event, newEventId, eventFrom(interaction, call, meta, currentOwner) as Partial<Event>)
     event.nft = final
     await store.save(event)
   } catch (e) {
@@ -390,4 +400,3 @@ async function createEvent(final: NFTEntity, interaction: Interaction, call: Bas
   }
   
 }
-

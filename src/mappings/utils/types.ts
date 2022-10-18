@@ -4,6 +4,7 @@ import { CallHandlerContext } from '@subsquid/substrate-processor'
 import { RemarkResult } from './extract'
 import type { EntityManager } from 'typeorm'
 import type { CreatedNFT, CreatedCollection, InteractionValue } from '@kodadot1/minimark'
+import { AccountEntity } from '../../model/generated/accountEntity.model'
 
 export type Store = EntityManager
 
@@ -24,7 +25,7 @@ export function collectionEventFrom(interaction: RmrkEvent.MINT | RmrkEvent.CHAN
   })
 }
 
-export function eventFrom<T>(interaction: T, { blockNumber, caller, timestamp }: BaseCall, meta: string, currentOwner?: string): IEvent<T> {
+export function eventFrom<T>(interaction: T, { blockNumber, caller, timestamp }: BaseCall, meta: string, currentOwner?: AccountEntity | string): IEvent<T> {
   return {
     interaction,
     blockNumber: BigInt(blockNumber),
@@ -59,8 +60,8 @@ export type BaseCall = {
 export interface IEvent<T = RmrkEvent> {
   interaction: T;
   blockNumber: bigint,
-  caller: string,
-  currentOwner: string,
+  caller: AccountEntity | string,
+  currentOwner: AccountEntity | string,
   timestamp: Date,
   meta: string;
 }

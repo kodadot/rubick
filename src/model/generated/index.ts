@@ -1,3 +1,4 @@
+export * from "./accountEntity.model"
 export * from "./remarkEntity.model"
 export * from "./failedEntity.model"
 export * from "./collectionEntity.model"

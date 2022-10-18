@@ -1,10 +1,11 @@
 import assert from "assert"
 import * as marshal from "./marshal"
+import {AccountEntity} from "./accountEntity.model"
 
 export class CollectionEvent {
   private _blockNumber!: string | undefined | null
   private _timestamp!: Date | undefined | null
-  private _caller!: string
+  private _caller!: string | undefined | null
   private _interaction!: string
   private _meta!: string
 
@@ -13,7 +14,7 @@ export class CollectionEvent {
     if (json != null) {
       this._blockNumber = json.blockNumber == null ? undefined : marshal.string.fromJSON(json.blockNumber)
       this._timestamp = json.timestamp == null ? undefined : marshal.datetime.fromJSON(json.timestamp)
-      this._caller = marshal.string.fromJSON(json.caller)
+      this._caller = json.caller == null ? undefined : marshal.string.fromJSON(json.caller)
       this._interaction = marshal.string.fromJSON(json.interaction)
       this._meta = marshal.string.fromJSON(json.meta)
     }
@@ -35,12 +36,11 @@ export class CollectionEvent {
     this._timestamp = value
   }
 
-  get caller(): string {
-    assert(this._caller != null, 'uninitialized access')
+  get caller(): string | undefined | null {
     return this._caller
   }
 
-  set caller(value: string) {
+  set caller(value: string | undefined | null) {
     this._caller = value
   }
 

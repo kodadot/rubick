@@ -1,6 +1,7 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, ManyToOne as ManyToOne_, OneToMany as OneToMany_} from "typeorm"
 import * as marshal from "./marshal"
 import {CollectionEntity} from "./collectionEntity.model"
+import {AccountEntity} from "./accountEntity.model"
 import {Event} from "./event.model"
 import {Emote} from "./emote.model"
 import {MetadataEntity} from "./metadataEntity.model"
@@ -42,8 +43,8 @@ export class NFTEntity {
   metadata!: string | undefined | null
 
   @Index_()
-  @Column_("text", {nullable: true})
-  currentOwner!: string | undefined | null
+  @ManyToOne_(() => AccountEntity, {nullable: true})
+  currentOwner!: AccountEntity | undefined | null
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   price!: bigint
