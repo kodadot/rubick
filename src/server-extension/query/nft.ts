@@ -21,7 +21,7 @@ FROM nft_entity ne
 where
     e.interaction = 'BUY'
     and e.timestamp >= NOW() - INTERVAL '7 DAY'
-ORDER BY e.timestamp desc`
+ORDER BY e.timestamp DESC`
 
 export const hotDashboardQuery = (dateRange: string): string => `SELECT
     e.timestamp,
