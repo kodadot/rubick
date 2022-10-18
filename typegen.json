@@ -4,10 +4,7 @@
   "typesBundle": "kusama",
   "events": [],
   "calls": [
-    "System.remark",
-    "Utility.batch_all",
-    "Utility.batch",
-    "Balances.transfer"
+    "System.remark"
   ],
   "storage": []
 }

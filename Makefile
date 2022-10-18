@@ -1,52 +1,33 @@
-process: build
+process: migrate
 	@node -r dotenv/config lib/processor.js
-
-
-serve:
-	@npx squid-graphql-server
-
-reset:
-	@npx sqd db drop
-	@npx sqd db create
-	@npx sqd db:migrate
-
-migrate:
-	@npx sqd db:migrate
-
-
-migration:
-	@npx sqd db:create-migration Data
-
 
 build:
 	@npm run build
 
+build-processor-image:
+	@docker build . --target processor -t squid-processor
+
+build-query-node-image:
+	@docker build . --target query-node -t query-node
+
+build-images: build-processor-image build-query-node-image
+
+serve:
+	@npx squid-graphql-server --subscriptions
+
+migrate:
+	@npx squid-typeorm-migration apply
 
 codegen:
-	@npx sqd codegen
+	@npx squid-typeorm-codegen
 
-
-typegen: kusamaVersions.json
+typegen:
 	@npx squid-substrate-typegen typegen.json
-
-
-kusamaVersions.json:
-	@make explore
-
-
-explore:
-	@npx squid-substrate-metadata-explorer \
-		--chain wss://kusama-rpc.polkadot.io \
-		--archive https://kusama.indexer.gc.subsquid.io/v4/graphql \
-		--out kusamaVersions.json
-
 
 up:
 	@docker-compose up -d
 
-
 down:
 	@docker-compose down
 
-
-.PHONY: process serve start codegen migration migrate up down reset
+.PHONY: build serve process migrate codegen typegen up down

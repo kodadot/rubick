@@ -22,7 +22,7 @@ export class NFTEntity {
   transferable!: number | undefined | null
 
   @Index_()
-  @ManyToOne_(() => CollectionEntity, {nullable: false})
+  @ManyToOne_(() => CollectionEntity, {nullable: true})
   collection!: CollectionEntity
 
   @Column_("text", {nullable: true})
@@ -69,4 +69,7 @@ export class NFTEntity {
 
   @Column_("timestamp with time zone", {nullable: false})
   updatedAt!: Date
+
+  @Column_("int4", {nullable: false})
+  emoteCount!: number
 }

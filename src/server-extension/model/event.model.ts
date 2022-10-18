@@ -3,59 +3,65 @@ import { Field, ObjectType } from 'type-graphql';
 @ObjectType()
 export class EventEntity {
   @Field(() => Date, { nullable: false })
-  date!: Date
+  date!: Date;
 
   @Field(() => BigInt, { nullable: true, defaultValue: 0n })
-  max!: bigint
+  max!: bigint;
 
   @Field(() => Number, { nullable: true, defaultValue: 0 })
-  count!: number
+  count!: number;
 
   constructor(props: Partial<EventEntity>) {
     Object.assign(this, props);
-}
+  }
 }
 
 @ObjectType()
 export class HistoryEntity {
   @Field(() => String)
-  id!: string
+  id!: string;
 
   @Field(() => Date)
-  date!: Date
+  date!: Date;
 
   @Field(() => Number)
-  count!: number
+  count!: number;
 }
 
 @ObjectType()
 export class LastEventEntity {
   @Field(() => String, { nullable: false })
-  id!: String
+  id!: String;
 
   @Field(() => String, { nullable: false })
-  name!: String
+  name!: String;
 
   @Field(() => String, { nullable: false })
-  issuer!: String
+  issuer!: String;
 
   @Field(() => Date, { nullable: false })
-  timestamp!: Date
+  timestamp!: Date;
 
   @Field(() => String, { nullable: false })
-  metadata!: String
+  metadata!: String;
 
   @Field(() => String, { nullable: false })
-  value!: String
+  value!: String;
 
-  @Field(() => String, { nullable: false, name: 'currentOwner'})
-  current_owner!: String
+  @Field(() => String, { nullable: false, name: 'currentOwner' })
+  current_owner!: String;
 
   @Field(() => String, { nullable: true })
-  image!: String
+  image!: String;
 
-  @Field(() => String, {nullable: true, name: 'animationUrl'})
-  animation_url!: string | undefined | null
+  @Field(() => String, { nullable: true, name: 'animationUrl' })
+  animation_url!: string | undefined | null;
+
+  @Field(() => String, { nullable: false, name: 'collectionId' })
+  collection_id!: string;
+
+  @Field(() => String, { nullable: false, name: 'collectionName' })
+  collection_name!: string;
 
   constructor(props: Partial<LastEventEntity>) {
     Object.assign(this, props);
