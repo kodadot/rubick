@@ -27,6 +27,9 @@ type CollectionEntity @entity {
   blockNumber: BigInt
   meta: MetadataEntity
   createdAt: DateTime!
+  updatedAt: DateTime!
+  nftCount: Int!
+  supply: Int!
 }
 
 type NFTEntity @entity {

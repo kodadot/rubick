@@ -111,6 +111,9 @@ async function mint(context: Context): Promise<void> {
     final.blockNumber = BigInt(blockNumber)
     final.metadata = collection.metadata
     final.createdAt = timestamp
+    final.updatedAt = timestamp
+    final.nftCount = 0
+    final.supply = 0
 
     if (final.metadata) {
       const metadata = await handleMetadata(final.metadata, final.name, context.store)
@@ -160,6 +163,10 @@ async function mintNFT(
     final.updatedAt = timestamp
     final.emoteCount = 0
 
+    collection.updatedAt = timestamp
+    collection.nftCount += 1 
+    collection.supply += 1 
+
     if (final.metadata) {
       const metadata = await handleMetadata(final.metadata, final.name, context.store)
       final.meta = metadata
@@ -167,6 +174,7 @@ async function mintNFT(
 
     logger.success(`[MINT] ${final.id}`)
     await context.store.save(final)
+    await context.store.save(collection)
     await createEvent(final, RmrkEvent.MINTNFT, { blockNumber, caller, timestamp }, '', context.store)
 
   } catch (e) {
@@ -222,8 +230,14 @@ async function buy(context: Context) {
     nft.price = BigInt(0)
     nft.updatedAt = timestamp
 
+    plsBe(real, nft.collection)
+    const collection = ensure<CollectionEntity>(await get<CollectionEntity>(context.store, CollectionEntity, nft.collection.toString()))
+    plsBe(real, collection)
+    collection.updatedAt = timestamp
+    
     logger.success(`[BUY] ${nft.id} from ${caller}`)
     await context.store.save(nft)
+    await context.store.save(collection)
     await createEvent(nft, RmrkEvent.BUY, { blockNumber, caller, timestamp }, String(originalPrice), context.store, originalOwner)
   } catch (e) {
     logError(e, (e) =>
@@ -247,9 +261,15 @@ async function consume(context: Context) {
     nft.price = BigInt(0)
     nft.burned = true
     nft.updatedAt = timestamp
+    plsBe(real, nft.collection)
+    const collection = ensure<CollectionEntity>(await get<CollectionEntity>(context.store, CollectionEntity, nft.collection.toString()))
+    plsBe(real, collection)
+    collection.updatedAt = timestamp
+    collection.supply -= 1
 
     logger.success(`[CONSUME] ${nft.id} from ${caller}`)
     await context.store.save(nft)
+    await context.store.save(collection)
     await createEvent(nft, RmrkEvent.CONSUME, { blockNumber, caller, timestamp }, '', context.store)
   } catch (e) {
     logError(e, (e) =>
