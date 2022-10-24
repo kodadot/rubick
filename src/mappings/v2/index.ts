@@ -1,4 +1,5 @@
 import { unwrapRemark } from '@kodadot1/minimark'
+import { createCollection } from '../shared/create'
 import { unwrap } from '../utils/extract'
 import logger from '../utils/logger'
 import { Context, RmrkEvent, RmrkInteraction } from '../utils/types'
@@ -10,9 +11,9 @@ export async function mainFrame(remark: string, context: Context): Promise<void>
     logger.pending(`[${event === RmrkEvent.MINT ? 'COLLECTION' : event}]: ${base.blockNumber}`)
 
     switch (event) {
-      // case RmrkEvent.MINT:
-      //   await mint(context)
-      //   break
+      case RmrkEvent.MINT: // should be CRATE
+        await createCollection(context)
+        break
       // case RmrkEvent.MINTNFT:
       //   await mintNFT(context)
       //   break

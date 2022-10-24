@@ -24,6 +24,7 @@ import {
   RmrkEvent,
   RmrkInteraction, Store
 } from '../utils/types'
+import { createCollection } from '../shared/create'
 
 
 export async function handleRemark(context: Context): Promise<void> {
@@ -50,7 +51,7 @@ export async function mainFrame(remark: string, context: Context): Promise<void>
 
       switch (event) {
         case RmrkEvent.MINT:
-          await mint(context)
+          await createCollection(context)
           break
         case RmrkEvent.MINTNFT:
           await mintNFT(context)
@@ -89,43 +90,6 @@ export async function mainFrame(remark: string, context: Context): Promise<void>
     }
   }
 
-async function mint(context: Context): Promise<void> {
-  let collection: Optional<Collection> = null
-  try {
-    const { value, caller, timestamp, blockNumber, version  } = unwrap(context, getCreateCollection);
-    collection = value
-    plsBe<string>(real, collection.id)
-    const entity = await get<CollectionEntity>(
-      context.store,
-      CollectionEntity,
-      collection.id
-    )
-    plsNotBe<CollectionEntity>(real, entity as CollectionEntity)
-
-    const final = create<CollectionEntity>(CollectionEntity, collection.id, {})
-
-    final.name = collection.name.trim()
-    final.max = Number(collection.max) || 0
-    final.issuer = caller
-    final.currentOwner = caller
-    final.symbol = collection.symbol.trim()
-    final.blockNumber = BigInt(blockNumber)
-    final.metadata = collection.metadata
-    final.createdAt = timestamp
-
-    if (final.metadata) {
-      const metadata = await handleMetadata(final.metadata, final.name, context.store)
-      final.meta = metadata
-    }
-
-    logger.success(`[COLLECTION] ${final.id}`)
-    await context.store.save(final)
-  } catch (e) {
-    logError(e, (e) =>
-      logger.error(`[COLLECTION] ${e.message}, ${JSON.stringify(collection)}`)
-    )
-  }
-}
 
 async function mintNFT(
   context: Context
