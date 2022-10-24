@@ -15,6 +15,7 @@
   "dependencies": {
     "@kodadot1/metasquid": "^0.1.0-rc.2",
     "@kodadot1/minimark": "^0.0.1-rc.10",
+    "@kodadot1/minipfs": "^0.1.0-rc.0",
     "@polkadot/types": "^9.4.1",
     "@subsquid/archive-registry": "1.0.14",
     "@subsquid/cli": "^0.7.1",
