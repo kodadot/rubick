@@ -24,7 +24,7 @@ import {
   RmrkEvent,
   RmrkInteraction, Store
 } from '../utils/types'
-import { createCollection } from '../shared/create'
+import { createCollection, createEvent } from '../shared/create'
 
 
 export async function handleRemark(context: Context): Promise<void> {
@@ -222,33 +222,6 @@ async function consume(context: Context) {
   }
 }
 
-async function list(context: Context) {
-  let interaction: Optional<RmrkInteraction> = null
-
-  try {
-    const { value, caller, timestamp, blockNumber } = unwrap(context, getInteraction);
-    interaction = value
-    const nft = ensure<NFTEntity>(
-      await get<NFTEntity>(context.store, NFTEntity, interaction.id)
-    )
-    validateInteraction(nft, interaction)
-    isOwnerOrElseError(nft, caller)
-    const price = BigInt(interaction.value || '0')
-    isPositiveOrElseError(price)
-    nft.price = price
-    nft.updatedAt = timestamp
-
-    logger.success(`[LIST] ${nft.id} from ${caller}`)
-    await context.store.save(nft)
-    const event = nft.price === 0n ? RmrkEvent.UNLIST : RmrkEvent.LIST
-    await createEvent(nft, event, { blockNumber, caller, timestamp }, String(price), context.store)
-  } catch (e) {
-    logError(e, (e) =>
-      logger.warn(`[LIST] ${e.message} ${JSON.stringify(interaction)}`)
-    )
-  }
-}
-
 async function changeIssuer(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
 
@@ -307,15 +280,4 @@ async function emote(context: Context) {
   }
 }
 
-async function createEvent(final: NFTEntity, interaction: Interaction, call: BaseCall, meta: string, store: Store, currentOwner?: string) {
-  try {
-    const newEventId = eventId(final.id, interaction)
-    const event = create<Event>(Event, newEventId, eventFrom(interaction, call, meta, currentOwner))
-    event.nft = final
-    await store.save(event)
-  } catch (e) {
-    logError(e, (e) => logger.warn(`[[${interaction}]]: ${final.id} Reason: ${e.message}`))
-  }
-  
-}
 

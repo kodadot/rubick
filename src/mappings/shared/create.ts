@@ -1,12 +1,13 @@
 import { plsBe, plsNotBe, real } from '@kodadot1/metasquid/consolidator'
 import { create, get } from '@kodadot1/metasquid/entity'
-import { Optional } from '@kodadot1/metasquid/types'
+import { BaseCall, Optional, Store } from '@kodadot1/metasquid/types'
 
-import { CollectionEntity } from '../../model'
+import { CollectionEntity, Interaction, NFTEntity, Event } from '../../model'
 import { unwrap } from '../utils/extract'
 import { getCreateCollection } from '../utils/getters'
+import { eventId } from '../utils/helper'
 import logger, { logError } from '../utils/logger'
-import { Collection, Context } from '../utils/types'
+import { Collection, Context, eventFrom } from '../utils/types'
 import { handleMetadata } from './metadata'
 
 
@@ -47,5 +48,18 @@ export async function createCollection(context: Context): Promise<void> {
       logger.error(`[COLLECTION] ${e.message}, ${JSON.stringify(collection)}`)
     )
   }
+}
+
+
+export async function createEvent(final: NFTEntity, interaction: Interaction, call: BaseCall, meta: string, store: Store, currentOwner?: string) {
+  try {
+    const newEventId = eventId(final.id, interaction)
+    const event = create<Event>(Event, newEventId, eventFrom(interaction, call, meta, currentOwner))
+    event.nft = final
+    await store.save(event)
+  } catch (e) {
+    logError(e, (e) => logger.warn(`[[${interaction}]]: ${final.id} Reason: ${e.message}`))
+  }
+  
 }
 
