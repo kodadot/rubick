@@ -1,30 +1,26 @@
 import {
-  CollectionEntity,
-  Emote, Event,
-  Interaction, NFTEntity
+  CollectionEntity, NFTEntity
 } from '../../model/generated'
 
-import { burned, plsBe, plsNotBe, real } from '@kodadot1/metasquid/dist/consolidator'
+import { plsBe, real } from '@kodadot1/metasquid/dist/consolidator'
 import { isRemark, unwrapRemark } from '@kodadot1/minimark'
 import md5 from 'md5'
 import { SystemRemarkCall } from '../../types/calls'
 import { unwrap } from '../utils'
 import { updateCache } from '../utils/cache'
-import { isBuyLegalOrElseError, isInteractive, isOwnerOrElseError, isPositiveOrElseError, validateInteraction, withMeta } from '../utils/consolidator'
+import { isOwnerOrElseError } from '../utils/consolidator'
 
-import { handleMetadata } from '../shared/metadata'
+import { burn as consume, buy, changeIssuer, createCollection, createEvent, emote, handleMetadata, list, send } from '../shared'
 import { create, get } from '../utils/entity'
-import { getCreateCollection, getCreateToken, getInteraction, getInteractionWithExtra } from '../utils/getters'
-import { emoteId, ensure, eventId } from '../utils/helper'
+import { getCreateToken } from '../utils/getters'
+import { ensure } from '../utils/helper'
 import logger, { logError } from '../utils/logger'
 import {
-  BaseCall, Collection, Context, eventFrom,
-  getNftId, NFT,
+  Context, getNftId, NFT,
   Optional,
   RmrkEvent,
-  RmrkInteraction, Store
+  RmrkInteraction
 } from '../utils/types'
-import { createCollection, createEvent } from '../shared/create'
 
 
 export async function handleRemark(context: Context): Promise<void> {
@@ -137,146 +133,6 @@ async function mintNFT(
     logError(e, (e) =>
       logger.error(`[MINT] ${e.message}, ${JSON.stringify(nft)}`)
     )
-  }
-}
-
-async function send(context: Context) {
-  let interaction: Optional<RmrkInteraction> = null
-
-  try {
-    const { value, caller, timestamp, blockNumber } = unwrap(context, getInteraction);
-    interaction = value
-
-    const nft = ensure<NFTEntity>(
-      await get<NFTEntity>(context.store, NFTEntity, interaction.id)
-    )
-    validateInteraction(nft, interaction)
-    isOwnerOrElseError(nft, caller)
-    const originalOwner = nft.currentOwner ?? undefined
-    nft.currentOwner = interaction.value
-    nft.price = BigInt(0)
-    nft.updatedAt = timestamp
-
-    logger.success(`[SEND] ${nft.id} to ${interaction.value}`)
-    await context.store.save(nft)
-    await createEvent(nft, RmrkEvent.SEND, { blockNumber, caller, timestamp }, interaction.value || '', context.store, originalOwner)
-  } catch (e) {
-    logError(e, (e) =>
-      logger.error(`[SEND] ${e.message} ${JSON.stringify(interaction)}`)
-    )
-  }
-}
-
-async function buy(context: Context) {
-  let interaction: Optional<RmrkInteraction> = null
-
-  try {
-    const { value, caller, timestamp, blockNumber, extra } = unwrap(context, getInteractionWithExtra);
-    interaction = value
-
-    const nft = ensure<NFTEntity>(
-      await get<NFTEntity>(context.store, NFTEntity, interaction.id)
-    )
-    isInteractive(nft)
-    isPositiveOrElseError(nft.price, true)
-    isBuyLegalOrElseError(nft, extra || [])
-    const originalPrice = nft.price
-    const originalOwner = nft.currentOwner ?? undefined
-    nft.currentOwner = caller
-    nft.price = BigInt(0)
-    nft.updatedAt = timestamp
-
-    logger.success(`[BUY] ${nft.id} from ${caller}`)
-    await context.store.save(nft)
-    await createEvent(nft, RmrkEvent.BUY, { blockNumber, caller, timestamp }, String(originalPrice), context.store, originalOwner)
-  } catch (e) {
-    logError(e, (e) =>
-      logger.error(`[BUY] ${e.message} ${JSON.stringify(interaction)}`)
-    )
-  }
-}
-
-async function consume(context: Context) {
-  let interaction: Optional<RmrkInteraction> = null
-
-  try {
-    const { value, caller, timestamp, blockNumber } = unwrap(context, getInteraction);
-    interaction = value
-    const nft = ensure<NFTEntity>(
-      await get<NFTEntity>(context.store, NFTEntity, interaction.id)
-    )
-    plsBe<NFTEntity>(real, nft)
-    plsNotBe<NFTEntity>(burned, nft)
-    isOwnerOrElseError(nft, caller)
-    nft.price = BigInt(0)
-    nft.burned = true
-    nft.updatedAt = timestamp
-
-    logger.success(`[CONSUME] ${nft.id} from ${caller}`)
-    await context.store.save(nft)
-    await createEvent(nft, RmrkEvent.CONSUME, { blockNumber, caller, timestamp }, '', context.store)
-  } catch (e) {
-    logError(e, (e) =>
-      logger.warn(`[CONSUME] ${e.message} ${JSON.stringify(interaction)}`)
-    )
-  }
-}
-
-async function changeIssuer(context: Context) {
-  let interaction: Optional<RmrkInteraction> = null
-
-  try {
-    const { value, caller } = unwrap(context, getInteraction);
-    interaction = value
-    plsBe(withMeta, interaction)
-    const collection = ensure<CollectionEntity>(
-      await get<CollectionEntity>(context.store, CollectionEntity, interaction.id)
-    )
-    plsBe<CollectionEntity>(real, collection)
-    isOwnerOrElseError(collection, caller)
-    collection.currentOwner = interaction.value
-
-    logger.success(`[CHANGEISSUER] ${collection.id} from ${caller}`)
-    await context.store.save(collection)
-  } catch (e) {
-    logError(e, (e) =>
-      logger.warn(`[CHANGEISSUER] ${e.message} ${JSON.stringify(interaction)}`)
-    )
-  }
-}
-
-async function emote(context: Context) {
-  let interaction: Optional<RmrkInteraction> = null
-
-  try {
-    const { value, caller } = unwrap(context, getInteraction);
-    interaction = value
-    plsBe(withMeta, interaction)
-    const nft = ensure<NFTEntity>(
-      await get<NFTEntity>(context.store, NFTEntity, interaction.id)
-    )
-    plsBe<NFTEntity>(real, nft)
-    plsNotBe<NFTEntity>(burned, nft)
-    const id = emoteId(interaction, caller)
-    let emote = await get<Emote>(context.store, Emote, interaction.id)
-
-    if (emote) {
-      await context.store.remove(emote)
-      return
-    }
-
-    emote = create<Emote>(Emote, id, {
-      id,
-      caller,
-      value: interaction.value,
-    })
-
-    emote.nft = nft
-
-    logger.success(`[EMOTE] ${nft.id} from ${caller}`)
-    await context.store.save(emote)
-  } catch (e) {
-    logError(e, (e) => logger.warn(`[EMOTE] ${e.message}`))
   }
 }
 
