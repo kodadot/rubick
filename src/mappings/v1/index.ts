@@ -1,29 +1,28 @@
 import {
   CollectionEntity,
   Emote, Event,
-  Interaction, MetadataEntity as Metadata,
-  NFTEntity
+  Interaction, NFTEntity
 } from '../../model/generated'
 
+import { burned, plsBe, plsNotBe, real } from '@kodadot1/metasquid/dist/consolidator'
 import { isRemark, unwrapRemark } from '@kodadot1/minimark'
 import md5 from 'md5'
-import { real, burned, plsBe, plsNotBe } from '@kodadot1/metasquid/dist/consolidator'
 import { SystemRemarkCall } from '../../types/calls'
 import { unwrap } from '../utils'
 import { updateCache } from '../utils/cache'
 import { isBuyLegalOrElseError, isInteractive, isOwnerOrElseError, isPositiveOrElseError, validateInteraction, withMeta } from '../utils/consolidator'
 
+import { handleMetadata } from '../shared/metadata'
 import { create, get } from '../utils/entity'
 import { getCreateCollection, getCreateToken, getInteraction, getInteractionWithExtra } from '../utils/getters'
-import { emoteId, ensure, eventId, isEmpty } from '../utils/helper'
+import { emoteId, ensure, eventId } from '../utils/helper'
 import logger, { logError } from '../utils/logger'
-import { fetchMetadata } from '../utils/metadata'
 import {
-  attributeFrom, BaseCall, Collection, Context, eventFrom,
+  BaseCall, Collection, Context, eventFrom,
   getNftId, NFT,
   Optional,
   RmrkEvent,
-  RmrkInteraction, Store, TokenMetadata
+  RmrkInteraction, Store
 } from '../utils/types'
 
 
@@ -343,37 +342,6 @@ async function emote(context: Context) {
     logError(e, (e) => logger.warn(`[EMOTE] ${e.message}`))
   }
 }
-
-async function handleMetadata(
-  id: string,
-  name: string,
-  store: Store
-): Promise<Optional<Metadata>> {
-  const meta = await get<Metadata>(store, Metadata, id)
-  if (meta) {
-    return meta
-  }
-
-  const metadata = await fetchMetadata<TokenMetadata>({ metadata: id })
-  if (isEmpty(metadata)) {
-    return null
-  }
-
-  const partial: Partial<Metadata> = {
-    id,
-    description: metadata.description || '',
-    image: metadata.image || metadata.thumbnailUri || metadata.mediaUri,
-    animationUrl: metadata.animation_url || metadata.mediaUri,
-    attributes: metadata.attributes?.map(attributeFrom) || [],
-    name: metadata.name || name,
-    type: metadata.type || '',
-  }
-
-  const final = create<Metadata>(Metadata, id, partial)
-  await store.save(final)
-  return final
-}
-
 
 async function createEvent(final: NFTEntity, interaction: Interaction, call: BaseCall, meta: string, store: Store, currentOwner?: string) {
   try {
