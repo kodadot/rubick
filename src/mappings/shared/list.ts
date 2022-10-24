@@ -8,7 +8,7 @@ import { isOwnerOrElseError, isPositiveOrElseError, validateInteraction } from '
 import { getInteraction } from '../utils/getters'
 import logger, { logError } from '../utils/logger'
 import { Context, RmrkEvent, RmrkInteraction } from '../utils/types'
-import { createEvent } from './create'
+import { createEvent } from './event'
 
 export async function list(context: Context) {
   let interaction: Optional<RmrkInteraction> = null

@@ -9,7 +9,7 @@ import { isOwnerOrElseError } from '../utils/consolidator'
 import { getInteraction } from '../utils/getters'
 import logger, { logError } from '../utils/logger'
 import { Context, RmrkEvent, RmrkInteraction } from '../utils/types'
-import { createEvent } from './create'
+import { createEvent } from './event'
 
 
 export async function burn(context: Context) {

@@ -8,7 +8,7 @@ import { isBuyLegalOrElseError, isInteractive, isPositiveOrElseError } from '../
 import { getInteractionWithExtra } from '../utils/getters'
 import logger, { logError } from '../utils/logger'
 import { Context, RmrkEvent, RmrkInteraction } from '../utils/types'
-import { createEvent } from './create'
+import { createEvent } from './event'
 
 export async function buy(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
