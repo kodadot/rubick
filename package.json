@@ -13,7 +13,7 @@
     "test:unit": "mocha -r ts-node/register tests/unit/**.spec.ts"
   },
   "dependencies": {
-    "@kodadot1/metasquid": "^0.1.0-rc.2",
+    "@kodadot1/metasquid": "^0.1.0-rc.3",
     "@kodadot1/minimark": "^0.0.1-rc.10",
     "@kodadot1/minipfs": "^0.1.0-rc.0",
     "@polkadot/types": "^9.4.1",
