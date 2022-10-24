@@ -1,13 +1,11 @@
-import { Attribute, CollectionEvent, Interaction as RmrkEvent } from '../../model/generated'
+import type { Store } from '@kodadot1/metasquid/types'
+import type { CreatedCollection, CreatedNFT, InteractionValue } from '@kodadot1/minimark'
+
 import { CallHandlerContext } from '@subsquid/substrate-processor'
-
+import { Attribute, CollectionEvent, Interaction as RmrkEvent } from '../../model/generated'
 import { RemarkResult } from './extract'
-import type { EntityManager } from 'typeorm'
-import type { CreatedNFT, CreatedCollection, InteractionValue } from '@kodadot1/minimark'
 
-export type Store = EntityManager
-
-export { RmrkEvent }
+export { RmrkEvent, Store }
 
 export const getNftId = (nft: any, blocknumber?: string | number): string => {
   return `${blocknumber ? blocknumber + '-' : '' }${nft.collection}-${nft.instance || nft.name}-${nft.sn}`
