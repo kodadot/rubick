@@ -33,6 +33,7 @@ export async function createCollection(context: Context): Promise<void> {
     final.blockNumber = BigInt(blockNumber)
     final.metadata = collection.metadata
     final.createdAt = timestamp
+    final.version = version
 
     if (final.metadata) {
       const metadata = await handleMetadata(final.metadata, final.name, context.store)
