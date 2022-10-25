@@ -34,6 +34,9 @@ export async function createCollection(context: Context): Promise<void> {
     final.metadata = collection.metadata
     final.createdAt = timestamp
     final.version = version
+    final.updatedAt = timestamp
+    final.nftCount = 0
+    final.supply = 0
 
     if (final.metadata) {
       const metadata = await handleMetadata(final.metadata, final.name, context.store)

@@ -15,7 +15,7 @@ export async function emote(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
 
   try {
-    const { value, caller } = unwrap(context, getInteraction);
+    const { value, caller, timestamp } = unwrap(context, getInteraction);
     interaction = value
     plsBe(withMeta, interaction)
     const nft = ensure<NFTEntity>(
@@ -27,7 +27,9 @@ export async function emote(context: Context) {
     let emote = await get<Emote>(context.store, Emote, interaction.id)
 
     if (emote) {
+      nft.emoteCount -= 1
       await context.store.remove(emote)
+      await context.store.save(nft)
       return
     }
 
@@ -38,9 +40,11 @@ export async function emote(context: Context) {
     })
 
     emote.nft = nft
+    nft.emoteCount += 1
 
     logger.success(`[EMOTE] ${nft.id} from ${caller}`)
     await context.store.save(emote)
+    await context.store.save(nft)
   } catch (e) {
     logError(e, (e) => logger.warn(`[EMOTE] ${e.message}`))
   }

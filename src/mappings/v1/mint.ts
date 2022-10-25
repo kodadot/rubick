@@ -50,6 +50,11 @@ export async function mintNFT(
     final.burned = false
     final.createdAt = timestamp
     final.updatedAt = timestamp
+    final.emoteCount = 0
+
+    collection.updatedAt = timestamp
+    collection.nftCount += 1 
+    collection.supply += 1 
 
     if (final.metadata) {
       const metadata = await handleMetadata(final.metadata, final.name, context.store)
@@ -58,6 +63,7 @@ export async function mintNFT(
 
     logger.success(`[MINT] ${final.id}`)
     await context.store.save(final)
+    await context.store.save(collection)
     await createEvent(final, RmrkEvent.MINTNFT, { blockNumber, caller, timestamp }, '', context.store)
 
   } catch (e) {

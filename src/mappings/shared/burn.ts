@@ -3,7 +3,7 @@ import { burned, plsBe, plsNotBe, real } from '@kodadot1/metasquid/consolidator'
 import { get } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
 
-import { NFTEntity } from '../../model'
+import { CollectionEntity, NFTEntity } from '../../model'
 import { unwrap } from '../utils'
 import { isOwnerOrElseError } from '../utils/consolidator'
 import { getInteraction } from '../utils/getters'
@@ -28,8 +28,15 @@ export async function burn(context: Context) {
     nft.burned = true
     nft.updatedAt = timestamp
 
+    plsBe(real, nft.collection)
+    const collection = ensure<CollectionEntity>(await get<CollectionEntity>(context.store, CollectionEntity, nft.collection.toString()))
+    plsBe(real, collection)
+    collection.updatedAt = timestamp
+    collection.supply -= 1
+
     logger.success(`[CONSUME] ${nft.id} from ${caller}`)
     await context.store.save(nft)
+    await context.store.save(collection)
     await createEvent(nft, RmrkEvent.CONSUME, { blockNumber, caller, timestamp }, '', context.store)
   } catch (e) {
     logError(e, (e) =>

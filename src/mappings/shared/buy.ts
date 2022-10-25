@@ -1,8 +1,9 @@
 import { ensure } from '@kodadot1/metasquid'
+import { plsBe, real } from '@kodadot1/metasquid/consolidator'
 import { get } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
 
-import { NFTEntity } from '../../model'
+import { CollectionEntity, NFTEntity } from '../../model'
 import { unwrap } from '../utils'
 import { isBuyLegalOrElseError, isInteractive, isPositiveOrElseError } from '../utils/consolidator'
 import { getInteractionWithExtra } from '../utils/getters'
@@ -29,8 +30,14 @@ export async function buy(context: Context) {
     nft.price = BigInt(0)
     nft.updatedAt = timestamp
 
+    plsBe(real, nft.collection)
+    const collection = ensure<CollectionEntity>(await get<CollectionEntity>(context.store, CollectionEntity, nft.collection.toString()))
+    plsBe(real, collection)
+    collection.updatedAt = timestamp
+
     logger.success(`[BUY] ${nft.id} from ${caller}`)
     await context.store.save(nft)
+    await context.store.save(collection)
     await createEvent(nft, RmrkEvent.BUY, { blockNumber, caller, timestamp }, String(originalPrice), context.store, originalOwner)
   } catch (e) {
     logError(e, (e) =>

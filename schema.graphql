@@ -29,6 +29,9 @@ type CollectionEntity @entity {
   nfts: [NFTEntity!] @derivedFrom(field: "collection")
   symbol: String! @unique
   version: String
+  updatedAt: DateTime!
+  nftCount: Int!
+  supply: Int!
 }
 
 type NFTEntity @entity {
@@ -50,6 +53,7 @@ type NFTEntity @entity {
   sn: String
   transferable: Int
   updatedAt: DateTime!
+  emoteCount: Int!
 }
 
 type MetadataEntity @entity {

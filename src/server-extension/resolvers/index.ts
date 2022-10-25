@@ -3,11 +3,12 @@ import type { EntityManager } from 'typeorm'
 
 import { CollectionChartResolver } from './collectionChart'
 import { CollectionEventResolver } from './collectionEvent'
+import { PassionFeedResolver } from "./passionFeed";
+import { SalesFeedResolver } from "./salesFeed";
+import { HotDashboardResolver } from "./hotDashboard";
 import { CountResolver } from './count'
 import { EmoteResolver } from './emote'
 import { EventResolver } from './event'
-import { PassionFeedResolver } from './passionFeed'
-import { SalesFeedResolver } from './salesFeed'
 import { SeriesResolver } from './series'
 import { SpotlightResolver } from './spotlight'
 
@@ -36,12 +37,13 @@ export class HelloResolver {
 
 export {
   CollectionChartResolver,
+  CollectionEventResolver,
   CountResolver,
   EventResolver,
   SeriesResolver,
   SpotlightResolver,
-  CollectionEventResolver,
   PassionFeedResolver,
   SalesFeedResolver,
+  HotDashboardResolver,
   EmoteResolver,
 }
