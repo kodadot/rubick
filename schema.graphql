@@ -104,19 +104,31 @@ type Emote @entity {
   value: String!
 }
 
+# DEV: for RMRK v1 MINT use CREATE
+# DEV: for RMRK v1 MINTNFT use MINT
 enum Interaction {
+  ACCEPT
+  BASE
+  BURN
+  CREATE
+  DESTROY
   MINT
-  MINTNFT
   LIST
-  UNLIST
   BUY
   SEND
-  CONSUME
   CHANGEISSUER
   EMOTE
+  SETPRIORITY
+  SETPROPERTY
+  THEMEADD
+  RESADD
+  EQUIP
+  EQUIPPABLE
+  LOCK
+  UNLIST
 }
 
-
+# Cachce and tables
 type Series @entity {
   id: ID!
   issuer: String,
