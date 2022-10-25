@@ -128,6 +128,31 @@ enum Interaction {
   UNLIST
 }
 
+# Remarkably specific types
+# type Base @entity {
+#     id: ID!
+#     type: BaseType!
+#     symbol: String!
+#     issuer: Account!
+#     parts: [BasePart!] @derivedFrom(field: "base")
+#     themes: [BaseTheme!] @derivedFrom(field: "base")
+#     attachedToResources: [Resource!] @derivedFrom (field: "base")
+#     # logs: [Call!] @derivedFrom (field: "base") // Rename to event
+# }
+
+# type Resource @entity {
+#     id: ID!
+#     src: String
+#     metadata: String
+#     license: String
+#     thumb: String
+#     base: Base
+#     parts: [ResourcePart!] @derivedFrom (field: "resource")
+#     theme: BaseTheme
+#     slot: String!
+#     nft: NFT!
+# }
+
 # Cachce and tables
 type Series @entity {
   id: ID!
