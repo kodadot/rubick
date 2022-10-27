@@ -4,7 +4,7 @@ import { extractExtra } from './extract'
 import { ensureInteraction } from './helper'
 import { Collection, Context, InteractionExtra, NFT } from './types'
 
-function getRemark<T = InteractionValue>(ctx: Context): UnwrappedRemark<T | InteractionValue> {
+export function getRemark<T = InteractionValue>(ctx: Context): UnwrappedRemark<T | InteractionValue> {
   const { remark } = new SystemRemarkCall(ctx).asV1020
   return unwrapRemark<T>(remark.toString())
 }
