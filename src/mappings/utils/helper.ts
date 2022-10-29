@@ -12,7 +12,12 @@ export const emoteId = ({ id, value: metadata }: RmrkInteraction, caller: string
 
 export const eventId = (id: string, event: RmrkEvent) => `${id}-${event}${nanoid()}`
 
-export const baseId = (blockNumber: number | bigint | string, symbol: string) => `$base-${blockNumber}-${symbol}`
+export const baseId = (blockNumber: number | bigint | string, symbol: string) => {
+  if (!blockNumber || !symbol) {
+    throw new EvalError('[MINIMARK] unable to construct Base ID since block or symbol is miising')
+  }
+  return `$base-${blockNumber}-${symbol}`
+}
 
 export const ensureInteraction = ({ id, value: metadata }: RmrkInteraction): RmrkInteraction  => ({ id: trim(id), value: trimAll(metadata) })
 
