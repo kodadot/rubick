@@ -6,15 +6,15 @@ import logger, { logError } from '../utils/logger'
 import { plsBe, real } from '@kodadot1/metasquid/consolidator'
 import { createUnlessNotExist } from '../utils/verbose'
 import { CollectionEntity } from '../../model'
-
-
+import { baseId } from '../utils/helper'
 
 export async function base(context: Context) {
   let base: Optional<Base> = undefined
   try {
     const { value, caller, timestamp, blockNumber, version } = unwrap(context, getCreateBase);
     base = value
-    const final = await createUnlessNotExist('', CollectionEntity, context);
+    const id = baseId(blockNumber, base.symbol)
+    const final = await createUnlessNotExist(id, CollectionEntity, context);
     final.issuer = caller
     final.currentOwner = caller
     final.symbol = base.symbol.trim()
