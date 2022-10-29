@@ -12,6 +12,8 @@ export const emoteId = ({ id, value: metadata }: RmrkInteraction, caller: string
 
 export const eventId = (id: string, event: RmrkEvent) => `${id}-${event}${nanoid()}`
 
+export const baseId = (blockNumber: number | bigint | string, symbol: string) => `$base-${blockNumber}-${symbol}`
+
 export const ensureInteraction = ({ id, value: metadata }: RmrkInteraction): RmrkInteraction  => ({ id: trim(id), value: trimAll(metadata) })
 
 export function ensure<T>(value: any): T {
