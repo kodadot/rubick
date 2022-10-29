@@ -65,9 +65,20 @@ export interface IEvent<T = RmrkEvent> {
 
 export type RmrkInteraction = InteractionValue
 
+// TODO: remove once new minimark is imported
+export type BaseType = 'svg' | 'png' | 'audio' | 'video' | 'mixed' | string;
+type Theme = string | Record<string, string>
+type Themes = Record<string, Theme>
+
 export type Collection = CreatedCollection
 export type NFT = CreatedNFT
-
+export type Base = {
+  symbol: string
+  type?: BaseType
+  themes?: Themes
+  parts: any[]
+  metadata?: string
+}
 export type EntityConstructor<T> = {
   new (...args: any[]): T;
 };

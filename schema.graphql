@@ -133,16 +133,17 @@ enum Interaction {
 }
 
 # Remarkably specific types
-# type Base @entity {
-#     id: ID!
-#     type: BaseType!
-#     symbol: String!
-#     issuer: Account!
-#     parts: [BasePart!] @derivedFrom(field: "base")
-#     themes: [BaseTheme!] @derivedFrom(field: "base")
-#     attachedToResources: [Resource!] @derivedFrom (field: "base")
-#     # logs: [Call!] @derivedFrom (field: "base") // Rename to event
-# }
+type Base @entity {
+    id: ID!
+    type: BaseType!
+    symbol: String!
+    issuer: String!
+    currentOwner: String!
+    # parts: [BasePart!] @derivedFrom(field: "base")
+    # themes: [BaseTheme!] @derivedFrom(field: "base")
+    # attachedToResources: [Resource!] @derivedFrom (field: "base")
+    # logs: [Call!] @derivedFrom (field: "base") // Rename to event
+}
 
 # type Resource @entity {
 #     id: ID!
@@ -156,6 +157,19 @@ enum Interaction {
 #     slot: String!
 #     nft: NFT!
 # }
+
+enum BaseType {
+    svg
+    audio
+    mixed
+    video
+    png
+}
+
+enum BasePartType {
+    fixed
+    slot
+}
 
 # Cachce and tables
 type Series @entity {
