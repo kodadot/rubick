@@ -138,7 +138,9 @@ type Base @entity {
     type: BaseType!
     symbol: String!
     issuer: String!
-    currentOwner: String!
+    currentOwner: String!  
+    meta: MetadataEntity
+    metadata: String
     # parts: [BasePart!] @derivedFrom(field: "base")
     # themes: [BaseTheme!] @derivedFrom(field: "base")
     # attachedToResources: [Resource!] @derivedFrom (field: "base")
