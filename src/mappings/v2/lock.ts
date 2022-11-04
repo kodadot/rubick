@@ -24,7 +24,7 @@ export async function lockCollection(context: Context) {
     plsBe<CollectionEntity>(real, collection)
     isOwnerOrElseError(collection, caller)
     // TODO: implement lock
-    // collection.max = 100
+    collection.max = Number(interaction.value)
     
 
     logger.success(`[CHANGEISSUER] ${collection.id} from ${caller}`)
