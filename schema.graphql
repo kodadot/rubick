@@ -28,7 +28,7 @@ type CollectionEntity @entity {
   name: String @index
   nfts: [NFTEntity!] @derivedFrom(field: "collection")
   symbol: String! @unique
-  version: String
+  version: String!
   updatedAt: DateTime!
   nftCount: Int!
   supply: Int!
@@ -53,6 +53,7 @@ type NFTEntity @entity {
   sn: String
   transferable: Int
   updatedAt: DateTime!
+  version: String!
   emoteCount: Int!
 }
 
@@ -79,6 +80,7 @@ interface EventType {
   caller: String!
   currentOwner: String # currentOwner
   interaction: Interaction!
+  version: String!
   meta: String!
 }
 
@@ -91,6 +93,7 @@ type Event implements EventType @entity {
   interaction: Interaction!
   meta: String!
   nft: NFTEntity!
+  version: String!
 }
 
 type CollectionEvent @jsonField {
