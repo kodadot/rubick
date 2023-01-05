@@ -3,20 +3,20 @@ import {NFTEntity} from "./nftEntity.model"
 
 @Entity_()
 export class Emote {
-  constructor(props?: Partial<Emote>) {
-    Object.assign(this, props)
-  }
+    constructor(props?: Partial<Emote>) {
+        Object.assign(this, props)
+    }
 
-  @PrimaryColumn_()
-  id!: string
+    @PrimaryColumn_()
+    id!: string
 
-  @Index_()
-  @ManyToOne_(() => NFTEntity, {nullable: true})
-  nft!: NFTEntity
+    @Index_()
+    @ManyToOne_(() => NFTEntity, {nullable: true})
+    nft!: NFTEntity
 
-  @Column_("text", {nullable: false})
-  caller!: string
+    @Column_("text", {nullable: false})
+    caller!: string
 
-  @Column_("text", {nullable: false})
-  value!: string
+    @Column_("text", {nullable: false})
+    value!: string
 }

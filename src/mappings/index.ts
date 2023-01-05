@@ -77,7 +77,7 @@ async function mainFrame(remark: string, context: Context): Promise<void> {
             `[SKIP] ${event}::${base.value}::${base.blockNumber}`
           )
       }
-      await updateCache(base.timestamp,context.store)
+      await updateCache(base.timestamp, context.store)
     } catch (e) {
       logger.warn(
         `[MALFORMED]
