@@ -7,7 +7,7 @@
     "update": "npx npm-check-updates --filter /subsquid/ --upgrade && npm i -f",
     "db:migrate": "npx squid-typeorm-migration apply",
     "processor:start": "node lib/processor.js",
-    "query-node:start": "squid-graphql-server",
+    "query-node:start": "squid-graphql-server --subscriptions --dumb-cache in-memory --dumb-cache-ttl 1000 --dumb-cache-size 100 --dumb-cache-max-age 1000",
     "test:unit": "mocha -r ts-node/register tests/unit/**.spec.ts"
   },
   "dependencies": {
