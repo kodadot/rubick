@@ -3,7 +3,7 @@ import { ensure } from './helper'
 import logger from './logger'
 import { SanitizerFunc, SomethingWithMeta } from './types'
 
-export const BASE_URL = 'https://kodadot.mypinata.cloud/'
+export const BASE_URL = 'https://image.w.kodadot.xyz/'
 
 const api = Axios.create({
   baseURL: BASE_URL,
