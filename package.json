@@ -4,10 +4,8 @@
   "private": true,
   "scripts": {
     "build": "rm -rf lib && tsc",
-    "init": "node db/init.js",
+    "update": "npx npm-check-updates --filter /subsquid/ --upgrade && npm i -f",
     "db:migrate": "npx squid-typeorm-migration apply",
-    "schema:reset": "",
-    "processor:migrate": "echo skip",
     "processor:start": "node lib/processor.js",
     "query-node:start": "squid-graphql-server",
     "test:unit": "mocha -r ts-node/register tests/unit/**.spec.ts"
