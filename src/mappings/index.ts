@@ -13,7 +13,7 @@ import { updateCache } from './utils/cache'
 import { burned, isBuyLegalOrElseError, isInteractive, isOwnerOrElseError, isPositiveOrElseError, plsBe, plsNotBe, real, validateInteraction, withMeta } from './utils/consolidator'
 import { create, get } from './utils/entity'
 import { getCreateCollection, getCreateToken, getInteraction, getInteractionWithExtra } from './utils/getters'
-import { emoteId, ensure, eventId, isEmpty } from './utils/helper'
+import { collectionIdFrom, emoteId, ensure, eventId, isEmpty } from './utils/helper'
 import logger, { logError } from './utils/logger'
 import { fetchMetadata } from './utils/metadata'
 import {
@@ -115,10 +115,10 @@ async function mint(context: Context): Promise<void> {
     final.nftCount = 0
     final.supply = 0
 
-    if (final.metadata) {
-      const metadata = await handleMetadata(final.metadata, final.name, context.store)
-      final.meta = metadata
-    }
+    // if (final.metadata) {
+    //   const metadata = await handleMetadata(final.metadata, final.name, context.store)
+    //   final.meta = metadata
+    // }
 
     logger.success(`[COLLECTION] ${final.id}`)
     await context.store.save(final)
@@ -167,10 +167,10 @@ async function mintNFT(
     collection.nftCount += 1 
     collection.supply += 1 
 
-    if (final.metadata) {
-      const metadata = await handleMetadata(final.metadata, final.name, context.store)
-      final.meta = metadata
-    }
+    // if (final.metadata) {
+    //   const metadata = await handleMetadata(final.metadata, final.name, context.store)
+    //   final.meta = metadata
+    // }
 
     logger.success(`[MINT] ${final.id}`)
     await context.store.save(final)
@@ -230,8 +230,8 @@ async function buy(context: Context) {
     nft.price = BigInt(0)
     nft.updatedAt = timestamp
 
-    plsBe(real, nft.collection)
-    const collection = ensure<CollectionEntity>(await get<CollectionEntity>(context.store, CollectionEntity, nft.collection.toString()))
+    const collectionId = collectionIdFrom(nft.id)
+    const collection = ensure<CollectionEntity>(await get<CollectionEntity>(context.store, CollectionEntity, collectionId))
     plsBe(real, collection)
     collection.updatedAt = timestamp
     
@@ -261,8 +261,9 @@ async function consume(context: Context) {
     nft.price = BigInt(0)
     nft.burned = true
     nft.updatedAt = timestamp
-    plsBe(real, nft.collection)
-    const collection = ensure<CollectionEntity>(await get<CollectionEntity>(context.store, CollectionEntity, nft.collection.toString()))
+
+    const collectionId = collectionIdFrom(nft.id)
+    const collection = ensure<CollectionEntity>(await get<CollectionEntity>(context.store, CollectionEntity, collectionId))
     plsBe(real, collection)
     collection.updatedAt = timestamp
     collection.supply -= 1
