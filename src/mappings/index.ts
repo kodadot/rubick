@@ -43,7 +43,7 @@ async function mainFrame(remark: string, context: Context): Promise<void> {
       logger.pending(`[${event === RmrkEvent.MINT ? 'COLLECTION' : event}]: ${base.blockNumber}`)
 
       if (version === '2.0.0') {
-        logger.star(`[RMRK::2.0.0] is not supported, please help us to make it awesome ${remark}`)
+        logger.start(`[RMRK::2.0.0] is not supported, please help us to make it awesome ${remark}`)
         return;
       }
 
