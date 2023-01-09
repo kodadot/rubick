@@ -115,10 +115,10 @@ async function mint(context: Context): Promise<void> {
     final.nftCount = 0
     final.supply = 0
 
-    // if (final.metadata) {
-    //   const metadata = await handleMetadata(final.metadata, final.name, context.store)
-    //   final.meta = metadata
-    // }
+    if (final.metadata) {
+      const metadata = await handleMetadata(final.metadata, final.name, context.store)
+      final.meta = metadata
+    }
 
     logger.success(`[COLLECTION] ${final.id}`)
     await context.store.save(final)
@@ -167,10 +167,10 @@ async function mintNFT(
     collection.nftCount += 1 
     collection.supply += 1 
 
-    // if (final.metadata) {
-    //   const metadata = await handleMetadata(final.metadata, final.name, context.store)
-    //   final.meta = metadata
-    // }
+    if (final.metadata) {
+      const metadata = await handleMetadata(final.metadata, final.name, context.store)
+      final.meta = metadata
+    }
 
     logger.success(`[MINT] ${final.id}`)
     await context.store.save(final)
