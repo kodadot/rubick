@@ -14,6 +14,11 @@ export const eventId = (id: string, event: RmrkEvent) => `${id}-${event}${nanoid
 
 export const ensureInteraction = ({ id, value: metadata }: RmrkInteraction): RmrkInteraction  => ({ id: trim(id), value: trimAll(metadata) })
 
+export const collectionIdFrom = (nftId: string) => {
+  const [_blockNumber, id, symbol] = nftId.split('-')
+  return `${id}-${symbol}`
+}
+
 export function ensure<T>(value: any): T {
   return value as T
 }
