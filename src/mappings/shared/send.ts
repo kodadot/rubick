@@ -7,7 +7,7 @@ import { unwrap } from '../utils'
 import { isOwnerOrElseError, validateInteraction } from '../utils/consolidator'
 import { getInteraction } from '../utils/getters'
 import logger, { logError } from '../utils/logger'
-import { Context, RmrkEvent, RmrkInteraction } from '../utils/types'
+import { Context, Action, RmrkInteraction } from '../utils/types'
 import { createEvent } from './event'
 
 export async function send(context: Context) {
@@ -29,7 +29,7 @@ export async function send(context: Context) {
 
     logger.success(`[SEND] ${nft.id} to ${interaction.value}`)
     await context.store.save(nft)
-    await createEvent(nft, RmrkEvent.SEND, { blockNumber, caller, timestamp }, interaction.value || '', context.store, originalOwner)
+    await createEvent(nft, Action.SEND, { blockNumber, caller, timestamp }, interaction.value || '', context.store, originalOwner)
   } catch (e) {
     logError(e, (e) =>
       logger.error(`[SEND] ${e.message} ${JSON.stringify(interaction)}`)

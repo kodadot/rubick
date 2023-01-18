@@ -7,7 +7,7 @@ import { unwrap } from '../utils'
 import { isOwnerOrElseError, isPositiveOrElseError, validateInteraction } from '../utils/consolidator'
 import { getInteraction } from '../utils/getters'
 import logger, { logError } from '../utils/logger'
-import { Context, RmrkEvent, RmrkInteraction } from '../utils/types'
+import { Context, Action, RmrkInteraction } from '../utils/types'
 import { createEvent } from './event'
 
 export async function list(context: Context) {
@@ -28,7 +28,7 @@ export async function list(context: Context) {
 
     logger.success(`[LIST] ${nft.id} from ${caller}`)
     await context.store.save(nft)
-    const event = nft.price === 0n ? RmrkEvent.UNLIST : RmrkEvent.LIST
+    const event = nft.price === 0n ? Action.UNLIST : Action.LIST
     await createEvent(nft, event, { blockNumber, caller, timestamp }, String(price), context.store)
   } catch (e) {
     logError(e, (e) =>

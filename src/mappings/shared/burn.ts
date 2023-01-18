@@ -8,7 +8,7 @@ import { unwrap } from '../utils'
 import { isOwnerOrElseError } from '../utils/consolidator'
 import { getInteraction } from '../utils/getters'
 import logger, { logError } from '../utils/logger'
-import { Context, RmrkEvent, RmrkInteraction } from '../utils/types'
+import { Context, Action, RmrkInteraction } from '../utils/types'
 import { createEvent } from './event'
 
 
@@ -37,7 +37,7 @@ export async function burn(context: Context) {
     logger.success(`[CONSUME] ${nft.id} from ${caller}`)
     await context.store.save(nft)
     await context.store.save(collection)
-    await createEvent(nft, RmrkEvent.CONSUME, { blockNumber, caller, timestamp }, '', context.store)
+    await createEvent(nft, Action.BURN, { blockNumber, caller, timestamp }, '', context.store)
   } catch (e) {
     logError(e, (e) =>
       logger.warn(`[CONSUME] ${e.message} ${JSON.stringify(interaction)}`)

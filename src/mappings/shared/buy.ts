@@ -8,7 +8,7 @@ import { unwrap } from '../utils'
 import { isBuyLegalOrElseError, isInteractive, isPositiveOrElseError } from '../utils/consolidator'
 import { getInteractionWithExtra } from '../utils/getters'
 import logger, { logError } from '../utils/logger'
-import { Context, RmrkEvent, RmrkInteraction } from '../utils/types'
+import { Context, Action, RmrkInteraction } from '../utils/types'
 import { createEvent } from './event'
 
 export async function buy(context: Context) {
@@ -38,7 +38,7 @@ export async function buy(context: Context) {
     logger.success(`[BUY] ${nft.id} from ${caller}`)
     await context.store.save(nft)
     await context.store.save(collection)
-    await createEvent(nft, RmrkEvent.BUY, { blockNumber, caller, timestamp }, String(originalPrice), context.store, originalOwner)
+    await createEvent(nft, Action.BUY, { blockNumber, caller, timestamp }, String(originalPrice), context.store, originalOwner)
   } catch (e) {
     logError(e, (e) =>
       logger.error(`[BUY] ${e.message} ${JSON.stringify(interaction)}`)
