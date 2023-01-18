@@ -9,7 +9,7 @@ import { RemarkResult } from './extract'
 import { InteractionV2Value } from '@vikiival/minimark/v2'
 import { InteractionValue } from '@vikiival/minimark/v1'
 
-export { Action as RmrkEvent, Store }
+export { Action, Store }
 
 export const getNftId = (nft: any, blocknumber?: string | number): string => {
   return `${blocknumber ? blocknumber + '-' : '' }${nft.collection}-${nft.instance || nft.name}-${nft.sn}`
