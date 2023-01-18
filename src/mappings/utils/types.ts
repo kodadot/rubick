@@ -1,18 +1,22 @@
 import type { Store } from '@kodadot1/metasquid/types'
-import type { CreatedCollection, CreatedNFT, InteractionValue } from '@kodadot1/minimark'
+import { CreatedCollection, CreatedNFT } from '@vikiival/minimark/v1'
+import { CreatedCollection as NewCreatedCollection, CreatedNFT as NewCreatedNFT } from '@vikiival/minimark/v2'
+// import type { CreatedCollection, CreatedNFT } from '@vikiival/minimark'
 
 import { CallHandlerContext } from '@subsquid/substrate-processor'
-import { Attribute, CollectionEvent, Interaction as RmrkEvent } from '../../model/generated'
+import { Attribute, CollectionEvent, Interaction as Action } from '../../model/generated'
 import { RemarkResult } from './extract'
+import { InteractionV2Value } from '@vikiival/minimark/v2'
+import { InteractionValue } from '@vikiival/minimark/v1'
 
-export { RmrkEvent, Store }
+export { Action as RmrkEvent, Store }
 
 export const getNftId = (nft: any, blocknumber?: string | number): string => {
   return `${blocknumber ? blocknumber + '-' : '' }${nft.collection}-${nft.instance || nft.name}-${nft.sn}`
 }
 
 
-export function collectionEventFrom(interaction: RmrkEvent.MINT | RmrkEvent.CHANGEISSUER,  { blockNumber, caller, timestamp }: RemarkResult, meta: string): CollectionEvent {
+export function collectionEventFrom(interaction: Action.MINT | Action.CHANGEISSUER,  { blockNumber, caller, timestamp }: RemarkResult, meta: string): CollectionEvent {
   return new CollectionEvent({
     interaction,
     blockNumber,
@@ -54,7 +58,7 @@ export type BaseCall = {
   timestamp: Date;
 };
 
-export interface IEvent<T = RmrkEvent> {
+export interface IEvent<T = Action> {
   interaction: T;
   blockNumber: bigint,
   caller: string,
@@ -63,15 +67,20 @@ export interface IEvent<T = RmrkEvent> {
   meta: string;
 }
 
-export type RmrkInteraction = InteractionValue
+// TODO: use
+type NewType<IsNew extends boolean, Old, New> = IsNew extends false ? Old : New
+type Bool<T extends boolean = false> = T
+
+// Conditional types
+export type RmrkInteraction<T extends boolean = false> = T extends false ? InteractionValue : InteractionV2Value
+export type NFT<T extends boolean = false> = T extends false ? CreatedNFT : NewCreatedNFT
+export type Collection <T extends boolean = false> = NewType<Bool<T>, CreatedCollection, NewCreatedCollection>
 
 // TODO: remove once new minimark is imported
 export type BaseType = 'svg' | 'png' | 'audio' | 'video' | 'mixed' | string;
 type Theme = string | Record<string, string>
 type Themes = Record<string, Theme>
 
-export type Collection = CreatedCollection
-export type NFT = CreatedNFT
 export type Base = {
   symbol: string
   type?: BaseType
