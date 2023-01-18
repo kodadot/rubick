@@ -9,13 +9,13 @@ import { isOwnerOrElseError } from '../utils/consolidator'
 
 import { createEvent, handleMetadata } from '../shared'
 import { create, get } from '../utils/entity'
-import { getCreateToken } from '../utils/getters'
+import { getCreateToken } from './getters'
 import { ensure } from '../utils/helper'
 import logger, { logError } from '../utils/logger'
 import {
   Context, getNftId, NFT,
   Optional,
-  RmrkEvent
+  Action
 } from '../utils/types'
 
 export async function mintNFT(
@@ -24,7 +24,7 @@ export async function mintNFT(
   let nft: Optional<NFT> = null
   try {
     const { value, caller, timestamp, blockNumber } = unwrap(context, getCreateToken);
-    nft = value
+    nft = value as NFT
     plsBe(real, nft.collection)
     const collection = ensure<CollectionEntity>(
       await get<CollectionEntity>(context.store, CollectionEntity, nft.collection)
@@ -51,6 +51,7 @@ export async function mintNFT(
     final.createdAt = timestamp
     final.updatedAt = timestamp
     final.emoteCount = 0
+    final.version = '1'
 
     collection.updatedAt = timestamp
     collection.nftCount += 1 
@@ -64,7 +65,7 @@ export async function mintNFT(
     logger.success(`[MINT] ${final.id}`)
     await context.store.save(final)
     await context.store.save(collection)
-    await createEvent(final, RmrkEvent.MINTNFT, { blockNumber, caller, timestamp }, '', context.store)
+    await createEvent(final, Action.MINT, { blockNumber, caller, timestamp }, '', context.store)
 
   } catch (e) {
     logError(e, (e) =>
