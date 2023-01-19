@@ -9,7 +9,6 @@ const STARTING_BLOCK = 16259864;
 const ENDING_BLOCK = 16261119;
 
 processor.setTypesBundle('kusama');
-processor.setBatchSize(30);
 // processor.setBlockRange({ from: 5756453 });
 processor.setBlockRange({ from: STARTING_BLOCK, to: ENDING_BLOCK });
 processor.setDataSource({
