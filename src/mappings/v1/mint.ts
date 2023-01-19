@@ -9,7 +9,7 @@ import { isOwnerOrElseError } from '../utils/consolidator'
 
 import { createEvent, handleMetadata } from '../shared'
 import { create, get } from '../utils/entity'
-import { getCreateToken } from './getters'
+import { getCreateToken } from '../utils/getters'
 import { ensure } from '../utils/helper'
 import logger, { logError } from '../utils/logger'
 import {
@@ -19,11 +19,11 @@ import {
 } from '../utils/types'
 
 export async function mintNFT(
-  context: Context
+  context: Context,
 ): Promise<void> {
   let nft: Optional<NFT> = null
   try {
-    const { value, caller, timestamp, blockNumber } = unwrap(context, getCreateToken);
+    const { value, caller, timestamp, blockNumber, version } = unwrap(context, getCreateToken);
     nft = value as NFT
     plsBe(real, nft.collection)
     const collection = ensure<CollectionEntity>(
@@ -51,7 +51,7 @@ export async function mintNFT(
     final.createdAt = timestamp
     final.updatedAt = timestamp
     final.emoteCount = 0
-    final.version = '1'
+    final.version = version
 
     collection.updatedAt = timestamp
     collection.nftCount += 1 
