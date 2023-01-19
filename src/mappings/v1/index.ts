@@ -1,22 +1,23 @@
 
-import { unwrapRemark } from '@kodadot1/minimark'
+import { unwrapRemark } from '@vikiival/minimark/v1'
 import { unwrap } from '../utils'
 import { updateCache } from '../utils/cache'
 
 import { burn as consume, buy, changeIssuer, createCollection, emote, list, send } from '../shared'
 import logger from '../utils/logger'
 import {
-  Context, RmrkEvent,
+  Context,
   RmrkInteraction
 } from '../utils/types'
 import { mintNFT } from './mint'
+import { Interaction } from '@vikiival/minimark/v1'
 
 
 export async function mainFrame(remark: string, context: Context): Promise<void> {
     const base = unwrap(context, (_: Context) => ({ value: remark }))
     try {
       const { interaction: event, version } = unwrapRemark<RmrkInteraction>(remark.toString())
-      logger.pending(`[${event === RmrkEvent.MINT ? 'COLLECTION' : event}]: ${base.blockNumber}`)
+      logger.pending(`[${event === Interaction.MINT ? 'COLLECTION' : event}]: ${base.blockNumber}`)
 
       if (version === '2.0.0') {
         logger.star(`[RMRK::2.0.0] is not supported, please help us to make it awesome ${remark}`)
@@ -24,28 +25,28 @@ export async function mainFrame(remark: string, context: Context): Promise<void>
       }
 
       switch (event) {
-        case RmrkEvent.MINT:
+        case Interaction.MINT:
           await createCollection(context)
           break
-        case RmrkEvent.MINTNFT:
+        case Interaction.MINTNFT:
           await mintNFT(context)
           break
-        case RmrkEvent.SEND:
+        case Interaction.SEND:
           await send(context)
           break
-        case RmrkEvent.BUY:
+        case Interaction.BUY:
           await buy(context)
           break
-        case RmrkEvent.CONSUME:
+        case Interaction.CONSUME:
           await consume(context)
           break
-        case RmrkEvent.LIST:
+        case Interaction.LIST:
           await list(context)
           break
-        case RmrkEvent.CHANGEISSUER:
+        case Interaction.CHANGEISSUER:
           await changeIssuer(context)
           break
-        case RmrkEvent.EMOTE:
+        case Interaction.EMOTE:
           await emote(context)
           break
         default:
