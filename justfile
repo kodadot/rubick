@@ -38,6 +38,8 @@ reset: migrate
 
 quickstart: migrate process
 
+quick: build reset process
+
 prod TAG:
 	gh pr create --base release-{{TAG}}
 
