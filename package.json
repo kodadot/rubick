@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@kodadot1/metasquid": "^0.1.0-rc.3",
-    "@kodadot1/minimark": "^0.0.1-rc.10",
+    "@vikiival/minimark": "0.1.0-rc.3",
     "@kodadot1/minipfs": "^0.1.1-rc.1",
     "@polkadot/types": "^9.11.3",
     "@subsquid/archive-registry": "2.0.1",
