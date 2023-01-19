@@ -15,63 +15,63 @@ export async function mainFrame(remark: string, context: Context): Promise<void>
         await createCollection(context)
         break
       case Interaction.MINT:
-        logger.info(`[MINT]::${base.blockNumber}`)
+        logger.info(`[MINT]::${base.blockNumber}::${base.value}`)
         // await mintNFT(context)
         break
       case Interaction.SEND:
-        logger.info(`[SEND]::${base.blockNumber}`)
+        logger.info(`[SEND]::${base.blockNumber}::${base.value}`)
         // await send(context)
         break
       case Interaction.BUY:
-        logger.info(`[BUY]::${base.blockNumber}`)
+        logger.info(`[BUY]::${base.blockNumber}::${base.value}`)
         // await buy(context)
         break
       case Interaction.BURN:
-        logger.info(`[BURN]::${base.blockNumber}`)
+        logger.info(`[BURN]::${base.blockNumber}::${base.value}`)
         // await consume(context)
         break
       case Interaction.LIST:
-        logger.info(`[LIST]::${base.blockNumber}`)
+        logger.info(`[LIST]::${base.blockNumber}::${base.value}`)
         // await list(context)
         break
       case Interaction.CHANGEISSUER:
-        logger.info(`[CHANGEISSUER]::${base.blockNumber}`)
+        logger.info(`[CHANGEISSUER]::${base.blockNumber}::${base.value}`)
         // await changeIssuer(context)
         break
       case Interaction.EMOTE:
-        logger.info(`[EMOTE]::${base.blockNumber}`)
+        logger.info(`[EMOTE]::${base.blockNumber}::${base.value}`)
         // await emote(context)
         break
       // RMRK v2.0.0
       case Interaction.ACCEPT:
-        logger.info(`[ACCEPT]::${base.blockNumber}`)
+        logger.info(`[ACCEPT]::${base.blockNumber}::${base.value}`)
         break
       case Interaction.BASE:
-        logger.info(`[BASE]::${base.blockNumber}`)
+        logger.info(`[BASE]::${base.blockNumber}::${base.value}`)
         break
       case Interaction.DESTROY:
-        logger.info(`[DESTROY]::${base.blockNumber}`)
+        logger.info(`[DESTROY]::${base.blockNumber}::${base.value}`)
         break
       case Interaction.SETPRIORITY:
-        logger.info(`[SETPRIORITY]::${base.blockNumber}`)
+        logger.info(`[SETPRIORITY]::${base.blockNumber}::${base.value}`)
         break
       case Interaction.SETPROPERTY:
-        logger.info(`[SETPROPERTY]::${base.blockNumber}`)
+        logger.info(`[SETPROPERTY]::${base.blockNumber}::${base.value}`)
         break
       case Interaction.THEMEADD:
-        logger.info(`[THEMEADD]::${base.blockNumber}`)
+        logger.info(`[THEMEADD]::${base.blockNumber}::${base.value}`)
         break
       case Interaction.RESADD:
-        logger.info(`[RESADD]::${base.blockNumber}`)
+        logger.info(`[RESADD]::${base.blockNumber}::${base.value}`)
         break
       case Interaction.EQUIP:
-        logger.info(`[EQUIP]::${base.blockNumber}`)
+        logger.info(`[EQUIP]::${base.blockNumber}::${base.value}`)
         break
       case Interaction.EQUIPPABLE:
-        logger.info(`[EQUIPPABLE]::${base.blockNumber}`)
+        logger.info(`[EQUIPPABLE]::${base.blockNumber}::${base.value}`)
         break
       case Interaction.LOCK:
-        logger.info(`[LOCK]::${base.blockNumber}`)
+        logger.info(`[LOCK]::${base.blockNumber}::${base.value}`)
         break
       default:
         logger.start(
