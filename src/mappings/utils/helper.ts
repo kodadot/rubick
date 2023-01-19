@@ -1,8 +1,8 @@
 import * as ss58 from '@subsquid/ss58'
 import { decodeHex } from '@subsquid/substrate-processor'
 import { nanoid } from 'nanoid'
-import { ArchiveCallWithOptionalValue, RmrkEvent, RmrkInteraction } from './types'
-export { isEmpty } from '@kodadot1/minimark'
+import { ArchiveCallWithOptionalValue, Action, RmrkInteraction } from './types'
+export { isEmpty } from '@vikiival/minimark/utils'
 
 export const trim = (text?: string) => (text || '').trim()
 
@@ -10,7 +10,7 @@ export const trimAll = (text?: string) => (text || '').replace(/\s/g, "")
 
 export const emoteId = ({ id, value: metadata }: RmrkInteraction, caller: string) => `${id}-${metadata}-${caller}`
 
-export const eventId = (id: string, event: RmrkEvent) => `${id}-${event}${nanoid()}`
+export const eventId = (id: string, event: Action) => `${id}-${event}${nanoid()}`
 
 export const baseId = (blockNumber: number | bigint | string, symbol: string) => {
   if (!blockNumber || !symbol) {

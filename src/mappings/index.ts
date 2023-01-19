@@ -1,4 +1,5 @@
-import { isRemark, unwrapRemark } from '@kodadot1/minimark'
+import { unwrapRemark } from '@vikiival/minimark/v1'
+import { isRemark } from '@vikiival/minimark/shared'
 import { SystemRemarkCall } from '../types/calls'
 import logger from './utils/logger'
 import { RmrkInteraction, Context } from './utils/types'
@@ -25,7 +26,7 @@ export async function versionRouter(value: string, context: Context): Promise<vo
     await mainFrameV2(value, context)
   }
 
-  await mainFrameV1(value, context)
+  // await mainFrameV1(value, context)
   // TODO: use data from the base or something
   // await updateCache(new Date(), context.store)
 }

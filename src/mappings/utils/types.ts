@@ -6,7 +6,7 @@ import { CreatedCollection as NewCreatedCollection, CreatedNFT as NewCreatedNFT 
 import { CallHandlerContext } from '@subsquid/substrate-processor'
 import { Attribute, CollectionEvent, Interaction as Action } from '../../model/generated'
 import { RemarkResult } from './extract'
-import { InteractionV2Value } from '@vikiival/minimark/v2'
+import { InteractionValue as NewInteractionValue } from '@vikiival/minimark/v2'
 import { InteractionValue } from '@vikiival/minimark/v1'
 
 export { Action, Store }
@@ -72,7 +72,7 @@ type NewType<IsNew extends boolean, Old, New> = IsNew extends false ? Old : New
 type Bool<T extends boolean = false> = T
 
 // Conditional types
-export type RmrkInteraction<T extends boolean = false> = T extends false ? InteractionValue : InteractionV2Value
+export type RmrkInteraction<T extends boolean = false> = T extends false ? InteractionValue : NewInteractionValue
 export type NFT<T extends boolean = false> = T extends false ? CreatedNFT : NewCreatedNFT
 export type Collection <T extends boolean = false> = NewType<Bool<T>, CreatedCollection, NewCreatedCollection>
 

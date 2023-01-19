@@ -1,6 +1,6 @@
 import { create, get } from '@kodadot1/metasquid/entity'
 import { Optional, TokenMetadata } from '@kodadot1/metasquid/types'
-import { isEmpty } from '@vikiival/minimark'
+import { isEmpty } from '@vikiival/minimark/utils'
 
 import { fetchMetadata } from '../utils/metadata'
 import { attributeFrom, Store } from '../utils/types'
