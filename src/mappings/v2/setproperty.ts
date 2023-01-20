@@ -1,3 +1,3 @@
 import { Context } from '../utils/types'
 
-export async function setproperty(context: Context) {}
+export async function setProperty(context: Context) {}

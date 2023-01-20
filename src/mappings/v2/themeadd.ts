@@ -1,5 +1,3 @@
 import { Context } from '../utils/types'
 
-
-
-export async function themeadd(context: Context) {}
+export async function addTheme(context: Context) {}

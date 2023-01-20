@@ -8,7 +8,7 @@ export async function mainFrame(remark: string, context: Context): Promise<void>
   const base = unwrap(context, (_: Context) => ({ value: remark }))
   try {
     const { interaction: event, version } = unwrapRemark<RmrkInteraction<true>>(remark.toString())
-    logger.pending(`[${event === Interaction.CREATE ? 'COLLECTION' : event}]: ${base.blockNumber}`)
+    logger.start(`[${event === Interaction.CREATE ? 'COLLECTION' : event}]: ${base.blockNumber}`)
 
     switch (event) {
       case Interaction.CREATE: // should be CRATE
@@ -74,7 +74,7 @@ export async function mainFrame(remark: string, context: Context): Promise<void>
         logger.info(`[LOCK]::${base.blockNumber}::${base.value}`)
         break
       default:
-        logger.start(
+        logger.fatal(
           `[SKIP] ${event}::${base.value}::${base.blockNumber}`
         )
     }

@@ -1,3 +1,3 @@
 import { Context } from '../utils/types'
 
-export async function resadd(context: Context) {}
+export async function addResource(context: Context) {}

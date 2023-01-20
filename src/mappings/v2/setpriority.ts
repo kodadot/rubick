@@ -2,4 +2,4 @@ import { Context } from '../utils/types'
 
 
 
-export async function setpriority(context: Context) {}
+export async function setPriority(context: Context) {}
