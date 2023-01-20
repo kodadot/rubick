@@ -1,5 +1,4 @@
 import { SubstrateCall, SubstrateExtrinsic } from '@subsquid/substrate-processor'
-import { VersionedRemark } from '@vikiival/minimark/shared'
 import { Call } from '../../types/support'
 import { addressOf } from './helper'
 import { ArchiveCall, BaseCall, BatchArg, CallWith, Context, Transfer, UnwrapFunc } from './types'
@@ -8,7 +7,6 @@ const PREFIXES = ['0x726d726b', '0x524d524b', 'rmrk', 'RMRK']
  export interface RemarkResult extends BaseCall {
   value: string;
   extra?: BatchArg[];
-  version?: VersionedRemark
 }
 
 const startsWithRemark = (value: string, prefixes: string[] = PREFIXES): boolean => (prefixes.length < 1 || prefixes.some((word) => value.startsWith(word)))
