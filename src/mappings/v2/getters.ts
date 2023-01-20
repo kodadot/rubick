@@ -1,4 +1,4 @@
-import { Base, Interaction, UnwrappedRemark, unwrapRemarkV2 as unwrapRemark, UnwrapValue } from '@vikiival/minimark/v2'
+import { Base, Interaction, UnwrappedRemark, unwrapRemarkV2 as unwrapRemark, UnwrapValue, Accept } from '@vikiival/minimark/v2'
 import { SystemRemarkCall } from '../../types/calls'
 import { Context, NFT } from '../utils/types'
 
@@ -13,4 +13,12 @@ export function getCreateBase(ctx: Context): UnwrappedRemark<Base> {
 
 export function getCreateToken(ctx: Context): UnwrappedRemark<NFT<true>> {
   return getRemark<any>(ctx) as UnwrappedRemark<NFT<true>>
+}
+
+export function getInteraction<T extends keyof UnwrapValue = "NONE">(ctx: Context): UnwrappedRemark<UnwrapValue[T]> {
+  return getRemark<T>(ctx)
+}
+
+export function getAcceptResource(ctx: Context): UnwrappedRemark<Accept> {
+  return getRemark<Interaction.ACCEPT>(ctx)
 }
