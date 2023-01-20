@@ -4,10 +4,12 @@ import { CreatedCollection as NewCreatedCollection, CreatedNFT as NewCreatedNFT 
 // import type { CreatedCollection, CreatedNFT } from '@vikiival/minimark'
 
 import { CallHandlerContext } from '@subsquid/substrate-processor'
-import { Attribute, CollectionEvent, Interaction as Action } from '../../model/generated'
+import { Attribute, CollectionEvent, Interaction as Action, Interaction } from '../../model/generated'
 import { RemarkResult } from './extract'
 import { InteractionValue as NewInteractionValue } from '@vikiival/minimark/v2'
 import { InteractionValue } from '@vikiival/minimark/v1'
+import { VersionedRemark } from '@vikiival/minimark/shared'
+import { BaseCall as SquidCall } from '@kodadot1/metasquid/types'
 
 export { Action, Store }
 
@@ -52,11 +54,9 @@ export type UnwrapFunc<T> = (ctx: Context) => T;
 export type SanitizerFunc = (url: string) => string;
 export type CallWith<T> = BaseCall & T;
 
-export type BaseCall = {
-  caller: string;
-  blockNumber: string;
-  timestamp: Date;
-};
+export type BaseCall = SquidCall & {
+  version?: VersionedRemark
+}
 
 export interface IEvent<T = Action> {
   interaction: T;
@@ -136,6 +136,13 @@ export type Transfer = {
   value: bigint
 }
 
+export type WithVersion = {
+  version: VersionedRemark
+}
+
+export type VersionedInteraction = WithVersion & {
+  interaction: Interaction
+}
 
 export type InteractionExtra<T = Transfer[]> = {
   extra: T
