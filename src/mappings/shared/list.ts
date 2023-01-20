@@ -14,7 +14,7 @@ export async function list(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
 
   try {
-    const { value, caller, timestamp, blockNumber } = unwrap(context, getInteraction);
+    const { value, caller, timestamp, blockNumber, version } = unwrap(context, getInteraction);
     interaction = value
     const nft = ensure<NFTEntity>(
       await get<NFTEntity>(context.store, NFTEntity, interaction.id)
@@ -29,7 +29,7 @@ export async function list(context: Context) {
     logger.success(`[LIST] ${nft.id} from ${caller}`)
     await context.store.save(nft)
     const event = nft.price === 0n ? Action.UNLIST : Action.LIST
-    await createEvent(nft, event, { blockNumber, caller, timestamp }, String(price), context.store)
+    await createEvent(nft, event, { blockNumber, caller, timestamp, version }, String(price), context.store)
   } catch (e) {
     logError(e, (e) =>
       logger.warn(`[LIST] ${e.message} ${JSON.stringify(interaction)}`)
