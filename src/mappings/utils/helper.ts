@@ -1,23 +1,16 @@
 import * as ss58 from '@subsquid/ss58'
 import { decodeHex } from '@subsquid/substrate-processor'
+import { trim, trimAll } from '@vikiival/minimark/utils'
 import { nanoid } from 'nanoid'
-import { ArchiveCallWithOptionalValue, Action, RmrkInteraction } from './types'
-export { isEmpty } from '@vikiival/minimark/utils'
+import { Action, ArchiveCallWithOptionalValue, RmrkInteraction } from './types'
 
-export const trim = (text?: string) => (text || '').trim()
+export { isEmpty, trim, trimAll } from '@vikiival/minimark/utils'
+export { toBaseId as baseId } from '@vikiival/minimark/v2'
 
-export const trimAll = (text?: string) => (text || '').replace(/\s/g, "")
 
 export const emoteId = ({ id, value: metadata }: RmrkInteraction, caller: string) => `${id}-${metadata}-${caller}`
 
 export const eventId = (id: string, event: Action) => `${id}-${event}${nanoid()}`
-
-export const baseId = (blockNumber: number | bigint | string, symbol: string) => {
-  if (!blockNumber || !symbol) {
-    throw new EvalError('[MINIMARK] unable to construct Base ID since block or symbol is miising')
-  }
-  return `$base-${blockNumber}-${symbol}`
-}
 
 export const ensureInteraction = ({ id, value: metadata }: RmrkInteraction): RmrkInteraction  => ({ id: trim(id), value: trimAll(metadata) })
 
