@@ -7,12 +7,13 @@ import { plsBe, real } from '@kodadot1/metasquid/consolidator'
 import { createUnlessNotExist } from '../utils/verbose'
 import { CollectionEntity } from '../../model'
 import { baseId } from '../utils/helper'
+import { CreatedBase } from '@vikiival/minimark/v2'
 
 export async function base(context: Context) {
   let base: Optional<Base> = undefined
   try {
-    const { value, caller, timestamp, blockNumber, version } = unwrap(context, getCreateBase);
-    base = value
+    const { value: interaction, caller, timestamp, blockNumber, version } = unwrap(context, getCreateBase);
+    const base = interaction.value as CreatedBase
     const id = baseId(blockNumber, base.symbol)
     const final = await createUnlessNotExist(id, CollectionEntity, context);
     final.issuer = caller

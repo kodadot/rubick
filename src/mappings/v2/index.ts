@@ -7,7 +7,7 @@ import { Context, Action, RmrkInteraction } from '../utils/types'
 export async function mainFrame(remark: string, context: Context): Promise<void> {
   const base = unwrap(context, (_: Context) => ({ value: remark }))
   try {
-    const { interaction: event, version } = unwrapRemark<RmrkInteraction<true>>(remark.toString())
+    const { interaction: event } = unwrapRemark(remark.toString())
     logger.start(`[${event === Interaction.CREATE ? 'COLLECTION' : event}]: ${base.blockNumber}`)
 
     switch (event) {
