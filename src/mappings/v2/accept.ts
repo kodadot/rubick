@@ -2,6 +2,7 @@ import { ensure } from '@kodadot1/metasquid'
 import { burned, plsBe, plsNotBe, real } from '@kodadot1/metasquid/consolidator'
 import { get } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
+import { Accept } from '@vikiival/minimark/v2'
 
 import { NFTEntity } from '../../model'
 import { createEvent } from '../shared/event'
@@ -12,7 +13,7 @@ import { Action, Context } from '../utils/types'
 import { getAcceptResource } from './getters'
 
 export async function acceptResource(context: Context) {
-  let interaction: Optional<any> = null
+  let interaction: Optional<Accept> = null
 
   try {
     const { value: interaction, caller, timestamp, blockNumber, version } = unwrap(context, getAcceptResource);

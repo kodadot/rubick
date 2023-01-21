@@ -26,7 +26,7 @@ export async function base(context: Context) {
     plsBe<string>(real, '')
   } catch (e) {
     logError(e, (e) =>
-      logger.error(`[COLLECTION] ${e.message}, ${JSON.stringify(base)}`)
+      logger.error(`[BASE] ${e.message}, ${JSON.stringify(base)}`)
     )
   }
   
