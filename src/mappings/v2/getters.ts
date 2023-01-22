@@ -62,7 +62,7 @@ export function getLock(ctx: Context): UnwrappedRemark<Lock> {
   return getRemark<Interaction.LOCK>(ctx)
 }
 
-export function Resadd(ctx: Context): UnwrappedRemark<Resadd> {
+export function getAddRes(ctx: Context): UnwrappedRemark<Resadd> {
   return getRemark<Interaction.RESADD>(ctx)
 }
 

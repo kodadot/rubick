@@ -12,6 +12,8 @@ import logger, { logError } from '../utils/logger'
 import { Action, Context } from '../utils/types'
 import { getAcceptResource } from './getters'
 
+const OPERATION = Action.ACCEPT
+
 export async function acceptResource(context: Context) {
   let interaction: Optional<Accept> = null
 

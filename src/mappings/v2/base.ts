@@ -1,6 +1,6 @@
 import { unwrap } from '../utils/extract'
 import { getCreateBase } from './getters'
-import { Base, Context } from '../utils/types'
+import { Action, Base, Context } from '../utils/types'
 import { Optional } from '@kodadot1/metasquid/types'
 import logger, { logError } from '../utils/logger'
 import { plsBe, real } from '@kodadot1/metasquid/consolidator'
@@ -8,6 +8,8 @@ import { createUnlessNotExist } from '../utils/verbose'
 import { CollectionEntity } from '../../model'
 import { baseId } from '../utils/helper'
 import { CreatedBase } from '@vikiival/minimark/v2'
+
+const OPERATION = Action.BASE
 
 export async function base(context: Context) {
   let base: Optional<Base> = undefined
