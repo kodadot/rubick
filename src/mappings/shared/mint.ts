@@ -7,7 +7,7 @@ import md5 from 'md5'
 import { unwrap } from '../utils'
 import { isOwnerOrElseError } from '../utils/consolidator'
 
-import { createEvent, handleMetadata } from '../shared'
+import { createEvent, handleMetadata } from '../v1'
 import { create, get } from '../utils/entity'
 import { getCreateToken } from '../utils/getters'
 import { ensure } from '../utils/helper'
@@ -18,7 +18,7 @@ import {
   Action
 } from '../utils/types'
 
-export async function mintNFT(
+export async function mintItem(
   context: Context,
 ): Promise<void> {
   let nft: Optional<NFT> = null
@@ -65,7 +65,7 @@ export async function mintNFT(
     logger.success(`[MINT] ${final.id}`)
     await context.store.save(final)
     await context.store.save(collection)
-    await createEvent(final, Action.MINT, { blockNumber, caller, timestamp }, '', context.store)
+    await createEvent(final, Action.MINT, { blockNumber, caller, timestamp, version }, '', context.store)
 
   } catch (e) {
     logError(e, (e) =>
