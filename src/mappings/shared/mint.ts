@@ -7,7 +7,6 @@ import md5 from 'md5'
 import { unwrap } from '../utils'
 import { isOwnerOrElseError } from '../utils/consolidator'
 
-import { createEvent, handleMetadata } from '../v1'
 import { create, get } from '../utils/entity'
 import { getCreateToken } from '../utils/getters'
 import { ensure } from '../utils/helper'
@@ -17,7 +16,10 @@ import {
   Optional,
   Action
 } from '../utils/types'
+import { handleMetadata } from './metadata'
+import { createEvent } from './event'
 
+// TODO: MINT IS NOT CORRECTLY IMPLEMENTED
 export async function mintItem(
   context: Context,
 ): Promise<void> {

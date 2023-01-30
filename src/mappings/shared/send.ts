@@ -14,7 +14,7 @@ export async function send(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
 
   try {
-    const { value, caller, timestamp, blockNumber } = unwrap(context, getInteraction);
+    const { value, caller, timestamp, blockNumber, version } = unwrap(context, getInteraction);
     interaction = value
 
     const nft = ensure<NFTEntity>(
@@ -29,7 +29,7 @@ export async function send(context: Context) {
 
     logger.success(`[SEND] ${nft.id} to ${interaction.value}`)
     await context.store.save(nft)
-    await createEvent(nft, Action.SEND, { blockNumber, caller, timestamp }, interaction.value || '', context.store, originalOwner)
+    await createEvent(nft, Action.SEND, { blockNumber, caller, timestamp, version }, interaction.value || '', context.store, originalOwner)
   } catch (e) {
     logError(e, (e) =>
       logger.error(`[SEND] ${e.message} ${JSON.stringify(interaction)}`)

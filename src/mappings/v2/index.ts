@@ -4,6 +4,7 @@ import { unwrap } from '../utils/extract'
 import logger from '../utils/logger'
 import { Context, Action, RmrkInteraction } from '../utils/types'
 import { mintItem } from '../shared/mint'
+import { send } from '../shared/send'
 
 export async function mainFrame(remark: string, context: Context): Promise<void> {
   const base = unwrap(context, (_: Context) => ({ value: remark }))
@@ -21,7 +22,7 @@ export async function mainFrame(remark: string, context: Context): Promise<void>
         break
       case Interaction.SEND:
         logger.info(`[SEND]::${base.blockNumber}::${base.value}`)
-        // await send(context)
+        await send(context)
         break
       case Interaction.BUY:
         logger.info(`[BUY]::${base.blockNumber}::${base.value}`)
