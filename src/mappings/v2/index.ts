@@ -5,6 +5,7 @@ import logger from '../utils/logger'
 import { Context, Action, RmrkInteraction } from '../utils/types'
 import { mintItem } from '../shared/mint'
 import { send } from '../shared/send'
+import { emote, list } from '../shared'
 
 export async function mainFrame(remark: string, context: Context): Promise<void> {
   const base = unwrap(context, (_: Context) => ({ value: remark }))
@@ -13,7 +14,7 @@ export async function mainFrame(remark: string, context: Context): Promise<void>
     logger.start(`[${event === Interaction.CREATE ? 'COLLECTION' : event}]: ${base.blockNumber}`)
 
     switch (event) {
-      case Interaction.CREATE: // should be CRATE
+      case Interaction.CREATE:
         await createCollection(context)
         break
       case Interaction.MINT:
@@ -34,7 +35,7 @@ export async function mainFrame(remark: string, context: Context): Promise<void>
         break
       case Interaction.LIST:
         logger.info(`[LIST]::${base.blockNumber}::${base.value}`)
-        // await list(context)
+        await list(context)
         break
       case Interaction.CHANGEISSUER:
         logger.info(`[CHANGEISSUER]::${base.blockNumber}::${base.value}`)
@@ -42,7 +43,7 @@ export async function mainFrame(remark: string, context: Context): Promise<void>
         break
       case Interaction.EMOTE:
         logger.info(`[EMOTE]::${base.blockNumber}::${base.value}`)
-        // await emote(context)
+        await emote(context)
         break
       // RMRK v2.0.0
       case Interaction.ACCEPT:
