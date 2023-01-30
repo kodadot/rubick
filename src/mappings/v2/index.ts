@@ -5,7 +5,7 @@ import logger from '../utils/logger'
 import { Context, Action, RmrkInteraction } from '../utils/types'
 import { mintItem } from '../shared/mint'
 import { send } from '../shared/send'
-import { emote, list } from '../shared'
+import { burn, emote, list } from '../shared'
 
 export async function mainFrame(remark: string, context: Context): Promise<void> {
   const base = unwrap(context, (_: Context) => ({ value: remark }))
@@ -31,7 +31,7 @@ export async function mainFrame(remark: string, context: Context): Promise<void>
         break
       case Interaction.BURN:
         logger.info(`[BURN]::${base.blockNumber}::${base.value}`)
-        // await consume(context)
+        await burn(context)
         break
       case Interaction.LIST:
         logger.info(`[LIST]::${base.blockNumber}::${base.value}`)

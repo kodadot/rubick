@@ -16,7 +16,7 @@ export async function burn(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
 
   try {
-    const { value, caller, timestamp, blockNumber } = unwrap(context, getInteraction);
+    const { value, caller, timestamp, blockNumber, version } = unwrap(context, getInteraction);
     interaction = value
     const nft = ensure<NFTEntity>(
       await get<NFTEntity>(context.store, NFTEntity, interaction.id)
@@ -37,7 +37,7 @@ export async function burn(context: Context) {
     logger.success(`[CONSUME] ${nft.id} from ${caller}`)
     await context.store.save(nft)
     await context.store.save(collection)
-    await createEvent(nft, Action.BURN, { blockNumber, caller, timestamp }, '', context.store)
+    await createEvent(nft, Action.BURN, { blockNumber, caller, timestamp, version }, '', context.store)
   } catch (e) {
     logError(e, (e) =>
       logger.warn(`[CONSUME] ${e.message} ${JSON.stringify(interaction)}`)
