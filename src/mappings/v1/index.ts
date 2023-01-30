@@ -9,7 +9,7 @@ import {
   Context,
   RmrkInteraction
 } from '../utils/types'
-import { mintItem } from './mint'
+import { mintItem } from '../shared/mint'
 import { Interaction } from '@vikiival/minimark/v1'
 
 
