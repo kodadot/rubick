@@ -4,19 +4,23 @@ import { get } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
 import { Equippable } from '@vikiival/minimark/v2'
 
+
 import { NFTEntity } from '../../model'
 import { createEvent } from '../shared/event'
 import { unwrap } from '../utils'
 import { isOwnerOrElseError } from '../utils/consolidator'
 import logger, { logError } from '../utils/logger'
 import { Action, Context } from '../utils/types'
-import { getEquippable } from './getters'
+import { getAs, getEquippable } from './getters'
+
+type OPERATION = Action.EQUIPPABLE
 
 export async function equippable(context: Context) {
   let interaction: Optional<Equippable> = null
 
   try {
-    const { value: equip, caller, timestamp, blockNumber, version } = unwrap(context, getEquippable);
+    const getE = getAs<OPERATION>()
+    const { value: equip, caller, timestamp, blockNumber, version } = unwrap(context, getE);
     interaction = equip
     const nft = ensure<NFTEntity>(
       await get<NFTEntity>(context.store, NFTEntity, interaction.id)
