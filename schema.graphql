@@ -109,6 +109,7 @@ type Emote @entity {
   nft: NFTEntity!
   caller: String!
   value: String!
+  version: String!
 }
 
 # DEV: for RMRK v1 MINT use CREATE
