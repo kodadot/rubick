@@ -2,6 +2,7 @@ import { ensure } from '@kodadot1/metasquid'
 import { burned, plsBe, plsNotBe, real } from '@kodadot1/metasquid/consolidator'
 import { create, get } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
+import { toVersion } from '@vikiival/minimark/shared'
 
 import { Emote, NFTEntity } from '../../model'
 import { unwrap } from '../utils'
@@ -38,6 +39,7 @@ export async function emote(context: Context) {
       id,
       caller,
       value: interaction.value,
+      version: toVersion(version)
     })
 
     emote.nft = nft
