@@ -3,6 +3,7 @@ import { createCollection } from '../shared/create'
 import { unwrap } from '../utils/extract'
 import logger from '../utils/logger'
 import { Context, Action, RmrkInteraction } from '../utils/types'
+import { mintItem } from '../shared/mint'
 
 export async function mainFrame(remark: string, context: Context): Promise<void> {
   const base = unwrap(context, (_: Context) => ({ value: remark }))
@@ -16,7 +17,7 @@ export async function mainFrame(remark: string, context: Context): Promise<void>
         break
       case Interaction.MINT:
         logger.info(`[MINT]::${base.blockNumber}::${base.value}`)
-        // await mintNFT(context)
+        await mintItem(context)
         break
       case Interaction.SEND:
         logger.info(`[SEND]::${base.blockNumber}::${base.value}`)

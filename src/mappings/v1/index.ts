@@ -9,7 +9,7 @@ import {
   Context,
   RmrkInteraction
 } from '../utils/types'
-import { mintNFT } from './mint'
+import { mintItem } from './mint'
 import { Interaction } from '@vikiival/minimark/v1'
 
 
@@ -29,7 +29,7 @@ export async function mainFrame(remark: string, context: Context): Promise<void>
           await createCollection(context)
           break
         case Interaction.MINTNFT:
-          await mintNFT(context)
+          await mintItem(context)
           break
         case Interaction.SEND:
           await send(context)
