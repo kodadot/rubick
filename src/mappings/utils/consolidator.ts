@@ -2,7 +2,7 @@ import { BatchArg, ExtraCall, RmrkInteraction, Transfer } from './types'
 import { CollectionEntity, NFTEntity } from '../../model/generated'
 import { serializer } from './serializer'
 
-import { real, burned, plsBe, plsNotBe } from '@kodadot1/metasquid/dist/consolidator'
+import { real, burned, plsBe, plsNotBe } from '@kodadot1/metasquid/consolidator'
 
 type Entity = CollectionEntity | NFTEntity
 

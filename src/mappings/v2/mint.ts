@@ -2,7 +2,7 @@ import {
   CollectionEntity, NFTEntity
 } from '../../model/generated'
 
-import { plsBe, real } from '@kodadot1/metasquid/dist/consolidator'
+import { plsBe, real } from '@kodadot1/metasquid/consolidator'
 import md5 from 'md5'
 import { unwrap } from '../utils'
 import { isOwnerOrElseError } from '../utils/consolidator'
