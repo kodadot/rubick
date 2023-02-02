@@ -7,7 +7,9 @@ import { handleMetadata } from '../shared'
 import { unwrap } from '../utils/extract'
 import { getCreateCollection } from './getters'
 import logger, { logError } from '../utils/logger'
-import { Collection, Context } from '../utils/types'
+import { Action, Collection, Context } from '../utils/types'
+
+const OPERATION = Action.CREATE
 
 
 export async function createCollection(context: Context): Promise<void> {
@@ -15,7 +17,6 @@ export async function createCollection(context: Context): Promise<void> {
   try {
     const { value, caller, timestamp, blockNumber, version } = unwrap(context, getCreateCollection);
     collection = value.value
-    logger.info(`[COLLECTION] ${collection.id}, ${collection}`)
     plsBe<string>(real, collection.id)
     const entity = await get<CollectionEntity>(
       context.store,
@@ -47,12 +48,13 @@ export async function createCollection(context: Context): Promise<void> {
     //     final.name = metadata.name
     //   }
     // }
-
-    await context.store.save(final)
-    logger.success(`[COLLECTION] ${final.id}`)
+    logger.debug(`[${OPERATION}] ${final.id}`)
+    await context.store.save(final).then(() => {
+      logger.debug(`[${OPERATION}] ${final.id} saved`)
+    })
   } catch (e) {
     logError(e, (e) =>
-      logger.error(`[COLLECTION] ${e.message}, ${JSON.stringify(collection)}`)
+      logger.error(`[${OPERATION}] ${e.message}, ${JSON.stringify(collection)}`)
     )
   }
 }
