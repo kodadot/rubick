@@ -20,7 +20,7 @@ export async function handleRemark(context: Context): Promise<void> {
 
 export async function versionRouter(value: string, context: Context): Promise<void> {
   const { interaction: event, version } = unwrapRemark<RmrkInteraction>(value.toString())
-  logger.pending(`[${event}]::${version}`)
+  logger.debug(`[${event}]::${version}`)
 
   if (version === '2.0.0') {
     await mainFrameV2(value, context)

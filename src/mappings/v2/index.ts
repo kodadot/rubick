@@ -1,11 +1,11 @@
-import { unwrapRemarkV2 as unwrapRemark, Interaction } from '@vikiival/minimark/v2'
-import { createCollection } from '../shared/create'
+import { Interaction, unwrapRemarkV2 as unwrapRemark } from '@vikiival/minimark/v2'
+import { burn, emote, list } from '../shared'
+import { send } from '../shared/send'
 import { unwrap } from '../utils/extract'
 import logger from '../utils/logger'
-import { Context, Action, RmrkInteraction } from '../utils/types'
-import { mintItem } from '../shared/mint'
-import { send } from '../shared/send'
-import { burn, emote, list } from '../shared'
+import { Context } from '../utils/types'
+import { createCollection } from './create'
+import { mintItem } from './mint'
 
 export async function mainFrame(remark: string, context: Context): Promise<void> {
   const base = unwrap(context, (_: Context) => ({ value: remark }))
@@ -15,6 +15,7 @@ export async function mainFrame(remark: string, context: Context): Promise<void>
 
     switch (event) {
       case Interaction.CREATE:
+        logger.info(`[MINT]::${base.blockNumber}::${base.value}`)
         await createCollection(context)
         break
       case Interaction.MINT:

@@ -4,6 +4,7 @@ import {
   Burn,
   Buy,
   ChangeIssuer,
+  Create,
   Emote,
   Equip,
   Equippable,
@@ -28,6 +29,10 @@ export function getRemark<T extends keyof UnwrapValue = 'NONE'>(
 ): UnwrappedRemark<UnwrapValue[T]> {
   const { remark } = new SystemRemarkCall(ctx).asV1020
   return unwrapRemark<T>(remark.toString())
+}
+
+export function getCreateCollection(ctx: Context): UnwrappedRemark<Create> {
+  return getRemark<Interaction.CREATE>(ctx)
 }
 
 export function getCreateBase(ctx: Context): UnwrappedRemark<Base> {
