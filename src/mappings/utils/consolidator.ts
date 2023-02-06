@@ -3,6 +3,7 @@ import { CollectionEntity, NFTEntity } from '../../model/generated'
 import { serializer } from './serializer'
 
 import { real, burned, plsBe, plsNotBe } from '@kodadot1/metasquid/consolidator'
+import { isAddress } from './helper'
 
 type Entity = CollectionEntity | NFTEntity
 
@@ -33,6 +34,12 @@ export function isOwnerOrElseError(entity: Entity, caller: string) {
 export function isIssuerOrElseError(entity: Entity, caller: string) {
   if (!isIssuer(entity, caller)) {
     throw new ReferenceError(`[CONSOLIDATE Bad Owner] Entity: ${entity.issuer} Caller: ${caller}`)
+  }
+}
+
+export function isAddressOrElseError(caller: string) {
+  if (!isAddress(caller)) {
+    throw new ReferenceError(`[CONSOLIDATE Bad Addresss] Caller: ${caller}`)
   }
 }
 

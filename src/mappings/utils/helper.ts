@@ -35,6 +35,15 @@ export function addressOf(address: ArchiveCallWithOptionalValue | string): strin
   return ss58.codec('kusama').encode(decodeHex(value))
 }
 
+export function isAddress(address: string): boolean {
+  try {
+    ss58.codec('kusama').decode(address)
+    return true
+  } catch (e) {
+    return false
+  }
+}
+
 export function metadataOf({ metadata }: { metadata: string }): string {
   return metadata ?? '';
 }
