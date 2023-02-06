@@ -4,8 +4,11 @@ process: build
 serve:
 	@npx squid-graphql-server
 
-up:
-  docker compose up
+up *FLAGS:
+  docker compose up {{FLAGS}}
+
+upd:
+	@just up -d
 
 pull:
   docker compose pull
