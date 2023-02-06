@@ -1,6 +1,7 @@
 import { plsBe, plsNotBe, real } from '@kodadot1/metasquid/consolidator'
 import { create, get } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
+import md5 from 'md5'
 
 import { CollectionEntity } from '../../model'
 import { unwrap } from '../utils/extract'
@@ -37,6 +38,7 @@ export async function createCollection(context: Context): Promise<void> {
     final.updatedAt = timestamp
     final.nftCount = 0
     final.supply = 0
+    final.hash = md5(collection.id)
 
     if (final.metadata) {
       const metadata = await handleMetadata(final.metadata, final.name, context.store)

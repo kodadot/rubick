@@ -8,6 +8,7 @@ import { unwrap } from '../utils/extract'
 import { getCreateCollection } from './getters'
 import logger, { logError } from '../utils/logger'
 import { Action, Collection, Context } from '../utils/types'
+import md5 from 'md5'
 
 const OPERATION = Action.CREATE
 
@@ -40,6 +41,7 @@ export async function createCollection(context: Context): Promise<void> {
     final.updatedAt = timestamp
     final.nftCount = 0
     final.supply = 0
+    final.hash = md5(collection.id)
 
     // if (final.metadata) {
     //   const metadata = await handleMetadata(final.metadata, final.name, context.store)
