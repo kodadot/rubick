@@ -7,6 +7,8 @@ import { Action, ArchiveCallWithOptionalValue, RmrkInteraction } from './types'
 export { isEmpty, trim, trimAll } from '@vikiival/minimark/utils'
 export { toBaseId as baseId } from '@vikiival/minimark/v2'
 
+export const SS58_REGEX = /^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{47}$/
+
 
 export const emoteId = ({ id, value: metadata }: RmrkInteraction, caller: string) => `${id}-${metadata}-${caller}`
 
@@ -42,6 +44,10 @@ export function isAddress(address: string): boolean {
   } catch (e) {
     return false
   }
+}
+
+export function isDummyAddress(address: string): boolean {
+  return SS58_REGEX.test(address)
 }
 
 export function metadataOf({ metadata }: { metadata: string }): string {
