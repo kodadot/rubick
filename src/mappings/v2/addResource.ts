@@ -8,7 +8,7 @@ import { NFTEntity } from '../../model'
 import { handleMetadata } from '../shared'
 import { createEvent } from '../shared/event'
 import { unwrap } from '../utils'
-import { isOwnerOrElseError } from '../utils/consolidator'
+import { isIssuerOrElseError, isOwnerOrElseError } from '../utils/consolidator'
 import logger, { logError } from '../utils/logger'
 import { Action, Context } from '../utils/types'
 import { getAddRes } from './getters'
@@ -26,7 +26,8 @@ export async function addResource(context: Context) {
     )
     plsBe(real, nft)
     plsNotBe(burned, nft)
-    isOwnerOrElseError(nft, caller)
+    isIssuerOrElseError(nft, caller)
+    const isPending = nft.currentOwner !== caller
     nft.updatedAt = timestamp
 
     if (interaction.value.metadata) {
