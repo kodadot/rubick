@@ -35,7 +35,7 @@ explore:
 	--archive https://kusama.archive.subsquid.io/graphql \
 	--out kusamaVersions.jsonl
 
-bug: down up
+bug: down upd
 
 reset: migrate
 
