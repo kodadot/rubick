@@ -14,7 +14,7 @@ import { BaseCall as SquidCall } from '@kodadot1/metasquid/types'
 export { Action, Store }
 
 export const getNftId = (nft: any, blocknumber?: string | number): string => {
-  return `${blocknumber ? blocknumber + '-' : '' }${nft.collection}-${nft.instance || nft.name}-${nft.sn}`
+  return `${blocknumber ? blocknumber + '-' : '' }${nft.collection}-${nft.instance || nft.symbol || nft.name}-${nft.sn}`
 }
 
 
