@@ -55,6 +55,7 @@ type NFTEntity @entity {
   updatedAt: DateTime!
   version: String!
   emoteCount: Int!
+  resources: [Resource!] @derivedFrom (field: "nft")
 }
 
 type MetadataEntity @entity {
@@ -151,16 +152,19 @@ type Base @entity {
     # logs: [Call!] @derivedFrom (field: "base") // Rename to event
 }
 
+
+# https://github.com/rmrk-team/rmrk-spec/blob/master/standards/rmrk2.0.0/entities/nft.md#resources-and-resource
 # type Resource @entity {
 #     id: ID!
+#     # base: Base
 #     src: String
+#     meta: MetadataEntity
 #     metadata: String
-#     license: String
+#     slot: String
 #     thumb: String
-#     base: Base
-#     parts: [ResourcePart!] @derivedFrom (field: "resource")
-#     theme: BaseTheme
-#     slot: String!
+#     # parts: [ResourcePart!] @derivedFrom (field: "resource")
+#     priority: Int! # 0 is highest priority, need to check if this is correct
+#     pending: Boolean!
 #     nft: NFT!
 # }
 
