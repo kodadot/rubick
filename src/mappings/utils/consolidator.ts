@@ -26,6 +26,12 @@ export function isIssuer(entity: Entity, caller: string) {
 
 export function isOwnerOrElseError(entity: Entity, caller: string) {
   if (!isOwner(entity, caller)) {
+    throw new ReferenceError(`[CONSOLIDATE Bad Owner] Entity: ${entity.currentOwner} Caller: ${caller}`)
+  }
+}
+
+export function isIssuerOrElseError(entity: Entity, caller: string) {
+  if (!isIssuer(entity, caller)) {
     throw new ReferenceError(`[CONSOLIDATE Bad Owner] Entity: ${entity.issuer} Caller: ${caller}`)
   }
 }
