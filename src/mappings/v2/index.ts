@@ -72,6 +72,7 @@ export async function mainFrame(remark: string, context: Context): Promise<void>
         logger.info(`[EQUIP]::${base.blockNumber}::${base.value}`)
         break
       case Interaction.EQUIPPABLE:
+        // BASE related
         logger.info(`[EQUIPPABLE]::${base.blockNumber}::${base.value}`)
         break
       case Interaction.LOCK:

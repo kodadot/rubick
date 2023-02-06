@@ -39,7 +39,8 @@ type NFTEntity @entity {
   burned: Boolean!
   collection: CollectionEntity!
   createdAt: DateTime!
-  currentOwner: String @index
+  currentOwner: String @index # or address
+  parent: NFTEntity # = nft_id
   emotes: [Emote!] @derivedFrom(field: "nft")
   events: [Event!] @derivedFrom(field: "nft")
   hash: String! @index @unique
