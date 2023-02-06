@@ -30,7 +30,7 @@ export const lastEventQuery = (whereCondition: string) => `SELECT
     me.image as image,
     me.animation_url,
     MAX(e.timestamp) as timestamp,
-    MAX(e.meta::bigint) as value,
+    MAX(e.meta::decimal) as value,
     ne.collection_id as collection_id,
     ce.name as collection_name
 
