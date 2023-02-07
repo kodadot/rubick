@@ -1,5 +1,5 @@
 import * as ss58 from '@subsquid/ss58'
-import { decodeHex } from '@subsquid/substrate-processor'
+import { assertNotNull, decodeHex } from '@subsquid/substrate-processor'
 import { trim, trimAll } from '@vikiival/minimark/utils'
 import { nanoid } from 'nanoid'
 import { Action, ArchiveCallWithOptionalValue, RmrkInteraction } from './types'
@@ -46,8 +46,9 @@ export function isAddress(address: string): boolean {
   }
 }
 
-export function isDummyAddress(address: string): boolean {
-  return SS58_REGEX.test(address)
+export function isDummyAddress(address?: string): boolean {
+  assertNotNull(address)
+  return SS58_REGEX.test(address as string)
 }
 
 export function metadataOf({ metadata }: { metadata: string }): string {
