@@ -4,6 +4,7 @@ import {CollectionEntity} from "./collectionEntity.model"
 import {Emote} from "./emote.model"
 import {Event} from "./event.model"
 import {MetadataEntity} from "./metadataEntity.model"
+import {Resource} from "./resource.model"
 
 @Entity_()
 export class NFTEntity {
@@ -27,6 +28,10 @@ export class NFTEntity {
     @Index_()
     @Column_("text", {nullable: true})
     currentOwner!: string | undefined | null
+
+    @Index_()
+    @ManyToOne_(() => NFTEntity, {nullable: true})
+    parent!: NFTEntity | undefined | null
 
     @OneToMany_(() => Emote, e => e.nft)
     emotes!: Emote[]
@@ -75,4 +80,7 @@ export class NFTEntity {
 
     @Column_("int4", {nullable: false})
     emoteCount!: number
+
+    @OneToMany_(() => Resource, e => e.nft)
+    resources!: Resource[]
 }
