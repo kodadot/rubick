@@ -7,6 +7,7 @@ import { Action, ArchiveCallWithOptionalValue, RmrkInteraction } from './types'
 export { isEmpty, trim, trimAll } from '@vikiival/minimark/utils'
 export { toBaseId as baseId } from '@vikiival/minimark/v2'
 
+// Lenght is 47 or 48
 export const SS58_REGEX = /^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{47}$/
 
 
@@ -50,6 +51,11 @@ export function isDummyAddress(address?: string): boolean {
   assertNotNull(address)
   return SS58_REGEX.test(address as string)
 }
+
+// RMRK R&D team
+export const isValidAddressPolkadotAddress = (address: string) => {
+  return address && !address.includes("-");
+};
 
 export function metadataOf({ metadata }: { metadata: string }): string {
   return metadata ?? '';
