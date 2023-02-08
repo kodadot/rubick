@@ -81,6 +81,9 @@ export class NFTEntity {
     @Column_("int4", {nullable: false})
     emoteCount!: number
 
+    @Column_("bool", {nullable: false})
+    pending!: boolean
+
     @OneToMany_(() => Resource, e => e.nft)
     resources!: Resource[]
 }
