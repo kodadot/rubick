@@ -1,6 +1,6 @@
 import { Interaction, unwrapRemarkV2 as unwrapRemark } from '@vikiival/minimark/v2'
 import { burn, emote, list } from '../shared'
-import { send } from '../shared/send'
+import { send } from './send'
 import { unwrap } from '../utils/extract'
 import logger from '../utils/logger'
 import { Context } from '../utils/types'
