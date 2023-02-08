@@ -50,9 +50,8 @@ export async function createCollection(context: Context): Promise<void> {
     //     final.name = metadata.name
     //   }
     // }
-    logger.debug(`[${OPERATION}] ${final.id}`)
     await context.store.save(final).then(() => {
-      logger.debug(`[${OPERATION}] ${final.id} saved`)
+      logger.success(`[${OPERATION}] ${final.id}`)
     })
   } catch (e) {
     logError(e, (e) =>

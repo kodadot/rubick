@@ -11,7 +11,7 @@ export async function mainFrame(remark: string, context: Context): Promise<void>
   const base = unwrap(context, (_: Context) => ({ value: remark }))
   try {
     const { interaction: event } = unwrapRemark(remark.toString())
-    logger.start(`[${event === Interaction.CREATE ? 'COLLECTION' : event}]: ${base.blockNumber}`)
+    logger.start(`.:[${event}] ${base.blockNumber}:.`)
 
     switch (event) {
       case Interaction.CREATE:

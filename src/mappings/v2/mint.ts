@@ -70,14 +70,14 @@ export async function mintItem(
       }
     }
 
-    logger.success(`[MINT] ${final.id}`)
     await context.store.save(final)
     await context.store.save(collection)
+    logger.success(`[${OPERATION}] ${final.id}`)
     await createEvent(final, Action.MINT, { blockNumber, caller, timestamp, version }, '', context.store)
 
   } catch (e) {
     logError(e, (e) =>
-      logger.error(`[MINT] ${e.message}, ${JSON.stringify(nft)}`)
+      logger.error(`[${OPERATION}] ${e.message}, ${JSON.stringify(nft)}`)
     )
   }
 }
