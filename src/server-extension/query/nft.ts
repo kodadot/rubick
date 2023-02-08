@@ -45,7 +45,7 @@ export const rootOwnerQuery = `with recursive part as (
     select pe.id, pe.name, pe.current_owner, pe.parent_id from nft_entity pe
     join part p on p.parent_id = pe.id
    )
-   select id, name, current_owner as currentOnwer
+   select id, name, current_owner
    from part
    where parent_id is null
    limit 1`
