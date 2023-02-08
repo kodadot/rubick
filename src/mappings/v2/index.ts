@@ -15,11 +15,9 @@ export async function mainFrame(remark: string, context: Context): Promise<void>
 
     switch (event) {
       case Interaction.CREATE:
-        logger.info(`[MINT]::${base.blockNumber}::${base.value}`)
         await createCollection(context)
         break
       case Interaction.MINT:
-        logger.info(`[MINT]::${base.blockNumber}::${base.value}`)
         await mintItem(context)
         break
       case Interaction.SEND:
