@@ -54,6 +54,7 @@ export async function mintItem(
     final.updatedAt = timestamp
     final.emoteCount = 0
     final.version = version
+    final.pending = false
 
     collection.updatedAt = timestamp
     collection.nftCount += 1 
