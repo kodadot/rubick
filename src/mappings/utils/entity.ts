@@ -1,5 +1,9 @@
-import { Store, EntityConstructor } from './types'
+import { takeFirst } from '@kodadot1/metasquid'
+import { findByRawQuery } from '@kodadot1/metasquid/entity'
 import { FindOptionsWhere } from 'typeorm'
+import { NFTEntity } from '../../model'
+import { rootOwnerQuery } from '../../server-extension/query/nft'
+import { EntityConstructor, Store } from './types'
 
 export type EntityWithId = {
   id: string
@@ -62,4 +66,17 @@ export function create<T extends EntityWithId>(
   entity.id = id
   Object.assign(entity, init)
   return entity
+}
+
+
+// Specific utils
+
+
+export async function findRootItemById(store: Store, id: string): Promise<NFTEntity> {
+  const result = await findByRawQuery(store, NFTEntity, rootOwnerQuery, [id]).then(takeFirst)
+  if (!result) {
+    throw new Error(`Root item with id ${id} not found`)
+  }
+
+  return result
 }
