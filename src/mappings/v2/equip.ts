@@ -1,6 +1,6 @@
 import { ensure } from '@kodadot1/metasquid'
 import { burned, plsBe, plsNotBe, real } from '@kodadot1/metasquid/consolidator'
-import { get } from '@kodadot1/metasquid/entity'
+import { getOrFail as get } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
 import { Equip } from '@vikiival/minimark/v2'
 
@@ -20,10 +20,7 @@ export async function equip(context: Context) {
   try {
     const { value: equip, caller, timestamp, blockNumber, version } = unwrap(context, getEquip);
     interaction = equip
-    const nft = ensure<NFTEntity>(
-      await get<NFTEntity>(context.store, NFTEntity, interaction.id)
-    )
-    plsBe(real, nft)
+    const nft = await get<NFTEntity>(context.store, NFTEntity, interaction.id)
     plsNotBe(burned, nft)
     isOwnerOrElseError(nft, caller)
     nft.updatedAt = timestamp
