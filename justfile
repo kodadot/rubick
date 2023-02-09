@@ -52,6 +52,8 @@ migrate:
 update-db:
 	npx squid-typeorm-migration generate
 
+db: update-db migrate
+
 test:
   npm run test:unit
 
