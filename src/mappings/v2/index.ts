@@ -1,11 +1,17 @@
 import { Interaction, unwrapRemarkV2 as unwrapRemark } from '@vikiival/minimark/v2'
-import { burn, emote, list } from '../shared'
-import { send } from './send'
+
+import { burn, buy, changeIssuer, emote, list } from '../shared'
 import { unwrap } from '../utils/extract'
 import logger from '../utils/logger'
 import { Context } from '../utils/types'
+import { acceptResource } from './accept'
+import { addResource } from './addResource'
+import { base as createBase } from './base'
 import { createCollection } from './create'
+import { lockCollection } from './lock'
 import { mintItem } from './mint'
+import { send } from './send'
+import { setPriority } from './setpriority'
 
 export async function mainFrame(remark: string, context: Context): Promise<void> {
   const base = unwrap(context, (_: Context) => ({ value: remark }))
@@ -21,60 +27,45 @@ export async function mainFrame(remark: string, context: Context): Promise<void>
         await mintItem(context)
         break
       case Interaction.SEND:
-        logger.info(`[SEND]::${base.blockNumber}::${base.value}`)
         await send(context)
         break
       case Interaction.BUY:
-        logger.info(`[BUY]::${base.blockNumber}::${base.value}`)
-        // await buy(context)
+        await buy(context)
         break
       case Interaction.BURN:
-        logger.info(`[BURN]::${base.blockNumber}::${base.value}`)
         await burn(context)
         break
       case Interaction.LIST:
-        logger.info(`[LIST]::${base.blockNumber}::${base.value}`)
         await list(context)
         break
       case Interaction.CHANGEISSUER:
-        logger.info(`[CHANGEISSUER]::${base.blockNumber}::${base.value}`)
-        // await changeIssuer(context)
+        await changeIssuer(context)
         break
       case Interaction.EMOTE:
-        logger.info(`[EMOTE]::${base.blockNumber}::${base.value}`)
         await emote(context)
         break
       // RMRK v2.0.0
       case Interaction.ACCEPT:
-        logger.info(`[ACCEPT]::${base.blockNumber}::${base.value}`)
+        await acceptResource(context)
         break
       case Interaction.BASE:
-        logger.info(`[BASE]::${base.blockNumber}::${base.value}`)
-        break
-      case Interaction.DESTROY:
-        logger.info(`[DESTROY]::${base.blockNumber}::${base.value}`)
+        await createBase(context)
         break
       case Interaction.SETPRIORITY:
-        logger.info(`[SETPRIORITY]::${base.blockNumber}::${base.value}`)
-        break
-      case Interaction.SETPROPERTY:
-        logger.info(`[SETPROPERTY]::${base.blockNumber}::${base.value}`)
-        break
-      case Interaction.THEMEADD:
-        logger.info(`[THEMEADD]::${base.blockNumber}::${base.value}`)
+        await setPriority(context)
         break
       case Interaction.RESADD:
-        logger.info(`[RESADD]::${base.blockNumber}::${base.value}`)
+        await addResource(context)
         break
-      case Interaction.EQUIP:
-        logger.info(`[EQUIP]::${base.blockNumber}::${base.value}`)
-        break
+      case Interaction.DESTROY:
+      case Interaction.THEMEADD:  
       case Interaction.EQUIPPABLE:
-        // BASE related
-        logger.info(`[EQUIPPABLE]::${base.blockNumber}::${base.value}`)
+      case Interaction.SETPROPERTY:
+      case Interaction.EQUIP:
+        logger.pending(`[${event}]::${base.blockNumber}::${base.value}`)
         break
       case Interaction.LOCK:
-        logger.info(`[LOCK]::${base.blockNumber}::${base.value}`)
+        await lockCollection(context)
         break
       default:
         logger.fatal(
