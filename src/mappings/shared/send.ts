@@ -1,5 +1,5 @@
 import { ensure } from '@kodadot1/metasquid'
-import { get } from '@kodadot1/metasquid/entity'
+import { getOrFail as get } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
 
 import { NFTEntity } from '../../model'
@@ -17,9 +17,7 @@ export async function send(context: Context) {
     const { value, caller, timestamp, blockNumber, version } = unwrap(context, getInteraction);
     interaction = value
 
-    const nft = ensure<NFTEntity>(
-      await get<NFTEntity>(context.store, NFTEntity, interaction.id)
-    )
+    const nft = await get<NFTEntity>(context.store, NFTEntity, interaction.id)
     validateInteraction(nft, interaction)
     isOwnerOrElseError(nft, caller)
     const originalOwner = nft.currentOwner ?? undefined

@@ -1,6 +1,6 @@
 import { ensure } from '@kodadot1/metasquid'
 import { burned, plsBe, plsNotBe, real } from '@kodadot1/metasquid/consolidator'
-import { create, get } from '@kodadot1/metasquid/entity'
+import { create, getOrFail as get } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
 import { toVersion } from '@vikiival/minimark/shared'
 
@@ -19,9 +19,7 @@ export async function emote(context: Context) {
     const { value, caller, timestamp, version } = unwrap(context, getInteraction);
     interaction = value
     plsBe(withMeta, interaction)
-    const nft = ensure<NFTEntity>(
-      await get<NFTEntity>(context.store, NFTEntity, interaction.id)
-    )
+    const nft = await get<NFTEntity>(context.store, NFTEntity, interaction.id)
     plsBe<NFTEntity>(real, nft)
     plsNotBe<NFTEntity>(burned, nft)
     const id = emoteId(interaction, caller)

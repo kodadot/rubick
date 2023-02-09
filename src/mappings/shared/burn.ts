@@ -1,6 +1,6 @@
 import { ensure } from '@kodadot1/metasquid'
 import { burned, plsBe, plsNotBe, real } from '@kodadot1/metasquid/consolidator'
-import { get } from '@kodadot1/metasquid/entity'
+import { getOrFail as get } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
 
 import { CollectionEntity, NFTEntity } from '../../model'
@@ -18,10 +18,7 @@ export async function burn(context: Context) {
   try {
     const { value, caller, timestamp, blockNumber, version } = unwrap(context, getInteraction);
     interaction = value
-    const nft = ensure<NFTEntity>(
-      await get<NFTEntity>(context.store, NFTEntity, interaction.id)
-    )
-    plsBe<NFTEntity>(real, nft)
+    const nft = await get<NFTEntity>(context.store, NFTEntity, interaction.id)
     plsNotBe<NFTEntity>(burned, nft)
     isOwnerOrElseError(nft, caller)
     nft.price = BigInt(0)
@@ -29,8 +26,7 @@ export async function burn(context: Context) {
     nft.updatedAt = timestamp
 
     plsBe(real, nft.collection)
-    const collection = ensure<CollectionEntity>(await get<CollectionEntity>(context.store, CollectionEntity, nft.collection.toString()))
-    plsBe(real, collection)
+    const collection = await get<CollectionEntity>(context.store, CollectionEntity, nft.collection.toString())
     collection.updatedAt = timestamp
     collection.supply -= 1
 

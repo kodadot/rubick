@@ -6,8 +6,8 @@ import { plsBe, real } from '@kodadot1/metasquid/consolidator'
 import md5 from 'md5'
 import { unwrap } from '../utils'
 import { isOwnerOrElseError } from '../utils/consolidator'
-
-import { create, get } from '../utils/entity'
+import { getOrFail as get } from '@kodadot1/metasquid/entity'
+import { create } from '../utils/entity'
 import { getCreateToken } from '../utils/getters'
 import { ensure } from '../utils/helper'
 import logger, { logError } from '../utils/logger'
@@ -28,10 +28,7 @@ export async function mintItem(
     const { value, caller, timestamp, blockNumber, version } = unwrap(context, getCreateToken);
     nft = value as NFT
     plsBe(real, nft.collection)
-    const collection = ensure<CollectionEntity>(
-      await get<CollectionEntity>(context.store, CollectionEntity, nft.collection)
-    )
-    plsBe(real, collection)
+    const collection = await get<CollectionEntity>(context.store, CollectionEntity, nft.collection)
     isOwnerOrElseError(collection, caller)
     const id = getNftId(nft, blockNumber)
     // const entity = await get<NFTEntity>(context.store, NFTEntity, id) // TODO: check if exists
