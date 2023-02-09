@@ -1,31 +1,37 @@
-import { unwrap } from '../utils/extract'
-import { getCreateBase } from './getters'
-import { Action, Base, Context } from '../utils/types'
 import { Optional } from '@kodadot1/metasquid/types'
-import logger, { logError } from '../utils/logger'
-import { plsBe, real } from '@kodadot1/metasquid/consolidator'
-import { createUnlessNotExist } from '../utils/verbose'
-import { CollectionEntity } from '../../model'
-import { baseId } from '../utils/helper'
 import { CreatedBase } from '@vikiival/minimark/v2'
+
+import { Base, BaseType } from '../../model'
+import { handleMetadata } from '../shared'
+import { unwrap } from '../utils/extract'
+import { baseId } from '../utils/helper'
+import logger, { logError } from '../utils/logger'
+import { Action, Context } from '../utils/types'
+import { createUnlessNotExist } from '../utils/verbose'
+import { getCreateBase } from './getters'
 
 const OPERATION = Action.BASE
 
 export async function base(context: Context) {
-  let base: Optional<Base> = undefined
+  let base: Optional<CreatedBase> = undefined
   try {
     const { value: interaction, caller, timestamp, blockNumber, version } = unwrap(context, getCreateBase);
     const base = interaction.value as CreatedBase
     const id = baseId(blockNumber, base.symbol)
-    const final = await createUnlessNotExist(id, CollectionEntity, context);
+    const final = await createUnlessNotExist(id, Base, context);
     final.issuer = caller
     final.currentOwner = caller
+    final.type = base.type as BaseType || BaseType.mixed
     final.symbol = base.symbol.trim()
-    // final.type = base.type
-    // final.themes = base.themes
-    // final.parts = base.parts
+    final.metadata = base.metadata
 
-    plsBe<string>(real, '')
+    if (base.metadata) {
+      const metadata = await handleMetadata(base.metadata, '', context.store)
+      logger.log(`[${OPERATION}] ${final.id} metadata ${metadata?.id}`)
+      final.meta = metadata
+    }
+    
+    await context.store.save(final)
   } catch (e) {
     logError(e, (e) =>
       logger.error(`[BASE] ${e.message}, ${JSON.stringify(base)}`)
