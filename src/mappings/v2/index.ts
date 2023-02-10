@@ -57,15 +57,15 @@ export async function mainFrame(remark: string, context: Context): Promise<void>
       case Interaction.RESADD:
         await addResource(context)
         break
+      case Interaction.LOCK:
+        await lockCollection(context)
+        break
       case Interaction.DESTROY:
       case Interaction.THEMEADD:  
       case Interaction.EQUIPPABLE:
       case Interaction.SETPROPERTY:
       case Interaction.EQUIP:
         logger.pending(`[${event}]::${base.blockNumber}::${base.value}`)
-        break
-      case Interaction.LOCK:
-        await lockCollection(context)
         break
       default:
         logger.fatal(
