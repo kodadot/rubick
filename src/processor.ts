@@ -5,7 +5,7 @@ import * as mappings from './mappings'
 
 const processor = new SubstrateProcessor(new Database())
 
-const STARTING_BLOCK = 8788586; // 8788586
+const STARTING_BLOCK = 10269144; // 8788586
 const ENDING_BLOCK = undefined; // 16261119;
 
 processor.setTypesBundle('kusama');
