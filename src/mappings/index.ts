@@ -6,6 +6,7 @@ import { RmrkInteraction, Context } from './utils/types'
 
 import { mainFrame as mainFrameV1 } from './v1'
 import { mainFrame as mainFrameV2 } from './v2'
+import { updateCache } from './utils/cache'
 
 export async function handleRemark(context: Context): Promise<void> {
   const { remark } = new SystemRemarkCall(context).asV1020
@@ -28,7 +29,7 @@ export async function versionRouter(value: string, context: Context): Promise<vo
 
   // await mainFrameV1(value, context)
   // TODO: use data from the base or something
-  // await updateCache(new Date(), context.store)
+  await updateCache(new Date(), context.store)
 }
 
 
