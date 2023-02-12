@@ -21,7 +21,7 @@
     "@subsquid/substrate-processor": "2.3.0",
     "@subsquid/typeorm-migration": "0.1.5",
     "@subsquid/typeorm-store": "0.2.1",
-    "@vikiival/minimark": "0.1.0-rc.13",
+    "@vikiival/minimark": "0.1.0-rc.14",
     "axios": "^1.3.2",
     "dotenv": "^16.0.3",
     "md5": "^2.3.0",
