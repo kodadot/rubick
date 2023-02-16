@@ -72,6 +72,9 @@ export class NFTEntity {
     @Column_("int4", {nullable: true})
     transferable!: number | undefined | null
 
+    @Column_("numeric", {transformer: marshal.floatTransformer, nullable: true})
+    royalty!: number | undefined | null
+
     @Column_("timestamp with time zone", {nullable: false})
     updatedAt!: Date
 

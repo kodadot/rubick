@@ -53,6 +53,7 @@ type NFTEntity @entity {
   price: BigInt!
   sn: String
   transferable: Int
+  royalty: Float
   updatedAt: DateTime!
   version: String!
   emoteCount: Int!
