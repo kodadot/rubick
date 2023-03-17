@@ -29,11 +29,17 @@ export class CollectionEntity {
     @PrimaryColumn_()
     id!: string
 
-    @Column_("text", {nullable: false})
-    issuer!: string
+    @Column_("text", {nullable: true})
+    image!: string | undefined | null
+
+    @Column_("text", {nullable: true})
+    issuer!: string | undefined | null
 
     @Column_("int4", {nullable: false})
     max!: number
+
+    @Column_("text", {nullable: true})
+    media!: string | undefined | null
 
     @Index_()
     @ManyToOne_(() => MetadataEntity, {nullable: true})

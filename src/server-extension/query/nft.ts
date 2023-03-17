@@ -10,7 +10,7 @@ export const salesQuery = `SELECT
     ne.issuer,
     collection_id,
     e.caller as buyer,
-    (e.meta::bigint) as sale_price,
+    (e.meta::decimal) as sale_price,
     e.timestamp,
     e.block_number,
     me.image

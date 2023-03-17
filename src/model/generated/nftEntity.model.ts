@@ -49,7 +49,13 @@ export class NFTEntity {
     instance!: string | undefined | null
 
     @Column_("text", {nullable: true})
+    image!: string | undefined | null
+
+    @Column_("text", {nullable: true})
     issuer!: string | undefined | null
+
+    @Column_("text", {nullable: true})
+    media!: string | undefined | null
 
     @Index_()
     @ManyToOne_(() => MetadataEntity, {nullable: true})

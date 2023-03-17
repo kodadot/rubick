@@ -21,8 +21,10 @@ type CollectionEntity @entity {
   events: [CollectionEvent!]
   hash: String! @unique
   id: ID!
-  issuer: String!
+  image: String
+  issuer: String
   max: Int!
+  media: String
   meta: MetadataEntity
   metadata: String
   name: String @index
@@ -46,7 +48,9 @@ type NFTEntity @entity {
   hash: String! @index @unique
   id: ID!
   instance: String
+  image: String
   issuer: String
+  media: String
   meta: MetadataEntity
   metadata: String
   name: String @index
