@@ -19,8 +19,10 @@ type CollectionEntity @entity {
   currentOwner: String
   events: [CollectionEvent!]
   id: ID!
+  image: String
   issuer: String
   max: Int!
+  media: String
   meta: MetadataEntity
   metadata: String
   name: String @index
@@ -44,7 +46,9 @@ type NFTEntity @entity {
   hash: String! @index
   id: ID!
   instance: String
+  image: String
   issuer: String
+  media: String
   meta: MetadataEntity
   metadata: String
   name: String @index
