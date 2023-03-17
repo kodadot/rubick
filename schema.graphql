@@ -26,12 +26,12 @@ type CollectionEntity @entity {
   meta: MetadataEntity
   metadata: String
   name: String @index
-  nfts: [NFTEntity!] @derivedFrom(field: "collection")
-  symbol: String! @unique
-  version: String!
-  updatedAt: DateTime!
   nftCount: Int!
+  nfts: [NFTEntity!] @derivedFrom(field: "collection")
   supply: Int!
+  symbol: String! @unique
+  updatedAt: DateTime!
+  version: String!
 }
 
 type NFTEntity @entity {
@@ -40,7 +40,7 @@ type NFTEntity @entity {
   collection: CollectionEntity!
   createdAt: DateTime!
   currentOwner: String @index # or address
-  parent: NFTEntity # = nft_id
+  emoteCount: Int!
   emotes: [Emote!] @derivedFrom(field: "nft")
   events: [Event!] @derivedFrom(field: "nft")
   hash: String! @index @unique
@@ -50,15 +50,15 @@ type NFTEntity @entity {
   meta: MetadataEntity
   metadata: String
   name: String @index
+  parent: NFTEntity # = nft_id
+  pending: Boolean!
   price: BigInt!
+  resources: [Resource!] @derivedFrom (field: "nft")
+  royalty: Float
   sn: String
   transferable: Int
-  royalty: Float
   updatedAt: DateTime!
   version: String!
-  emoteCount: Int!
-  pending: Boolean!
-  resources: [Resource!] @derivedFrom (field: "nft")
 }
 
 type MetadataEntity @entity {

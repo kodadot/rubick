@@ -46,22 +46,22 @@ export class CollectionEntity {
     @Column_("text", {nullable: true})
     name!: string | undefined | null
 
+    @Column_("int4", {nullable: false})
+    nftCount!: number
+
     @OneToMany_(() => NFTEntity, e => e.collection)
     nfts!: NFTEntity[]
+
+    @Column_("int4", {nullable: false})
+    supply!: number
 
     @Index_({unique: true})
     @Column_("text", {nullable: false})
     symbol!: string
 
-    @Column_("text", {nullable: false})
-    version!: string
-
     @Column_("timestamp with time zone", {nullable: false})
     updatedAt!: Date
 
-    @Column_("int4", {nullable: false})
-    nftCount!: number
-
-    @Column_("int4", {nullable: false})
-    supply!: number
+    @Column_("text", {nullable: false})
+    version!: string
 }

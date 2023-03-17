@@ -29,9 +29,8 @@ export class NFTEntity {
     @Column_("text", {nullable: true})
     currentOwner!: string | undefined | null
 
-    @Index_()
-    @ManyToOne_(() => NFTEntity, {nullable: true})
-    parent!: NFTEntity | undefined | null
+    @Column_("int4", {nullable: false})
+    emoteCount!: number
 
     @OneToMany_(() => Emote, e => e.nft)
     emotes!: Emote[]
@@ -63,8 +62,21 @@ export class NFTEntity {
     @Column_("text", {nullable: true})
     name!: string | undefined | null
 
+    @Index_()
+    @ManyToOne_(() => NFTEntity, {nullable: true})
+    parent!: NFTEntity | undefined | null
+
+    @Column_("bool", {nullable: false})
+    pending!: boolean
+
     @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
     price!: bigint
+
+    @OneToMany_(() => Resource, e => e.nft)
+    resources!: Resource[]
+
+    @Column_("numeric", {transformer: marshal.floatTransformer, nullable: true})
+    royalty!: number | undefined | null
 
     @Column_("text", {nullable: true})
     sn!: string | undefined | null
@@ -72,21 +84,9 @@ export class NFTEntity {
     @Column_("int4", {nullable: true})
     transferable!: number | undefined | null
 
-    @Column_("numeric", {transformer: marshal.floatTransformer, nullable: true})
-    royalty!: number | undefined | null
-
     @Column_("timestamp with time zone", {nullable: false})
     updatedAt!: Date
 
     @Column_("text", {nullable: false})
     version!: string
-
-    @Column_("int4", {nullable: false})
-    emoteCount!: number
-
-    @Column_("bool", {nullable: false})
-    pending!: boolean
-
-    @OneToMany_(() => Resource, e => e.nft)
-    resources!: Resource[]
 }
