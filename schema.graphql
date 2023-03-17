@@ -14,44 +14,48 @@ type FailedEntity @entity {
 }
 
 type CollectionEntity @entity {
-  version: String
-  name: String @index
-  max: Int!
-  issuer: String
-  symbol: String
-  id: ID!
-  metadata: String
-  currentOwner: String
-  nfts: [NFTEntity!] @derivedFrom(field: "collection")
-  events: [CollectionEvent!]
   blockNumber: BigInt
-  meta: MetadataEntity
   createdAt: DateTime!
-  updatedAt: DateTime!
+  currentOwner: String
+  events: [CollectionEvent!]
+  id: ID!
+  image: String
+  issuer: String
+  max: Int!
+  media: String
+  meta: MetadataEntity
+  metadata: String
+  name: String @index
   nftCount: Int!
+  nfts: [NFTEntity!] @derivedFrom(field: "collection")
   supply: Int!
+  symbol: String
+  updatedAt: DateTime!
+  version: String
 }
 
 type NFTEntity @entity {
-  name: String @index
-  instance: String
-  transferable: Int
-  collection: CollectionEntity!
-  issuer: String
-  sn: String
-  id: ID!
-  hash: String! @index
-  metadata: String
-  currentOwner: String @index
-  price: BigInt!
-  burned: Boolean!
   blockNumber: BigInt
-  events: [Event!] @derivedFrom(field: "nft")
-  emotes: [Emote!] @derivedFrom(field: "nft")
-  meta: MetadataEntity
+  burned: Boolean!
+  collection: CollectionEntity!
   createdAt: DateTime!
-  updatedAt: DateTime!
+  currentOwner: String @index
   emoteCount: Int!
+  emotes: [Emote!] @derivedFrom(field: "nft")
+  events: [Event!] @derivedFrom(field: "nft")
+  hash: String! @index
+  id: ID!
+  instance: String
+  image: String
+  issuer: String
+  media: String
+  meta: MetadataEntity
+  metadata: String
+  name: String @index
+  price: BigInt!
+  sn: String
+  transferable: Int
+  updatedAt: DateTime!
 }
 
 type MetadataEntity @entity {

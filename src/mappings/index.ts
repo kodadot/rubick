@@ -118,6 +118,8 @@ async function mint(context: Context): Promise<void> {
     if (final.metadata) {
       const metadata = await handleMetadata(final.metadata, final.name, context.store)
       final.meta = metadata
+      final.image = metadata?.image;
+      final.media = metadata?.animationUrl;
     }
 
     logger.success(`[COLLECTION] ${final.id}`)
@@ -170,6 +172,8 @@ async function mintNFT(
     if (final.metadata) {
       const metadata = await handleMetadata(final.metadata, final.name, context.store)
       final.meta = metadata
+      final.image = metadata?.image;
+      final.media = metadata?.animationUrl;
     }
 
     logger.success(`[MINT] ${final.id}`)
