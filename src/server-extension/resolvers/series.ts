@@ -58,8 +58,8 @@ export class SeriesResolver {
         COUNT(ne.*) as total, 
         AVG(ne.price) as average_price, 
         MIN(NULLIF(ne.price, 0)) as floor_price, 
-        COALESCE(MAX(e.meta::bigint), 0) as highest_sale,
-        COALESCE(SUM(e.meta::bigint), 0) as volume, 
+        COALESCE(MAX(e.meta::decimal), 0) as highest_sale,
+        COALESCE(SUM(e.meta::decimal), 0) as volume, 
         COUNT(e.*) as buys 
       FROM collection_entity ce 
       LEFT JOIN metadata_entity me on ce.meta_id = me.id 
