@@ -23,7 +23,7 @@ enum Query {
         AVG(ne.price)                      as average_price,
         MIN(NULLIF(ne.price, 0))           as floor_price,
         COALESCE(MAX(e.meta :: bigint), 0) as highest_sale,
-        COALESCE(SUM(e.meta::bigint), 0)   as volume,
+        COALESCE(SUM(e.meta::decimal), 0)   as volume,
         COUNT(e.*)                         as buys,
         COUNT(em.*)                        as emote_count
     FROM collection_entity ce
@@ -44,7 +44,7 @@ enum Query {
         COUNT(*)                                                       as total,
         COUNT(distinct ne.current_owner)                               as unique_collectors,
         SUM(CASE WHEN ne.issuer <> ne.current_owner THEN 1 ELSE 0 END) as sold,
-        COALESCE(SUM(e.meta::bigint), 0)                               as volume
+        COALESCE(SUM(e.meta::decimal), 0)                               as volume
     FROM nft_entity ne
         JOIN event e on e.nft_id = ne.id
     WHERE e.interaction = 'BUY'
@@ -57,11 +57,11 @@ enum Query {
         ne.current_owner                 as name,
         COUNT(distinct collection_id)    as collections,
         COUNT(distinct meta_id)          as unique,
-        AVG(e.meta::bigint)              as average,
+        AVG(e.meta::decimal)              as average,
         COUNT(e.id)                      as total,
         COUNT(ne.current_owner)          as unique_collectors,
-        COALESCE(SUM(e.meta::bigint), 0) as volume,
-        COALESCE(MAX(e.meta::bigint), 0) as max
+        COALESCE(SUM(e.meta::decimal), 0) as volume,
+        COALESCE(MAX(e.meta::decimal), 0) as max
     FROM nft_entity ne
             JOIN event e on e.nft_id = ne.id
     WHERE e.interaction = 'BUY'
