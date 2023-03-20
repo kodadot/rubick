@@ -4,6 +4,7 @@ import { Optional } from '@kodadot1/metasquid/types'
 
 import md5 from 'md5'
 import { CollectionEntity } from '../../model'
+import { handleMetadata } from '../shared'
 import { unwrap } from '../utils/extract'
 import { error, success } from '../utils/logger'
 import { Action, Collection, Context } from '../utils/types'
@@ -42,13 +43,16 @@ export async function createCollection(context: Context): Promise<void> {
     final.supply = 0
     final.hash = md5(collection.id)
 
-    // if (final.metadata) {
-    //   const metadata = await handleMetadata(final.metadata, final.name, context.store)
-    //   final.meta = metadata
-    //   if (metadata?.name && !final.name) {
-    //     final.name = metadata.name
-    //   }
-    // }
+    if (final.metadata) {
+      const metadata = await handleMetadata(final.metadata, final.name, context.store)
+      final.meta = metadata
+      final.image = metadata?.image
+      final.media = metadata?.animationUrl
+      if (metadata?.name && !final.name) {
+        final.name = metadata.name
+      }
+    }
+    
     await context.store.save(final).then(() => {
       success(OPERATION, final.id)
     })

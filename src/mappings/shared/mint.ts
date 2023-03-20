@@ -60,6 +60,8 @@ export async function mintItem(
     if (final.metadata) {
       const metadata = await handleMetadata(final.metadata, final.name, context.store)
       final.meta = metadata
+      final.image = metadata?.image
+      final.media = metadata?.animationUrl
     }
 
     success(OPERATION, `${final.id} from ${caller}`)
