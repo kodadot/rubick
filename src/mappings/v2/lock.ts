@@ -1,4 +1,3 @@
-import { ensure } from '@kodadot1/metasquid'
 import { plsBe, real } from '@kodadot1/metasquid/consolidator'
 import { getOrFail as get } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
@@ -7,9 +6,10 @@ import { CollectionEntity } from '../../model'
 import { unwrap } from '../utils'
 import { isOwnerOrElseError, withMeta } from '../utils/consolidator'
 import { getInteraction } from '../utils/getters'
-import logger, { logError } from '../utils/logger'
-import { Context, RmrkInteraction } from '../utils/types'
+import { error, success } from '../utils/logger'
+import { Action, Context, RmrkInteraction } from '../utils/types'
 
+const OPERATION = Action.LOCK
 
 export async function lockCollection(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
@@ -25,11 +25,9 @@ export async function lockCollection(context: Context) {
     collection.max = Number(interaction.value)
     
 
-    logger.success(`[CHANGEISSUER] ${collection.id} from ${caller}`)
+    success(OPERATION, `${collection.id} from ${caller}`)
     await context.store.save(collection)
   } catch (e) {
-    logError(e, (e) =>
-      logger.warn(`[CHANGEISSUER] ${e.message} ${JSON.stringify(interaction)}`)
-    )
+    error(e, OPERATION, JSON.stringify(interaction))
   }
 }
