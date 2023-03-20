@@ -1,4 +1,3 @@
-import { ensure } from '@kodadot1/metasquid'
 import { burned, plsBe, plsNotBe, real } from '@kodadot1/metasquid/consolidator'
 import { create, getOrFail as get } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
@@ -9,8 +8,10 @@ import { unwrap } from '../utils'
 import { withMeta } from '../utils/consolidator'
 import { getInteraction } from '../utils/getters'
 import { emoteId } from '../utils/helper'
-import logger, { logError } from '../utils/logger'
-import { Context, RmrkInteraction } from '../utils/types'
+import { error, success } from '../utils/logger'
+import { Action, Context, RmrkInteraction } from '../utils/types'
+
+const OPERATION = Action.EMOTE
 
 export async function emote(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
@@ -43,10 +44,10 @@ export async function emote(context: Context) {
     emote.nft = nft
     nft.emoteCount += 1
 
-    logger.success(`[EMOTE] ${nft.id} from ${caller}`)
+    success(OPERATION, `${nft.id} from ${caller}`)
     await context.store.save(emote)
     await context.store.save(nft)
   } catch (e) {
-    logError(e, (e) => logger.warn(`[EMOTE] ${e.message}`))
+    error(e, OPERATION, '')
   }
 }
