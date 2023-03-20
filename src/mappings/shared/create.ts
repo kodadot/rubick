@@ -6,10 +6,11 @@ import md5 from 'md5'
 import { CollectionEntity } from '../../model'
 import { unwrap } from '../utils/extract'
 import { getCreateCollection } from '../utils/getters'
-import logger, { logError } from '../utils/logger'
-import { Collection, Context } from '../utils/types'
+import { error, success } from '../utils/logger'
+import { Action, Collection, Context } from '../utils/types'
 import { handleMetadata } from './metadata'
 
+const OPERATION = Action.CREATE
 
 export async function createCollection(context: Context): Promise<void> {
   let collection: Optional<Collection> = undefined
@@ -45,12 +46,10 @@ export async function createCollection(context: Context): Promise<void> {
       final.meta = metadata
     }
 
-    logger.success(`[COLLECTION] ${final.id}`)
+    success(OPERATION, final.id)
     await context.store.save(final)
   } catch (e) {
-    logError(e, (e) =>
-      logger.error(`[COLLECTION] ${e.message}, ${JSON.stringify(collection)}`)
-    )
+    error(e, OPERATION, JSON.stringify(collection))
   }
 }
 
