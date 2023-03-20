@@ -10,7 +10,7 @@ import { handleMetadata } from '../shared'
 import { createEvent } from '../shared/event'
 import { unwrap } from '../utils'
 import { isOwnerOrElseError } from '../utils/consolidator'
-import logger, { logError } from '../utils/logger'
+import logger, { error, success } from '../utils/logger'
 import { Action, Context } from '../utils/types'
 import { getSetPriority } from './getters'
 
@@ -28,7 +28,7 @@ export async function setPriority(context: Context) {
     isOwnerOrElseError(nft, caller)
     nft.updatedAt = timestamp
 
-    logger.success(`[${OPERATION}] NEW PRIORITY ${interaction.value} for ${nft.id} from ${caller}`)
+    logger.info(`[${OPERATION}] NEW PRIORITY ${interaction.value} for ${nft.id} from ${caller}`)
 
     const resourceList = await findByIdList(context.store, Resource, interaction.value)
     
@@ -43,13 +43,11 @@ export async function setPriority(context: Context) {
   
     await context.store.save(resourceList)
     await context.store.save(nft)
-    logger.success(`[${OPERATION}] ${nft.id} from ${caller}`)
+    success(OPERATION, `${nft.id} from ${caller}`)
     await createEvent(nft, OPERATION, { blockNumber, caller, timestamp, version }, `${interaction.value.at(0)}`, context.store)
 
   } catch (e) {
-    logError(e, (e) =>
-      logger.warn(`[${OPERATION}] ${e.message} ${JSON.stringify(interaction)}`)
-    )
+    error(e, OPERATION, JSON.stringify(interaction))
   }
 }
 
