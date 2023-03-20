@@ -1,9 +1,8 @@
-import logger, { logError } from './logger';
-import { Series, Spotlight, CacheStatus, Collector } from "../../model/generated";
-import { Store } from "./types";
-import { EntityConstructor } from "./types";
-import { getOrCreate } from './entity';
-import { camelCase } from './helper';
+import { CacheStatus, Collector, Series, Spotlight } from "../../model/generated"
+import { getOrCreate } from './entity'
+import { camelCase } from './helper'
+import logger, { logError } from './logger'
+import { EntityConstructor, Store } from "./types"
 
 const DELAY_MIN: number = 60 // every 60 minutes
 const STATUS_ID: string = "0"
@@ -84,7 +83,7 @@ export async function updateCache(timestamp: Date, store: Store): Promise<void> 
             ])
             lastUpdate.lastBlockTimestamp = timestamp;
             await store.save(lastUpdate)
-            logger.success(`[CACHE UPDATE]`)
+            logger.info(`[CACHE UPDATE]`)
         }
         catch (e) {
             logError(e, (e) =>

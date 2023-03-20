@@ -12,7 +12,7 @@ export const fetchMetadata = async <T>(metadata: string): Promise<T> => {
     }
     return await $obtain<T>(metadata);
   } catch (e) {
-    logger.warn('IPFS Err', e);
+    logger.error(`[MINIPFS] ${e}}`);
   }
 
   return ensure<T>({});
