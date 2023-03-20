@@ -9,11 +9,12 @@ import { NFTEntity } from '../../model'
 import { createEvent } from '../shared/event'
 import { unwrap } from '../utils'
 import { isOwnerOrElseError } from '../utils/consolidator'
-import logger, { logError } from '../utils/logger'
+import logger, { error, logError, success } from '../utils/logger'
 import { Action, Context } from '../utils/types'
 import { getAs, getEquippable } from './getters'
 
 type OPERATION = Action.EQUIPPABLE
+const OPERATION = Action.EQUIPPABLE
 
 export async function equippable(context: Context) {
   let interaction: Optional<Equippable> = null
@@ -30,13 +31,11 @@ export async function equippable(context: Context) {
 
     // TODO: add logic for EQUIPing resource
 
-    logger.success(`[EQUIPABLE] ${nft.id} from ${caller}`)
+    success(OPERATION, `${nft.id} from ${caller}`)
     await context.store.save(nft)
     await createEvent(nft, Action.EQUIP, { blockNumber, caller, timestamp, version }, `${interaction.id}::${interaction.slot}`, context.store)
 
   } catch (e) {
-    logError(e, (e) =>
-      logger.warn(`[EQUIPABLE] ${e.message} ${JSON.stringify(interaction)}`)
-    )
+    error(e, OPERATION, JSON.stringify(interaction))
   }
 }
