@@ -1,4 +1,3 @@
-import { ensure } from '@kodadot1/metasquid'
 import { getOrFail as get } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
 
@@ -6,9 +5,11 @@ import { NFTEntity } from '../../model'
 import { unwrap } from '../utils'
 import { isOwnerOrElseError, validateInteraction } from '../utils/consolidator'
 import { getInteraction } from '../utils/getters'
-import logger, { logError } from '../utils/logger'
-import { Context, Action, RmrkInteraction } from '../utils/types'
+import { error, success } from '../utils/logger'
+import { Action, Context, RmrkInteraction } from '../utils/types'
 import { createEvent } from './event'
+
+const OPERATION = Action.SEND
 
 export async function send(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
@@ -25,12 +26,10 @@ export async function send(context: Context) {
     nft.price = BigInt(0)
     nft.updatedAt = timestamp
 
-    logger.success(`[SEND] ${nft.id} to ${interaction.value}`)
+    success(OPERATION, `${nft.id} to ${interaction.value}`)
     await context.store.save(nft)
     await createEvent(nft, Action.SEND, { blockNumber, caller, timestamp, version }, interaction.value || '', context.store, originalOwner)
   } catch (e) {
-    logError(e, (e) =>
-      logger.error(`[SEND] ${e.message} ${JSON.stringify(interaction)}`)
-    )
+    error(e, OPERATION, JSON.stringify(interaction))
   }
 }
