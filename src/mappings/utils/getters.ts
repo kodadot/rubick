@@ -4,9 +4,14 @@ import { extractExtra } from './extract'
 import { ensureInteraction } from './helper'
 import { Collection, Context, InteractionExtra, NFT } from './types'
 
-export function getRemark<T = InteractionValue>(ctx: Context): UnwrappedRemark<T | InteractionValue> {
+export function getRemarkString(ctx: Context): string {
   const { remark } = new SystemRemarkCall(ctx).asV1020
-  return unwrapRemark<T>(remark.toString())
+  return remark.toString()
+}
+
+export function getRemark<T = InteractionValue>(ctx: Context): UnwrappedRemark<T | InteractionValue> {
+  const remark  = getRemarkString(ctx)
+  return unwrapRemark<T>(remark)
 }
 
 export function getCreateCollection(ctx: Context): UnwrappedRemark<Collection> {
