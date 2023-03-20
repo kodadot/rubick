@@ -1,4 +1,3 @@
-import { ensure } from '@kodadot1/metasquid'
 import { burned, plsBe, plsNotBe, real } from '@kodadot1/metasquid/consolidator'
 import { getOrFail as get } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
@@ -7,10 +6,11 @@ import { CollectionEntity, NFTEntity } from '../../model'
 import { unwrap } from '../utils'
 import { isOwnerOrElseError } from '../utils/consolidator'
 import { getInteraction } from '../utils/getters'
-import logger, { logError } from '../utils/logger'
-import { Context, Action, RmrkInteraction } from '../utils/types'
+import { error, success } from '../utils/logger'
+import { Action, Context, RmrkInteraction } from '../utils/types'
 import { createEvent } from './event'
 
+const OPERATION = Action.BURN
 
 export async function burn(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
@@ -30,13 +30,11 @@ export async function burn(context: Context) {
     collection.updatedAt = timestamp
     collection.supply -= 1
 
-    logger.success(`[CONSUME] ${nft.id} from ${caller}`)
+    success(OPERATION, `${nft.id} from ${caller}`)
     await context.store.save(nft)
     await context.store.save(collection)
-    await createEvent(nft, Action.BURN, { blockNumber, caller, timestamp, version }, '', context.store)
+    await createEvent(nft, OPERATION, { blockNumber, caller, timestamp, version }, '', context.store)
   } catch (e) {
-    logError(e, (e) =>
-      logger.warn(`[CONSUME] ${e.message} ${JSON.stringify(interaction)}`)
-    )
+    error(e, OPERATION, JSON.stringify(interaction))
   }
 }
