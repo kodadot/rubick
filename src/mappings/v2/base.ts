@@ -5,7 +5,7 @@ import { Base, BaseType } from '../../model'
 import { handleMetadata } from '../shared'
 import { unwrap } from '../utils/extract'
 import { baseId } from '../utils/helper'
-import logger, { logError } from '../utils/logger'
+import logger, { error } from '../utils/logger'
 import { Action, Context } from '../utils/types'
 import { createUnlessNotExist } from '../utils/verbose'
 import { getCreateBase } from './getters'
@@ -27,15 +27,13 @@ export async function base(context: Context) {
 
     if (base.metadata) {
       const metadata = await handleMetadata(base.metadata, '', context.store)
-      logger.log(`[${OPERATION}] ${final.id} metadata ${metadata?.id}`)
+      logger.debug(`[${OPERATION}] ${final.id} metadata ${metadata?.id}`)
       final.meta = metadata
     }
     
     await context.store.save(final)
   } catch (e) {
-    logError(e, (e) =>
-      logger.error(`[BASE] ${e.message}, ${JSON.stringify(base)}`)
-    )
+    error(e, OPERATION, JSON.stringify(base))
   }
   
 
