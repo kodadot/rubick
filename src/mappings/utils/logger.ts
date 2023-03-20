@@ -21,10 +21,6 @@ export const error = (e: Error | unknown, action: Action, message: string) => {
   logError(e, (e) => logger.error(`💔 [${action}] ${e.message} ${message}`))
 }
 
-export const star = (action: Action, message: string) => {
-  logger.info(`⭐️ [${action}] ${message}`)
-}
-
 export const pending = (action: Action, message: string) => {
   logger.info(`⏳ [${action}] ${message}`)
 }
