@@ -19,7 +19,7 @@ export async function setProperty(context: Context) {
 
     // TODO: add logic for accepting resource
 
-    logger.pause(`[${OPERATION}] < ${interaction.name}, ${interaction.value} > for ${interaction.id} from ${caller}`)
+    logger.info(`[${OPERATION}] < ${interaction.name}, ${interaction.value} > for ${interaction.id} from ${caller}`)
     // await context.store.save(nft)
     // await createEvent(nft, OPERATION, { blockNumber, caller, timestamp, version }, `${interaction.value.at(0)}`, context.store)
 
