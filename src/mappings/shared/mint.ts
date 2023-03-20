@@ -3,21 +3,21 @@ import {
 } from '../../model/generated'
 
 import { plsBe, real } from '@kodadot1/metasquid/consolidator'
+import { getOrFail as get } from '@kodadot1/metasquid/entity'
 import md5 from 'md5'
 import { unwrap } from '../utils'
 import { isOwnerOrElseError } from '../utils/consolidator'
-import { getOrFail as get } from '@kodadot1/metasquid/entity'
 import { create } from '../utils/entity'
 import { getCreateToken } from '../utils/getters'
-import { ensure } from '../utils/helper'
-import logger, { logError } from '../utils/logger'
+import { error, success } from '../utils/logger'
 import {
-  Context, getNftId, NFT,
-  Optional,
-  Action
+  Action, Context, getNftId, NFT,
+  Optional
 } from '../utils/types'
-import { handleMetadata } from './metadata'
 import { createEvent } from './event'
+import { handleMetadata } from './metadata'
+
+const OPERATION = Action.MINT
 
 // TODO: MINT IS NOT CORRECTLY IMPLEMENTED
 export async function mintItem(
@@ -62,14 +62,12 @@ export async function mintItem(
       final.meta = metadata
     }
 
-    logger.success(`[MINT] ${final.id}`)
+    success(OPERATION, `${final.id} from ${caller}`)
     await context.store.save(final)
     await context.store.save(collection)
     await createEvent(final, Action.MINT, { blockNumber, caller, timestamp, version }, '', context.store)
 
   } catch (e) {
-    logError(e, (e) =>
-      logger.error(`[MINT] ${e.message}, ${JSON.stringify(nft)}`)
-    )
+    error(e, OPERATION, JSON.stringify(nft))
   }
 }
