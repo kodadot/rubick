@@ -1,16 +1,14 @@
-import { unwrapRemark } from '@vikiival/minimark/v1'
-import { isRemark, isRemarkVersion, VersionedRemark } from '@vikiival/minimark/shared'
-import { SystemRemarkCall } from '../types/calls'
+import { isRemarkVersion, VersionedRemark } from '@vikiival/minimark/shared'
 import logger from './utils/logger'
-import { RmrkInteraction, Context } from './utils/types'
+import { Context } from './utils/types'
 
+import { getRemarkString } from './utils/getters'
 import { mainFrame as mainFrameV1 } from './v1'
 import { mainFrame as mainFrameV2 } from './v2'
 import { updateCache } from './utils/cache'
 
 export async function handleRemark(context: Context): Promise<void> {
-  const { remark } = new SystemRemarkCall(context).asV1020
-  const value = remark.toString()
+  const value = getRemarkString(context)
   const version = isRemarkVersion(value)
 
   if (version) {
