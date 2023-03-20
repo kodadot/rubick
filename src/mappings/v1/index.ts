@@ -4,7 +4,7 @@ import { unwrap } from '../utils'
 import { updateCache } from '../utils/cache'
 
 import { burn as consume, buy, changeIssuer, createCollection, emote, list, send } from '../shared'
-import logger from '../utils/logger'
+import logger, { pending } from '../utils/logger'
 import {
   Context,
   RmrkInteraction
@@ -17,10 +17,10 @@ export async function mainFrame(remark: string, context: Context): Promise<void>
     const base = unwrap(context, (_: Context) => ({ value: remark }))
     try {
       const { interaction: event, version } = unwrapRemark<RmrkInteraction>(remark.toString())
-      logger.pending(`[${event === Interaction.MINT ? 'COLLECTION' : event}]: ${base.blockNumber}`)
+      pending(event, base.blockNumber)
 
       if (version === '2.0.0') {
-        logger.star(`[RMRK::2.0.0] is not supported, please help us to make it awesome ${remark}`)
+        logger.error(`[RMRK::2.0.0] should be handled by different handler ${remark}`)
         return;
       }
 
@@ -50,7 +50,7 @@ export async function mainFrame(remark: string, context: Context): Promise<void>
           await emote(context)
           break
         default:
-          logger.start(
+          logger.warn(
             `[SKIP] ${event}::${base.value}::${base.blockNumber}`
           )
       }
