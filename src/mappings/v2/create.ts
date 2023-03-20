@@ -2,13 +2,12 @@ import { plsBe, plsNotBe, real } from '@kodadot1/metasquid/consolidator'
 import { create, get } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
 
-import { CollectionEntity } from '../../model'
-import { handleMetadata } from '../shared'
-import { unwrap } from '../utils/extract'
-import { getCreateCollection } from './getters'
-import logger, { logError } from '../utils/logger'
-import { Action, Collection, Context } from '../utils/types'
 import md5 from 'md5'
+import { CollectionEntity } from '../../model'
+import { unwrap } from '../utils/extract'
+import { error, success } from '../utils/logger'
+import { Action, Collection, Context } from '../utils/types'
+import { getCreateCollection } from './getters'
 
 const OPERATION = Action.CREATE
 
@@ -51,12 +50,10 @@ export async function createCollection(context: Context): Promise<void> {
     //   }
     // }
     await context.store.save(final).then(() => {
-      logger.success(`[${OPERATION}] ${final.id}`)
+      success(OPERATION, final.id)
     })
   } catch (e) {
-    logError(e, (e) =>
-      logger.error(`[${OPERATION}] ${e.message}, ${JSON.stringify(collection)}`)
-    )
+    error(e, OPERATION, JSON.stringify(collection))
   }
 }
 
