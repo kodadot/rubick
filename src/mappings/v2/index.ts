@@ -2,7 +2,7 @@ import { Interaction, unwrapRemarkV2 as unwrapRemark } from '@vikiival/minimark/
 
 import { burn, buy, changeIssuer, emote, list } from '../shared'
 import { unwrap } from '../utils/extract'
-import logger from '../utils/logger'
+import logger, { pending } from '../utils/logger'
 import { Context } from '../utils/types'
 import { acceptResource } from './accept'
 import { addResource } from './addResource'
@@ -16,8 +16,8 @@ import { setPriority } from './setpriority'
 export async function mainFrame(remark: string, context: Context): Promise<void> {
   const base = unwrap(context, (_: Context) => ({ value: remark }))
   try {
-    const { interaction: event } = unwrapRemark(remark.toString())
-    logger.start(`.:[${event}] ${base.blockNumber}:.`)
+    const { interaction: event, version } = unwrapRemark(remark.toString())
+    pending(event,`.:${version} ${base.blockNumber}:.`)
 
     switch (event) {
       case Interaction.CREATE:
@@ -65,7 +65,7 @@ export async function mainFrame(remark: string, context: Context): Promise<void>
       case Interaction.EQUIPPABLE:
       case Interaction.SETPROPERTY:
       case Interaction.EQUIP:
-        logger.pending(`[${event}]::${base.blockNumber}::${base.value}`)
+        pending(event, `::${base.blockNumber}::${base.value}`)
         break
       default:
         logger.fatal(
