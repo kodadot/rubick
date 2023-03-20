@@ -1,5 +1,4 @@
-import { ensure } from '@kodadot1/metasquid'
-import { burned, plsBe, plsNotBe, real } from '@kodadot1/metasquid/consolidator'
+import { burned, plsNotBe } from '@kodadot1/metasquid/consolidator'
 import { getOrFail as get } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
 import { Equip } from '@vikiival/minimark/v2'
@@ -8,7 +7,7 @@ import { NFTEntity } from '../../model'
 import { createEvent } from '../shared/event'
 import { unwrap } from '../utils'
 import { isOwnerOrElseError } from '../utils/consolidator'
-import logger, { logError } from '../utils/logger'
+import { error, success } from '../utils/logger'
 import { Action, Context } from '../utils/types'
 import { getEquip } from './getters'
 
@@ -27,13 +26,11 @@ export async function equip(context: Context) {
 
     // TODO: add logic for EQUIPing resource
 
-    logger.success(`[EQUIP] ${nft.id} from ${caller}`)
+    success(OPERATION, `${nft.id} from ${caller}`)
     await context.store.save(nft)
-    await createEvent(nft, Action.EQUIP, { blockNumber, caller, timestamp, version }, `${interaction.id}::${interaction.baseslot}`, context.store)
+    await createEvent(nft, OPERATION, { blockNumber, caller, timestamp, version }, `${interaction.id}::${interaction.baseslot}`, context.store)
 
   } catch (e) {
-    logError(e, (e) =>
-      logger.warn(`[EQUIP] ${e.message} ${JSON.stringify(interaction)}`)
-    )
+    error(e, OPERATION, JSON.stringify(interaction))
   }
 }
