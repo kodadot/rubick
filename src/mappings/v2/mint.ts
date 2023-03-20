@@ -8,17 +8,14 @@ import { unwrap } from '../utils'
 import { isOwnerOrElseError } from '../utils/consolidator'
 
 import { create, getOrFail as get } from '@kodadot1/metasquid/entity'
-import { getCreateToken } from './getters'
-import { ensure } from '../utils/helper'
-import logger, { logError } from '../utils/logger'
-import {
-  Context, getNftId, NFT,
-  Optional,
-  Action
-} from '../utils/types'
-import { handleMetadata } from '../shared/metadata'
-import { createEvent } from '../shared/event'
 import { Mint } from '@vikiival/minimark/v2'
+import { createEvent } from '../shared/event'
+import { handleMetadata } from '../shared/metadata'
+import { error, success } from '../utils/logger'
+import {
+  Action, Context, getNftId, Optional
+} from '../utils/types'
+import { getCreateToken } from './getters'
 
 const OPERATION = Action.MINT
 
@@ -70,12 +67,10 @@ export async function mintItem(
 
     await context.store.save(final)
     await context.store.save(collection)
-    logger.success(`[${OPERATION}] ${final.id}`)
+    success(OPERATION, `${final.id} from ${caller}`)
     await createEvent(final, Action.MINT, { blockNumber, caller, timestamp, version }, '', context.store)
 
   } catch (e) {
-    logError(e, (e) =>
-      logger.error(`[${OPERATION}] ${e.message}, ${JSON.stringify(nft)}`)
-    )
+    error(e, OPERATION, JSON.stringify(nft))
   }
 }
