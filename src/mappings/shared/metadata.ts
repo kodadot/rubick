@@ -20,7 +20,8 @@ export async function handleMetadata(
   }
   
   const start = Date.now()
-  logger.info(`▶️ META ${id}`)
+  const logId = id.split('/').slice(-1).at(0)
+  logger.info(`▶️ [META] ${logId}`)
   const metadata = await fetchMetadata<TokenMetadata>(id)
   if (isEmpty(metadata)) {
     return undefined
@@ -39,7 +40,11 @@ export async function handleMetadata(
   const final = create<Metadata>(Metadata, id, partial)
   await store.save(final)
   const elapsed = (Date.now() - start) / 1000
-  const log = elapsed >= 30 ? logger.warn : logger.info
-  log(`⏱ META ${id} ${elapsed} s`)
+  const message = `⏱ [META] ${logId} ${elapsed}s`
+  if (elapsed >= 30) {
+    logger.warn(message)
+  } else {
+    logger.info(message)
+  }
   return final
 }
