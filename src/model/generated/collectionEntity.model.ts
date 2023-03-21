@@ -61,7 +61,6 @@ export class CollectionEntity {
     @Column_("int4", {nullable: false})
     supply!: number
 
-    @Index_({unique: true})
     @Column_("text", {nullable: false})
     symbol!: string
 
