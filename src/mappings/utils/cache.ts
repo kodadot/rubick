@@ -105,8 +105,8 @@ enum MetadataQuery {
 export async function updateMetadataCache(timestamp: Date, store: Store): Promise<void> {
   const lastUpdate = await getOrCreate(store, CacheStatus, METADATA_STATUS_ID, { id: METADATA_STATUS_ID, lastBlockTimestamp: new Date(0) });
   const passedMins = getPassedMinutes(timestamp, lastUpdate.lastBlockTimestamp);
-  logger.info(`[METADATA CACHE UPDATE] PASSED TIME - ${passedMins} MINS`);
   if (passedMins >= METADATA_DELAY_MIN) {
+    logger.info(`[METADATA CACHE UPDATE] PASSED TIME - ${passedMins} MINS`);
     try {
       await updateMissingMetadata(store);
       lastUpdate.lastBlockTimestamp = timestamp;
