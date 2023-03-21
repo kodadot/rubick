@@ -1,4 +1,3 @@
-import { ensure } from '@kodadot1/metasquid'
 import { burned, plsBe, plsNotBe, real } from '@kodadot1/metasquid/consolidator'
 import { getOrFail as get } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
@@ -9,9 +8,9 @@ import { NFTEntity } from '../../model'
 import { createEvent } from '../shared/event'
 import { unwrap } from '../utils'
 import { isOwnerOrElseError } from '../utils/consolidator'
-import logger, { error, logError, success } from '../utils/logger'
+import { error, success } from '../utils/logger'
 import { Action, Context } from '../utils/types'
-import { getAs, getEquippable } from './getters'
+import { getAs } from './getters'
 
 type OPERATION = Action.EQUIPPABLE
 const OPERATION = Action.EQUIPPABLE
