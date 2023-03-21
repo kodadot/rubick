@@ -11,7 +11,7 @@ import { create, getOrFail as get } from '@kodadot1/metasquid/entity'
 import { Mint } from '@vikiival/minimark/v2'
 import { createEvent } from '../shared/event'
 import { handleMetadata } from '../shared/metadata'
-import { error, success } from '../utils/logger'
+import logger, { error, success } from '../utils/logger'
 import {
   Action, Context, getNftId, Optional
 } from '../utils/types'
@@ -73,6 +73,9 @@ export async function mintItem(
     await createEvent(final, Action.MINT, { blockNumber, caller, timestamp, version }, '', context.store)
 
   } catch (e) {
+    if (e instanceof Error) {
+      logger.trace(e)
+    }
     error(e, OPERATION, JSON.stringify(nft))
   }
 }
