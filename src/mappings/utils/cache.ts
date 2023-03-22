@@ -37,7 +37,7 @@ enum Query {
     WHERE e.interaction = 'BUY'
     GROUP BY ce.id, me.image, ce.name
     ORDER BY volume DESC
-    LIMIT 450`,
+    LIMIT 100`,
 
     spotlight = `SELECT
         issuer                                                         as id,
