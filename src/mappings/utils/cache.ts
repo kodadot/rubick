@@ -131,8 +131,8 @@ export async function updateCache(timestamp: Date, store: Store): Promise<void> 
         try {
             await Promise.all([
                 updateEntityCache(store, Series, Query.series),
-                updateEntityCache(store, Spotlight, Query.spotlight),
-                updateEntityCache(store, Collector, Query.collector_whale),
+                // updateEntityCache(store, Spotlight, Query.spotlight),
+                // updateEntityCache(store, Collector, Query.collector_whale),
             ])
             lastUpdate.lastBlockTimestamp = timestamp;
             await store.save(lastUpdate)
