@@ -59,6 +59,7 @@ type NFTEntity @entity {
   price: BigInt!
   resources: [Resource!] @derivedFrom (field: "nft")
   royalty: Float
+  recipient: String
   sn: String
   transferable: Int
   updatedAt: DateTime!

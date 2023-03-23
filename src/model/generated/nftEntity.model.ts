@@ -85,6 +85,9 @@ export class NFTEntity {
     royalty!: number | undefined | null
 
     @Column_("text", {nullable: true})
+    recipient!: string | undefined | null
+
+    @Column_("text", {nullable: true})
     sn!: string | undefined | null
 
     @Column_("int4", {nullable: true})
