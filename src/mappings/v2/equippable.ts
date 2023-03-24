@@ -1,7 +1,7 @@
 import { burned, plsBe, plsNotBe, real } from '@kodadot1/metasquid/consolidator'
 import { getOrFail as get } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
-import { Equippable } from '@vikiival/minimark/v2'
+import { Equippable } from '@kodadot1/minimark/v2'
 
 
 import { NFTEntity } from '../../model'

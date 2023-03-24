@@ -20,7 +20,7 @@ import {
   UnwrappedRemark,
   unwrapRemarkV2 as unwrapRemark,
   UnwrapValue,
-} from '@vikiival/minimark/v2'
+} from '@kodadot1/minimark/v2'
 import { SystemRemarkCall } from '../../types/calls'
 import { Context } from '../utils/types'
 

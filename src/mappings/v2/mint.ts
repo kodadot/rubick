@@ -8,7 +8,7 @@ import { unwrap } from '../utils'
 import { isOwnerOrElseError } from '../utils/consolidator'
 
 import { create, getOrFail as get } from '@kodadot1/metasquid/entity'
-import { Mint, resolveRoyalty } from '@vikiival/minimark/v2'
+import { Mint, resolveRoyalty } from '@kodadot1/minimark/v2'
 import { createEvent } from '../shared/event'
 import { handleMetadata } from '../shared/metadata'
 import logger, { error, success } from '../utils/logger'

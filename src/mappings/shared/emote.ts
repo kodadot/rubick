@@ -1,7 +1,7 @@
 import { burned, plsBe, plsNotBe, real } from '@kodadot1/metasquid/consolidator'
 import { create, getOrFail as get } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
-import { toVersion } from '@vikiival/minimark/shared'
+import { toVersion } from '@kodadot1/minimark/shared'
 
 import { Emote, NFTEntity } from '../../model'
 import { unwrap } from '../utils'

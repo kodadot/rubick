@@ -1,11 +1,11 @@
 import * as ss58 from '@subsquid/ss58'
 import { assertNotNull, decodeHex } from '@subsquid/substrate-processor'
-import { trim, trimAll } from '@vikiival/minimark/utils'
+import { trim, trimAll } from '@kodadot1/minimark/utils'
 import { nanoid } from 'nanoid'
 import { Action, ArchiveCallWithOptionalValue, RmrkInteraction } from './types'
 
-export { isEmpty, trim, trimAll } from '@vikiival/minimark/utils'
-export { toBaseId as baseId } from '@vikiival/minimark/v2'
+export { isEmpty, trim, trimAll } from '@kodadot1/minimark/utils'
+export { toBaseId as baseId } from '@kodadot1/minimark/v2'
 
 // Lenght is 47 or 48
 export const SS58_REGEX = /^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{47}$/

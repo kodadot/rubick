@@ -3,7 +3,7 @@ import { burned, plsBe, plsNotBe, real } from '@kodadot1/metasquid/consolidator'
 import { findByIdList, getOrFail as get } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
 import { assertNotNull } from '@subsquid/substrate-processor'
-import { Resadd, SetPriority } from '@vikiival/minimark/v2'
+import { Resadd, SetPriority } from '@kodadot1/minimark/v2'
 
 import { NFTEntity, Resource } from '../../model'
 import { handleMetadata } from '../shared'

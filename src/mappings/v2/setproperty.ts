@@ -1,5 +1,5 @@
 import { Optional } from '@kodadot1/metasquid/types'
-import { SetProperty } from '@vikiival/minimark/v2'
+import { SetProperty } from '@kodadot1/minimark/v2'
 
 import { unwrap } from '../utils'
 import logger, { logError } from '../utils/logger'

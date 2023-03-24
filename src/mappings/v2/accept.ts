@@ -1,7 +1,7 @@
 import { burned, plsNotBe } from '@kodadot1/metasquid/consolidator'
 import { getOrFail as get } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
-import { Accept } from '@vikiival/minimark/v2'
+import { Accept } from '@kodadot1/minimark/v2'
 
 import { NFTEntity, Resource } from '../../model'
 import { createEvent } from '../shared/event'

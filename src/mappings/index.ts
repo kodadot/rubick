@@ -1,4 +1,4 @@
-import { isRemarkVersion, VersionedRemark } from '@vikiival/minimark/shared'
+import { isRemarkVersion, VersionedRemark } from '@kodadot1/minimark/shared'
 import logger from './utils/logger'
 import { Context } from './utils/types'
 

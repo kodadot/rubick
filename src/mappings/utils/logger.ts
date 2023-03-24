@@ -1,7 +1,7 @@
 import { serializer } from '@kodadot1/metasquid'
 import { logger } from '@kodadot1/metasquid/logger'
 import { Action as MetaAction  } from '../utils/types'
-import { Interaction } from '@vikiival/minimark/v1'
+import { Interaction } from '@kodadot1/minimark/v1'
 
 type Action = MetaAction | Interaction
 

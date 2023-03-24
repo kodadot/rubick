@@ -1,6 +1,6 @@
 import { create } from '@kodadot1/metasquid/entity'
 import { Store } from '@kodadot1/metasquid/types'
-import { toVersion } from '@vikiival/minimark/shared'
+import { toVersion } from '@kodadot1/minimark/shared'
 
 import { Event, Interaction, NFTEntity } from '../../model'
 import { eventId } from '../utils/helper'

@@ -1,4 +1,4 @@
-import { InteractionValue, UnwrappedRemark, unwrapRemark } from '@vikiival/minimark/v1'
+import { InteractionValue, UnwrappedRemark, unwrapRemark } from '@kodadot1/minimark/v1'
 import { SystemRemarkCall } from '../../types/calls'
 import { extractExtra } from './extract'
 import { ensureInteraction } from './helper'

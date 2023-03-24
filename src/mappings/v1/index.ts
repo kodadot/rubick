@@ -1,5 +1,5 @@
 
-import { unwrapRemark } from '@vikiival/minimark/v1'
+import { unwrapRemark } from '@kodadot1/minimark/v1'
 import { unwrap } from '../utils'
 import { updateCache } from '../utils/cache'
 
@@ -10,7 +10,7 @@ import {
   RmrkInteraction
 } from '../utils/types'
 import { mintItem } from '../shared/mint'
-import { Interaction } from '@vikiival/minimark/v1'
+import { Interaction } from '@kodadot1/minimark/v1'
 
 
 export async function mainFrame(remark: string, context: Context): Promise<void> {

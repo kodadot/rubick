@@ -1,5 +1,5 @@
 import { Optional } from '@kodadot1/metasquid/types'
-import { CreatedBase } from '@vikiival/minimark/v2'
+import { CreatedBase } from '@kodadot1/minimark/v2'
 
 import { Base, BaseType } from '../../model'
 import { handleMetadata } from '../shared'

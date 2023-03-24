@@ -1,4 +1,4 @@
-import { Interaction, unwrapRemarkV2 as unwrapRemark } from '@vikiival/minimark/v2'
+import { Interaction, unwrapRemarkV2 as unwrapRemark } from '@kodadot1/minimark/v2'
 
 import { burn, buy, changeIssuer, emote, list } from '../shared'
 import { unwrap } from '../utils/extract'

@@ -1,6 +1,6 @@
 import { create, get } from '@kodadot1/metasquid/entity'
 import { Optional, TokenMetadata } from '@kodadot1/metasquid/types'
-import { isEmpty } from '@vikiival/minimark/utils'
+import { isEmpty } from '@kodadot1/minimark/utils'
 
 import { logger } from '@kodadot1/metasquid/logger'
 import {

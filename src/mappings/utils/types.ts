@@ -1,14 +1,14 @@
 import type { Store } from '@kodadot1/metasquid/types'
-import { CreatedCollection, CreatedNFT } from '@vikiival/minimark/v1'
-import { CreatedCollection as NewCreatedCollection, CreatedNFT as NewCreatedNFT } from '@vikiival/minimark/v2'
-// import type { CreatedCollection, CreatedNFT } from '@vikiival/minimark'
+import { CreatedCollection, CreatedNFT } from '@kodadot1/minimark/v1'
+import { CreatedCollection as NewCreatedCollection, CreatedNFT as NewCreatedNFT } from '@kodadot1/minimark/v2'
+// import type { CreatedCollection, CreatedNFT } from '@kodadot1/minimark'
 
 import { CallHandlerContext } from '@subsquid/substrate-processor'
 import { Attribute, CollectionEvent, Interaction as Action, Interaction } from '../../model/generated'
 import { RemarkResult } from './extract'
-import { InteractionValue as NewInteractionValue } from '@vikiival/minimark/v2'
-import { InteractionValue } from '@vikiival/minimark/v1'
-import { VersionedRemark } from '@vikiival/minimark/shared'
+import { InteractionValue as NewInteractionValue } from '@kodadot1/minimark/v2'
+import { InteractionValue } from '@kodadot1/minimark/v1'
+import { VersionedRemark } from '@kodadot1/minimark/shared'
 import { BaseCall as SquidCall } from '@kodadot1/metasquid/types'
 
 export { Action, Store }
