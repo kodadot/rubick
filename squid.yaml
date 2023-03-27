@@ -8,6 +8,9 @@ build:
 deploy:
   addons:
     postgres:
+      config:
+        statement_timeout: 30000
+        log_min_duration_statement: 5000
   processor:
     cmd: [ "node", "lib/processor" ]
   api:
