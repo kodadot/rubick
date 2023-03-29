@@ -57,11 +57,11 @@ db: update-db migrate
 test:
   npm run test:unit
 
-improve TAG:
-	npx sqd squid:update rubick@{{TAG}}
+improve TAG=squid:
+	npx sqd redeploy -m {{TAG}}.yaml
 
-release TAG:
-	npx sqd squid:release rubick@{{TAG}}
+release TAG=squid:
+	npx sqd deploy -m {{TAG}}.yaml
 
 kill TAG:
 	npx sqd squid:kill "rubick@{{TAG}}"
