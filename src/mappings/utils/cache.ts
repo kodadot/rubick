@@ -75,19 +75,19 @@ enum Query {
 }
 
 enum MetadataQuery {
-    missing = `SELECT 
-      DISTINCT metadata as id
-    FROM nft_entity
-    WHERE metadata IS NOT NULL
-      AND meta_id IS NULL
-      LIMIT 10
-    UNION
-    SELECT
-      DISTINCT  metadata as id
-    FROM collection_entity
-    WHERE metadata IS NOT NULL
-      AND meta_id IS NULL
-      LIMIT 10;`,
+    missing = `SELECT *
+    FROM (
+      SELECT DISTINCT metadata as id
+      FROM nft_entity
+      WHERE metadata IS NOT NULL
+        AND meta_id IS NULL
+      UNION
+      SELECT DISTINCT metadata as id
+      FROM collection_entity
+      WHERE metadata IS NOT NULL
+        AND meta_id IS NULL
+    ) AS missing
+    LIMIT 10;`,
   
     nft = `UPDATE
       nft_entity ne
