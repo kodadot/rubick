@@ -80,12 +80,14 @@ enum MetadataQuery {
     FROM nft_entity
     WHERE metadata IS NOT NULL
       AND meta_id IS NULL
+      LIMIT 10
     UNION
     SELECT
       DISTINCT  metadata as id
     FROM collection_entity
     WHERE metadata IS NOT NULL
-      AND meta_id IS NULL;`,
+      AND meta_id IS NULL
+      LIMIT 10;`,
   
     nft = `UPDATE
       nft_entity ne
