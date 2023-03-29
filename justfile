@@ -1,3 +1,5 @@
+default := 'squid'
+
 process: build
 	node -r dotenv/config lib/processor.js
 
@@ -57,11 +59,11 @@ db: update-db migrate
 test:
   npm run test:unit
 
-improve TAG=squid:
-	npx sqd redeploy -m {{TAG}}.yaml
+improve TAG=default:
+	npx sqd redeploy -m {{TAG}}.yaml .
 
-release TAG=squid:
-	npx sqd deploy -m {{TAG}}.yaml
+release TAG=default:
+	npx sqd deploy -m {{TAG}}.yaml .
 
 kill TAG:
 	npx sqd squid:kill "rubick@{{TAG}}"
