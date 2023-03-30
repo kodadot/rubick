@@ -60,7 +60,7 @@ test:
   npm run test:unit
 
 improve TAG=default:
-	npx sqd redeploy -m {{TAG}}.yaml .
+	npx sqd deploy -m {{TAG}}.yaml .
 
 release TAG=default:
 	npx sqd deploy -m {{TAG}}.yaml .
@@ -75,7 +75,7 @@ brutal TAG=default:
 	npx sqd deploy —hard -m {{TAG}}.yaml .
 
 update-deps:
-	npx npm-check-updates -u
+	npx npm-check-updates -ux
 
 exec:
 	docker exec -it rubick-db-1 psql -U postgres -d squid
