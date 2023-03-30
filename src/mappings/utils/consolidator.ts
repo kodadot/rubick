@@ -3,6 +3,7 @@ import { CollectionEntity, NFTEntity } from '../../model/generated'
 import { serializer } from './serializer'
 
 import { real, burned, plsBe, plsNotBe } from '@kodadot1/metasquid/consolidator'
+import { isTransferable} from '@kodadot1/minimark/v2'
 import { isAddress } from './helper'
 
 type Entity = CollectionEntity | NFTEntity
@@ -52,6 +53,15 @@ export function isInteractive(nft: NFTEntity): void {
 export function validateInteraction(nft: NFTEntity, interaction: RmrkInteraction) {
   plsBe(withMeta, interaction)
   isInteractive(nft)
+}
+
+export function isMoreTransferable({ blockNumber, transferable }: NFTEntity, currentBlock: string) {
+  const block = BigInt(blockNumber || 0)
+  const transfer = Number(transferable || 1)
+  const canTransfer = isTransferable({ blockNumber: block, transferable: transfer }, Number(currentBlock))
+  if (!canTransfer) {
+    throw new ReferenceError(`[CONSOLIDATE isMoreTransferable] Entity: ${blockNumber} Transferable: ${transferable} Current: ${currentBlock}`)
+  }
 }
 
 export function isPositiveOrElseError(entity: bigint | number, excludeZero?: boolean): void {

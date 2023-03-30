@@ -79,12 +79,12 @@ enum MetadataQuery {
     FROM (
       SELECT DISTINCT metadata as id
       FROM nft_entity
-      WHERE metadata IS NOT NULL
+      WHERE metadata IS NOT NULL AND metadata <> ''
         AND meta_id IS NULL
       UNION
       SELECT DISTINCT metadata as id
       FROM collection_entity
-      WHERE metadata IS NOT NULL
+      WHERE metadata IS NOT NULL AND metadata <> ''
         AND meta_id IS NULL
     ) AS missing
     LIMIT 10;`,
@@ -174,7 +174,7 @@ async function updateMissingMetadata(store: Store) {
       }
   
       logger.info(`[MISSING METADATA] - ${missing.length}`);
-      const ids = missing.map((el) => el.id);
+      const ids = missing.map((el) => el.id).filter((el) => el);
       const results = await fetchAllMetadata<TokenMetadata>(ids);
       const entities = results.map((el) => create(MetadataEntity, el.id, el));
       logger.debug(`[MISSING METADATA] - FOUND ${entities.length}`);
