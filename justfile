@@ -71,8 +71,8 @@ kill TAG:
 tail TAG:
 	npx sqd squid logs rubick@{{TAG}} -f
 
-brutal TAG:
-	npx sqd squid:update rubick@{{TAG}} --hardReset
+brutal TAG=default:
+	npx sqd deploy —hard -m {{TAG}}.yaml .
 
 update-deps:
 	npx npm-check-updates -u
