@@ -94,6 +94,7 @@ enum MetadataQuery {
     SET meta_id = me.id
     FROM metadata_entity me
     WHERE ne.metadata = me.id
+    AND ne.meta_id IS NULL
     RETURNING ne.id, me.id;`,
   
     collection = `UPDATE
@@ -101,6 +102,7 @@ enum MetadataQuery {
     SET meta_id = me.id
     FROM metadata_entity me
     WHERE ce.metadata = me.id
+    AND ce.meta_id IS NULL
     RETURNING ce.id, me.id;`,
   }
 
