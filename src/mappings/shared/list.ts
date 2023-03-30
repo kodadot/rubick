@@ -20,10 +20,10 @@ export async function list(context: Context) {
     const nft = await get<NFTEntity>(context.store, NFTEntity, interaction.id)
     validateInteraction(nft, interaction)
     isOwnerOrElseError(nft, caller)
-    if (version === '2.0.0') {
+    const price = BigInt(interaction.value || '0')
+    if (version === '2.0.0' && price !== 0n) {
       isMoreTransferable(nft, blockNumber)
     }
-    const price = BigInt(interaction.value || '0')
     isPositiveOrElseError(price)
     nft.price = price
     nft.updatedAt = timestamp
