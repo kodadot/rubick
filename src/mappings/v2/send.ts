@@ -4,7 +4,7 @@ import { Optional } from '@kodadot1/metasquid/types'
 import { NFTEntity } from '../../model'
 import { createEvent } from '../shared/event'
 import { unwrap } from '../utils'
-import { isOwnerOrElseError, validateInteraction } from '../utils/consolidator'
+import { isMoreTransferable, isOwnerOrElseError, validateInteraction } from '../utils/consolidator'
 import { findRootItemById } from '../utils/entity'
 import { getInteraction } from '../utils/getters'
 import { isDummyAddress } from '../utils/helper'
@@ -23,6 +23,7 @@ export async function send(context: Context) {
     const nft = await get<NFTEntity>(context.store, NFTEntity, interaction.id)
     validateInteraction(nft, interaction)
     isOwnerOrElseError(nft, caller)
+    isMoreTransferable(nft, blockNumber)
     const originalOwner = nft.currentOwner ?? undefined
     const recipient = interaction.value || ''
 

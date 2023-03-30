@@ -3,7 +3,7 @@ import { Optional } from '@kodadot1/metasquid/types'
 
 import { NFTEntity } from '../../model'
 import { unwrap } from '../utils'
-import { isOwnerOrElseError, isPositiveOrElseError, validateInteraction } from '../utils/consolidator'
+import { isMoreTransferable, isOwnerOrElseError, isPositiveOrElseError, validateInteraction } from '../utils/consolidator'
 import { getInteraction } from '../utils/getters'
 import { error, success } from '../utils/logger'
 import { Action, Context, RmrkInteraction } from '../utils/types'
@@ -20,6 +20,9 @@ export async function list(context: Context) {
     const nft = await get<NFTEntity>(context.store, NFTEntity, interaction.id)
     validateInteraction(nft, interaction)
     isOwnerOrElseError(nft, caller)
+    if (version === '2.0.0') {
+      isMoreTransferable(nft, blockNumber)
+    }
     const price = BigInt(interaction.value || '0')
     isPositiveOrElseError(price)
     nft.price = price
