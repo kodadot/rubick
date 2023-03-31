@@ -77,6 +77,10 @@ export async function mintItem(
     await context.store.save(collection)
     success(OPERATION, `${final.id} from ${caller}`)
     await createEvent(final, Action.MINT, { blockNumber, caller, timestamp, version }, '', context.store)
+    
+    if (final.royalty) {
+      await createEvent(final, Action.ROYALTY, { blockNumber, caller, timestamp, version }, String(final.royalty || ''), context.store)
+    }
 
   } catch (e) {
     if (e instanceof Error) {
