@@ -143,6 +143,8 @@ enum Interaction {
   EQUIPPABLE
   LOCK
   UNLIST
+  PAY_ROYALTY
+  ROYALTY
 }
 
 # Remarkably specific types
