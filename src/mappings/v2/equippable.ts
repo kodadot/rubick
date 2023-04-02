@@ -1,8 +1,7 @@
 import { burned, plsBe, plsNotBe, real } from '@kodadot1/metasquid/consolidator'
 import { getOrFail as get } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
-import { Equippable } from '@kodadot1/minimark/v2'
-
+import { Equippable, Interaction } from '@kodadot1/minimark/v2'
 
 import { NFTEntity } from '../../model'
 import { createEvent } from '../shared/event'
@@ -12,14 +11,13 @@ import { error, success } from '../utils/logger'
 import { Action, Context } from '../utils/types'
 import { getAs } from './getters'
 
-type OPERATION = Action.EQUIPPABLE
 const OPERATION = Action.EQUIPPABLE
 
 export async function equippable(context: Context) {
   let interaction: Optional<Equippable> = null
 
   try {
-    const getE = getAs<OPERATION>()
+    const getE = getAs<Interaction.EQUIPPABLE>()
     const { value: equip, caller, timestamp, blockNumber, version } = unwrap(context, getE);
     interaction = equip
     const nft = await get<NFTEntity>(context.store, NFTEntity, interaction.id)
@@ -32,7 +30,7 @@ export async function equippable(context: Context) {
 
     success(OPERATION, `${nft.id} from ${caller}`)
     await context.store.save(nft)
-    await createEvent(nft, Action.EQUIP, { blockNumber, caller, timestamp, version }, `${interaction.id}::${interaction.slot}`, context.store)
+    await createEvent(nft, OPERATION, { blockNumber, caller, timestamp, version }, `${interaction.id}::${interaction.slot}`, context.store)
 
   } catch (e) {
     error(e, OPERATION, JSON.stringify(interaction))
