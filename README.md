@@ -93,9 +93,9 @@ npx squid-typeorm-migration revert
 
 ## Setting up the project for resolvers
 
-In case you just want to extend resolvers you don't index the whole project and just import the postgres database (last data 11.05.2022):
+In case you just want to extend resolvers you don't index the whole project and just import the postgres database (last data 29.03.2023):
 
-1. [Download the data](https://storage.googleapis.com/bright-meridian-316511-db-export/rubick.sql)
+1. [Contact @vikiival on Discord](https://discord.gg/yfeumhRCuw)
 2. `docker-compose up db`
 3. `docker exec -it rubick-db-1 psql -U postgres -d postgres -c "CREATE DATABASE squid;"`
 4. `docker exec -i rubick-db-1 psql -U postgres -d squid < rubick.sql`
