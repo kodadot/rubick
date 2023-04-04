@@ -1,0 +1,20 @@
+manifestVersion: subsquid.io/v0.1
+name: rubick
+version: 9
+description: |-
+  SubSquid indexer for Kusama NFTs by KodaDot
+build:
+
+deploy:
+  addons:
+    postgres:
+      config:
+        statement_timeout: 30000
+        log_min_duration_statement: 5000
+  processor:
+    cmd: [ "node", "lib/processor" ]
+  api:
+    cmd: [ "npx", "squid-graphql-server", "--subscriptions", "--dumb-cache", "in-memory", "--dumb-cache-ttl", "1000", "--dumb-cache-size", "100", "--dumb-cache-max-age", "1000" ]
+
+scale:
+  dedicated: true

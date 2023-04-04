@@ -1,4 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, ManyToOne as ManyToOne_, OneToMany as OneToMany_} from "typeorm"
 import * as marshal from "./marshal"
 import {CollectionEvent} from "./_collectionEvent"
 import {MetadataEntity} from "./metadataEntity.model"
@@ -21,6 +21,10 @@ export class CollectionEntity {
 
     @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.map((val: any) => val.toJSON()), from: obj => obj == null ? undefined : marshal.fromList(obj, val => new CollectionEvent(undefined, marshal.nonNull(val)))}, nullable: true})
     events!: (CollectionEvent)[] | undefined | null
+
+    @Index_({unique: true})
+    @Column_("text", {nullable: false})
+    hash!: string
 
     @PrimaryColumn_()
     id!: string
@@ -57,12 +61,12 @@ export class CollectionEntity {
     @Column_("int4", {nullable: false})
     supply!: number
 
-    @Column_("text", {nullable: true})
-    symbol!: string | undefined | null
+    @Column_("text", {nullable: false})
+    symbol!: string
 
     @Column_("timestamp with time zone", {nullable: false})
     updatedAt!: Date
 
-    @Column_("text", {nullable: true})
-    version!: string | undefined | null
+    @Column_("text", {nullable: false})
+    version!: string
 }

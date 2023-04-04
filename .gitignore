@@ -5,3 +5,4 @@
 kusamaVersions.json
 kusamaVersions.jsonl
 *.sql
+/builds

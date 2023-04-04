@@ -37,3 +37,15 @@ WHERE
     AND e.timestamp >= NOW() - INTERVAL '${dateRange}'
 ORDER BY
     e.timestamp`
+
+
+export const rootOwnerQuery = `with recursive part as (
+    select id, name, current_owner, parent_id from nft_entity where id = $1 
+    union
+    select pe.id, pe.name, pe.current_owner, pe.parent_id from nft_entity pe
+    join part p on p.parent_id = pe.id
+   )
+   select id, name, current_owner
+   from part
+   where parent_id is null
+   limit 1`

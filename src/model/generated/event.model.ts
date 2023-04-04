@@ -33,4 +33,7 @@ export class Event {
     @Index_()
     @ManyToOne_(() => NFTEntity, {nullable: true})
     nft!: NFTEntity
+
+    @Column_("text", {nullable: false})
+    version!: string
 }

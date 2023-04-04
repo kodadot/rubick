@@ -4,6 +4,7 @@ import {CollectionEntity} from "./collectionEntity.model"
 import {Emote} from "./emote.model"
 import {Event} from "./event.model"
 import {MetadataEntity} from "./metadataEntity.model"
+import {Resource} from "./resource.model"
 
 @Entity_()
 export class NFTEntity {
@@ -37,7 +38,7 @@ export class NFTEntity {
     @OneToMany_(() => Event, e => e.nft)
     events!: Event[]
 
-    @Index_()
+    @Index_({unique: true})
     @Column_("text", {nullable: false})
     hash!: string
 
@@ -67,8 +68,24 @@ export class NFTEntity {
     @Column_("text", {nullable: true})
     name!: string | undefined | null
 
+    @Index_()
+    @ManyToOne_(() => NFTEntity, {nullable: true})
+    parent!: NFTEntity | undefined | null
+
+    @Column_("bool", {nullable: false})
+    pending!: boolean
+
     @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
     price!: bigint
+
+    @OneToMany_(() => Resource, e => e.nft)
+    resources!: Resource[]
+
+    @Column_("numeric", {transformer: marshal.floatTransformer, nullable: true})
+    royalty!: number | undefined | null
+
+    @Column_("text", {nullable: true})
+    recipient!: string | undefined | null
 
     @Column_("text", {nullable: true})
     sn!: string | undefined | null
@@ -78,4 +95,7 @@ export class NFTEntity {
 
     @Column_("timestamp with time zone", {nullable: false})
     updatedAt!: Date
+
+    @Column_("text", {nullable: false})
+    version!: string
 }

@@ -1,23 +1,9 @@
-type RemarkEntity @entity {
-  id: ID! #id is a required field
-  value: String!
-  caller: String!
-  blockNumber: String!
-  interaction: String
-}
-
-type FailedEntity @entity {
-  id: ID! #id is a required field
-  value: String!
-  reason: String!
-  interaction: String
-}
-
 type CollectionEntity @entity {
   blockNumber: BigInt
   createdAt: DateTime!
   currentOwner: String
   events: [CollectionEvent!]
+  hash: String! @unique
   id: ID!
   image: String
   issuer: String
@@ -29,9 +15,9 @@ type CollectionEntity @entity {
   nftCount: Int!
   nfts: [NFTEntity!] @derivedFrom(field: "collection")
   supply: Int!
-  symbol: String
+  symbol: String!
   updatedAt: DateTime!
-  version: String
+  version: String!
 }
 
 type NFTEntity @entity {
@@ -39,11 +25,11 @@ type NFTEntity @entity {
   burned: Boolean!
   collection: CollectionEntity!
   createdAt: DateTime!
-  currentOwner: String @index
+  currentOwner: String @index # or address
   emoteCount: Int!
   emotes: [Emote!] @derivedFrom(field: "nft")
   events: [Event!] @derivedFrom(field: "nft")
-  hash: String! @index
+  hash: String! @index @unique
   id: ID!
   instance: String
   image: String
@@ -52,19 +38,25 @@ type NFTEntity @entity {
   meta: MetadataEntity
   metadata: String
   name: String @index
+  parent: NFTEntity # = nft_id
+  pending: Boolean!
   price: BigInt!
+  resources: [Resource!] @derivedFrom (field: "nft")
+  royalty: Float
+  recipient: String
   sn: String
   transferable: Int
   updatedAt: DateTime!
+  version: String!
 }
 
 type MetadataEntity @entity {
-  id: ID!
-  name: String
-  description: String
-  image: String
-  attributes: [Attribute!]
   animationUrl: String
+  attributes: [Attribute!]
+  description: String
+  id: ID!
+  image: String
+  name: String
   type: String
 }
 
@@ -81,6 +73,7 @@ interface EventType {
   caller: String!
   currentOwner: String # currentOwner
   interaction: Interaction!
+  version: String!
   meta: String!
 }
 
@@ -93,6 +86,7 @@ type Event implements EventType @entity {
   interaction: Interaction!
   meta: String!
   nft: NFTEntity!
+  version: String!
 }
 
 type CollectionEvent @jsonField {
@@ -108,21 +102,80 @@ type Emote @entity {
   nft: NFTEntity!
   caller: String!
   value: String!
+  version: String!
 }
 
+# DEV: for RMRK v1 MINT use CREATE
+# DEV: for RMRK v1 MINTNFT use MINT
 enum Interaction {
+  ACCEPT
+  BASE
+  BURN
+  CREATE
+  DESTROY
   MINT
-  MINTNFT
   LIST
-  UNLIST
   BUY
   SEND
-  CONSUME
   CHANGEISSUER
   EMOTE
+  SETPRIORITY
+  SETPROPERTY
+  THEMEADD
+  RESADD
+  EQUIP
+  EQUIPPABLE
+  LOCK
+  UNLIST
+  PAY_ROYALTY
+  ROYALTY
+}
+
+# Remarkably specific types
+type Base @entity {
+    id: ID!
+    type: BaseType!
+    symbol: String!
+    issuer: String!
+    currentOwner: String!  
+    meta: MetadataEntity
+    metadata: String
+    # parts: [BasePart!] @derivedFrom(field: "base")
+    # themes: [BaseTheme!] @derivedFrom(field: "base")
+    # attachedToResources: [Resource!] @derivedFrom (field: "base")
+    # logs: [Call!] @derivedFrom (field: "base") // Rename to event
 }
 
 
+# https://github.com/rmrk-team/rmrk-spec/blob/master/standards/rmrk2.0.0/entities/nft.md#resources-and-resource
+type Resource @entity {
+    id: ID!
+    # base: Base
+    src: String
+    meta: MetadataEntity
+    metadata: String
+    slot: String
+    thumb: String
+    # parts: [ResourcePart!] @derivedFrom (field: "resource")
+    priority: Int! # 0 is highest priority, need to check if this is correct
+    pending: Boolean!
+    nft: NFTEntity!
+}
+
+enum BaseType {
+    svg
+    audio
+    mixed
+    video
+    png
+}
+
+enum BasePartType {
+    fixed
+    slot
+}
+
+# Cachce and tables
 type Series @entity {
   id: ID!
   issuer: String,
