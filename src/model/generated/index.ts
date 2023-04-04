@@ -1,5 +1,3 @@
-export * from "./remarkEntity.model"
-export * from "./failedEntity.model"
 export * from "./collectionEntity.model"
 export * from "./_collectionEvent"
 export * from "./nftEntity.model"
