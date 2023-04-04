@@ -13,8 +13,6 @@ export async function handleRemark(context: Context): Promise<void> {
 
   if (version) {
     await versionRouter(value, context, version)
-  } else {
-    logger.warn(`[NON RMRK VALUE] ${value}`)
   }
 }
 
