@@ -13,7 +13,6 @@
     "@kodadot1/metasquid": "^0.1.5-rc.0",
     "@kodadot1/minimark": "0.1.4-rc.0",
     "@kodadot1/minipfs": "^0.3.0-rc.0",
-    "@polkadot/types": "^10.2.2",
     "@subsquid/archive-registry": "2.1.10",
     "@subsquid/big-decimal": "^0.0.0",
     "@subsquid/cli": "^2.2.1",
