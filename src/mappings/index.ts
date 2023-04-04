@@ -25,7 +25,9 @@ export async function versionRouter(value: string, context: Context, version: Ve
     await mainFrameV2(value, context)
   }
 
+  // TODO: Enable when v1 is ready
   // await mainFrameV1(value, context)
+
   // TODO: use data from the base or something
   // await updateCache(new Date(), context.store)
   await updateMetadataCache(new Date(), context.store)
