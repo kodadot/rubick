@@ -2,7 +2,7 @@ import { burned, plsBe, plsNotBe, real } from '@kodadot1/metasquid/consolidator'
 import { getWith } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
 
-import { CollectionEntity, NFTEntity } from '../../model'
+import { NFTEntity } from '../../model'
 import { unwrap } from '../utils'
 import { isOwnerOrElseError } from '../utils/consolidator'
 import { getInteraction } from '../utils/getters'

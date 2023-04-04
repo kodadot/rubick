@@ -27,6 +27,7 @@ export async function versionRouter(value: string, context: Context, version: Ve
   // await mainFrameV1(value, context)
 
   // TODO: use data from the base or something
+  // const date = new Date(context.block.timestamp)
   // await updateCache(new Date(), context.store)
   await updateMetadataCache(new Date(), context.store)
 }
