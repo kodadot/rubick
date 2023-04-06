@@ -68,7 +68,7 @@ export class LastEventEntity {
   }
 }
 
-@ObjectType()
+@ObjectType({ description: "only supports 1 level of nested attributes" })
 export class Resource {
   @Field(() => String, { nullable: false })
   id!: string;
@@ -91,7 +91,7 @@ export class Resource {
   @Field(() => Boolean, { nullable: false })
   pending!: boolean;
 
-  constructor(props: Partial<LastEventEntity>) {
+  constructor(props: Partial<Resource>) {
     Object.assign(this, props);
   }
 }
