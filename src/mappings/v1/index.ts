@@ -3,13 +3,14 @@ import { unwrapRemark } from '@kodadot1/minimark/v1'
 import { unwrap } from '../utils'
 
 import { Interaction } from '@kodadot1/minimark/v1'
-import { burn as consume, buy, changeIssuer, createCollection, emote, list, send } from '../shared'
+import { changeIssuer, burn as consume, createCollection, emote, list, send } from '../shared'
 import { mintItem } from '../shared/mint'
 import logger, { pending } from '../utils/logger'
 import {
   Context,
   RmrkInteraction
 } from '../utils/types'
+import { buy } from './buy'
 
 
 export async function mainFrame(remark: string, context: Context): Promise<void> {

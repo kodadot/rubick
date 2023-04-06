@@ -7,7 +7,7 @@ import { isBuyLegalOrElseError, isInteractive, isMoreTransferable, isPositiveOrE
 import { getInteractionWithExtra } from '../utils/getters'
 import { error, success } from '../utils/logger'
 import { Action, Context, RmrkInteraction } from '../utils/types'
-import { createEvent } from './event'
+import { createEvent } from '../shared/event'
 
 const OPERATION = Action.BUY
 
@@ -20,9 +20,6 @@ export async function buy(context: Context) {
     const nft = await getWith<NFTEntity>(context.store, NFTEntity, interaction.id, { collection: true })
     isInteractive(nft)
     isPositiveOrElseError(nft.price, true)
-    if (version === '2.0.0') {
-      isMoreTransferable(nft, blockNumber)
-    }
     isBuyLegalOrElseError(nft, extra || [])
     const originalPrice = nft.price
     const originalOwner = nft.currentOwner ?? undefined
