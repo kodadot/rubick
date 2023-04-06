@@ -60,7 +60,7 @@ If you do not plan to extend GraphQl server you can delete `server-extension` mo
 
 Start development by defining the schema of the target database via `schema.graphql`.
 Schema definition consists of regular graphql type declarations annotated with custom directives.
-Full description of `schema.graphql` dialect is available [here](https://docs.subsquid.io/docs/develop-a-squid/define-a-squid-schema).
+Full description of `schema.graphql` dialect is available [here](https://docs.subsquid.io/schema-file/).
 
 ### 2. Generate TypeORM classes
 
