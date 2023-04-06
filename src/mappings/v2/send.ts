@@ -32,7 +32,7 @@ export async function send(context: Context) {
     nft.price = BigInt(0)
     nft.updatedAt = timestamp
 
-
+// current owner on nested should indicate the owner of the root NFT
     if (isRecipientNFT) {
       const parent = await get<NFTEntity>(context.store, NFTEntity, recipient)
       const isCallerTheOwner = parent.currentOwner === caller
@@ -55,5 +55,3 @@ export async function send(context: Context) {
   }
 }
 
-
-// current owner on nested should indicate the owner of the root NFT
