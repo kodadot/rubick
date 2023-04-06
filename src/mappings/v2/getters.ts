@@ -22,7 +22,8 @@ import {
   UnwrapValue,
 } from '@kodadot1/minimark/v2'
 import { SystemRemarkCall } from '../../types/calls'
-import { Context } from '../utils/types'
+import { Context, InteractionExtra } from '../utils/types'
+import { extractExtra } from '../utils'
 
 export function getRemark<T extends keyof UnwrapValue = 'NONE'>(
   ctx: Context
@@ -83,8 +84,9 @@ export function getThemeAdd(ctx: Context): UnwrappedRemark<ThemeAdd> {
   return getRemark<Interaction.THEMEADD>(ctx)
 }
 
-export function getBuy(ctx: Context): UnwrappedRemark<Buy> {
-  return getRemark<Interaction.BUY>(ctx)
+export function getBuy(ctx: Context): UnwrappedRemark<Buy> & InteractionExtra {
+  const extra = extractExtra(ctx)
+  return { ...getRemark<Interaction.BUY>(ctx), extra }
 }
 
 export function getEmote(ctx: Context): UnwrappedRemark<Emote> {
