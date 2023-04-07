@@ -59,36 +59,53 @@ export const resourcesByNFT = (nftId: string) => `
         r.thumb as thumb,
         r.priority as priority,
         r.pending as pending,
-        json_build_object(
-          'block_number', ne.block_number,
-          'burned', ne.burned,
-          'collection_id', ne.collection_id,
-          'created_at', ne.created_at,
-          'current_owner', ne.current_owner,
-          'emote_count', ne.emote_count,
-          'hash', ne.hash,
-          'id', ne.id,
-          'image', ne.image,
-          'instance', ne.instance,
-          'issuer', ne.issuer,
-          'media', ne.media,
-          'meta_id', ne.meta_id,
-          'metadata', ne.metadata,
-          'name', ne.name,
-          'parent_id', ne.parent_id,
-          'pending', ne.pending,
-          'price', ne.price,
-          'recipient', ne.recipient,
-          'royalty', ne.royalty,
-          'sn', ne.sn,
-          'transferable', ne.transferable,
-          'updated_at', ne.updated_at,
-          'version', ne.version
+        CASE 
+        WHEN me.id IS NULL THEN NULL
+        ELSE json_strip_nulls(
+                json_build_object(
+                  'attributes', me.attributes,
+                  'name', me.name,
+                  'description', me.description,
+                  'id', me.id,
+                  'animation_url', me.animation_url,
+                  'type', me.type,
+                  'image', me.image
+                )
+              )
+        END AS meta,
+        json_strip_nulls(
+          json_build_object(
+            'block_number', ne.block_number,
+            'burned', ne.burned,
+            'collection_id', ne.collection_id,
+            'created_at', ne.created_at,
+            'current_owner', ne.current_owner,
+            'emote_count', ne.emote_count,
+            'hash', ne.hash,
+            'id', ne.id,
+            'image', ne.image,
+            'instance', ne.instance,
+            'issuer', ne.issuer,
+            'media', ne.media,
+            'meta_id', ne.meta_id,
+            'metadata', ne.metadata,
+            'name', ne.name,
+            'parent_id', ne.parent_id,
+            'pending', ne.pending,
+            'price', ne.price,
+            'recipient', ne.recipient,
+            'royalty', ne.royalty,
+            'sn', ne.sn,
+            'transferable', ne.transferable,
+            'updated_at', ne.updated_at,
+            'version', ne.version
+          )
         ) as nft
   FROM resource r
-  JOIN nft_entity ne ON ne.id = r.nft_id
+  LEFT JOIN nft_entity ne ON ne.id = r.nft_id
+  LEFT JOIN metadata_entity me ON me.id = r.meta_id
   WHERE ne.id = '${nftId}'
-  GROUP BY r.id, ne.id
+  GROUP BY r.id, ne.id, me.id
   LIMIT $1
   OFFSET $2
   `;
