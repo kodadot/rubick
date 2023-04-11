@@ -50,7 +50,10 @@ export function getInteraction<T extends keyof UnwrapValue = 'NONE'>(
   return getRemark<T>(ctx)
 }
 
-export const getAs = <T extends keyof UnwrapValue>() => (ctx: Context): UnwrappedRemark<UnwrapValue[T]> => getRemark<T>(ctx)
+export const getAs =
+  <T extends keyof UnwrapValue>() =>
+  (ctx: Context): UnwrappedRemark<UnwrapValue[T]> =>
+    getRemark<T>(ctx)
 
 export function getAcceptResource(ctx: Context): UnwrappedRemark<Accept> {
   return getRemark<Interaction.ACCEPT>(ctx)
