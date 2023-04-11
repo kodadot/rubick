@@ -1,4 +1,7 @@
-import { Interaction, unwrapRemarkV2 as unwrapRemark } from '@kodadot1/minimark/v2'
+import {
+  Interaction,
+  unwrapRemarkV2 as unwrapRemark,
+} from '@kodadot1/minimark/v2'
 
 import { burn, changeIssuer, emote, list } from '../shared'
 import { unwrap } from '../utils/extract'
@@ -14,11 +17,14 @@ import { mintItem } from './mint'
 import { send } from './send'
 import { setPriority } from './setpriority'
 
-export async function mainFrame(remark: string, context: Context): Promise<void> {
+export async function mainFrame(
+  remark: string,
+  context: Context
+): Promise<void> {
   const base = unwrap(context, (_: Context) => ({ value: remark }))
   try {
     const { interaction: event, version } = unwrapRemark(remark.toString())
-    pending(event,`.:${version} ${base.blockNumber}:.`)
+    pending(event, `.:${version} ${base.blockNumber}:.`)
 
     switch (event) {
       case Interaction.CREATE:
@@ -62,16 +68,14 @@ export async function mainFrame(remark: string, context: Context): Promise<void>
         await lockCollection(context)
         break
       case Interaction.DESTROY:
-      case Interaction.THEMEADD:  
+      case Interaction.THEMEADD:
       case Interaction.EQUIPPABLE:
       case Interaction.SETPROPERTY:
       case Interaction.EQUIP:
         pending(event, `::${base.blockNumber}::${base.value}`)
         break
       default:
-        logger.fatal(
-          `[SKIP] ${event}::${base.value}::${base.blockNumber}`
-        )
+        logger.fatal(`[SKIP] ${event}::${base.value}::${base.blockNumber}`)
     }
   } catch (e) {
     logger.warn(
