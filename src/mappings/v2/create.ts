@@ -12,7 +12,6 @@ import { getCreateCollection } from './getters'
 
 const OPERATION = Action.CREATE
 
-
 export async function createCollection(context: Context): Promise<void> {
   let collection: Optional<Collection> = undefined
   try {
@@ -60,5 +59,3 @@ export async function createCollection(context: Context): Promise<void> {
     error(e, OPERATION, JSON.stringify(collection))
   }
 }
-
-

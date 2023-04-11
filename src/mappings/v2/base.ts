@@ -35,6 +35,4 @@ export async function base(context: Context) {
   } catch (e) {
     error(e, OPERATION, JSON.stringify(base))
   }
-  
-
 }
