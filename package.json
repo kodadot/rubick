@@ -5,8 +5,8 @@
   "scripts": {
     "build": "rm -rf lib && tsc",
     "update": "npx npm-check-updates --filter /subsquid/ --upgrade && npm i -f",
-    "lint": "eslint --ext .ts src && prettier -c src",
-    "lint:fix": "eslint --fix --ext .ts src && prettier -w src",
+    "lint": "eslint --ext .ts src/mappings && prettier -c src/mappings",
+    "lint:fix": "eslint --fix --ext .ts src/mappings && prettier -w src/mappings",
     "db:migrate": "npx squid-typeorm-migration apply",
     "processor:start": "node lib/processor.js",
     "query-node:start": "squid-graphql-server --subscriptions --max-root-fields 50 --dumb-cache in-memory --dumb-cache-ttl 1000 --dumb-cache-size 100 --dumb-cache-max-age 1000"

@@ -19,6 +19,6 @@
     "unicorn/number-literal-case": 0,
     "unicorn/prefer-code-point": 0,
     "unicorn/prefer-math-trunc": 0,
-    "unicorn/text-encoding-identifier-case": 0,
-
+    "unicorn/text-encoding-identifier-case": 0
+  }
 }
