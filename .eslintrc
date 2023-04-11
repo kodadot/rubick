@@ -1,7 +1,24 @@
 {
   "extends": ["eslint-config-unjs"],
   "rules": {
-    "no-console": "off",
-    "unicorn/no-null": 0
-  }
+    "@typescript-eslint/no-inferrable-types": 0,
+    "@typescript-eslint/no-unused-vars": 0,
+    "generator-star-spacing": 0,
+    "import/no-named-as-default-member": 0,
+    "indent": 0,
+    "new-cap": 0,
+    "prefer-const": 0,
+    "prefer-rest-params": 0,
+    "prefer-spread": 0,
+    "require-await": 0,
+    "unicorn/catch-error-name": 0,
+    "unicorn/no-array-callback-reference": 0,
+    "unicorn/no-array-for-each": 0,
+    "unicorn/no-nested-ternary": 0,
+    "unicorn/no-null": 0,
+    "unicorn/number-literal-case": 0,
+    "unicorn/prefer-code-point": 0,
+    "unicorn/prefer-math-trunc": 0,
+    "unicorn/text-encoding-identifier-case": 0,
+
 }
