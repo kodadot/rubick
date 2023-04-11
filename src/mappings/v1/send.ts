@@ -1,13 +1,14 @@
 import { getOrFail as get } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
 
+import { plsBe } from '@kodadot1/metasquid/consolidator'
 import { NFTEntity } from '../../model'
+import { createEvent } from '../shared/event'
 import { unwrap } from '../utils'
-import { isOwnerOrElseError, validateInteraction } from '../utils/consolidator'
+import { isOwnerOrElseError, realAddress, validateInteraction } from '../utils/consolidator'
 import { getInteraction } from '../utils/getters'
 import { error, success } from '../utils/logger'
 import { Action, Context, RmrkInteraction } from '../utils/types'
-import { createEvent } from '../shared/event'
 
 const OPERATION = Action.SEND
 
@@ -21,6 +22,7 @@ export async function send(context: Context) {
     const nft = await get<NFTEntity>(context.store, NFTEntity, interaction.id)
     validateInteraction(nft, interaction)
     isOwnerOrElseError(nft, caller)
+    plsBe(realAddress, interaction.value)
     const originalOwner = nft.currentOwner ?? undefined
     nft.currentOwner = interaction.value
     nft.price = BigInt(0)

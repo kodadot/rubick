@@ -24,6 +24,10 @@ export function isIssuer(entity: Entity, caller: string) {
   return entity.issuer === caller
 }
 
+export function realAddress(address?: string): boolean {
+  return !!address && isAddress(address)
+}
+
 export function isOwnerOrElseError(entity: Entity, caller: string) {
   if (!isOwner(entity, caller)) {
     throw new ReferenceError(`[CONSOLIDATE Bad Owner] Entity: ${entity.currentOwner} Caller: ${caller}`)
