@@ -63,12 +63,15 @@ export class LastEventEntity {
   @Field(() => String, { nullable: false, name: "collectionName" })
   collection_name!: string;
 
+  @Field(() => [Resource], { nullable: true })
+  resources!: Resource[];
+
   constructor(props: Partial<LastEventEntity>) {
     Object.assign(this, props);
   }
 }
 
-@ObjectType({ description: "only supports 1 level of nested attributes" })
+@ObjectType()
 export class Resource {
   @Field(() => String, { nullable: false })
   id!: string;
@@ -90,6 +93,8 @@ export class Resource {
 
   @Field(() => Boolean, { nullable: false })
   pending!: boolean;
+
+  nftId!: string;
 
   constructor(props: Partial<Resource>) {
     Object.assign(this, props);

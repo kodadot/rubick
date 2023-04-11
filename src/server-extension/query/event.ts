@@ -51,7 +51,7 @@ export const lastEventQuery = (whereCondition: string) => `
   OFFSET $3
 `;
 
-export const resourcesByNFT = (nftId: string) => `
+export const resourcesByNFT = (whereCondition: string) => `
   SELECT r.id as id,
         r.src as src,
         r.metadata as metadata,
@@ -100,12 +100,11 @@ export const resourcesByNFT = (nftId: string) => `
             'updated_at', ne.updated_at,
             'version', ne.version
           )
-        ) as nft
+        ) as nft,
+        r.nft_id as nft_id
   FROM resource r
   LEFT JOIN nft_entity ne ON ne.id = r.nft_id
   LEFT JOIN metadata_entity me ON me.id = r.meta_id
-  WHERE ne.id = '${nftId}'
+  WHERE ${whereCondition}
   GROUP BY r.id, ne.id, me.id
-  LIMIT $1
-  OFFSET $2
   `;
