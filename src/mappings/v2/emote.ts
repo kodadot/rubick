@@ -3,23 +3,29 @@ import { create, getOrFail as get } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
 import { toVersion } from '@kodadot1/minimark/shared'
 
+import { Emote as EmoteValue } from '@kodadot1/minimark/v2'
 import { Emote, NFTEntity } from '../../model'
 import { unwrap } from '../utils'
 import { withMeta } from '../utils/consolidator'
-import { getInteraction } from '../utils/getters'
 import { emoteId } from '../utils/helper'
 import { error, success } from '../utils/logger'
-import { Action, Context, RmrkInteraction } from '../utils/types'
+import { Action, Context } from '../utils/types'
+import { getEmote } from './getters'
 
 const OPERATION = Action.EMOTE
 
 export async function emote(context: Context) {
-  let interaction: Optional<RmrkInteraction> = null
+  let interaction: Optional<EmoteValue> = null
 
   try {
-    const { value, caller, timestamp, version } = unwrap(context, getInteraction)
+    const { value, caller, timestamp, version } = unwrap(context, getEmote)
     interaction = value
     plsBe(withMeta, interaction)
+
+    if (['RMRK1', 'RMRK2'].includes(interaction.namespace) === false) {
+      throw new Error(`Unsupported namespace ${interaction.namespace} for emoting ${interaction.id}`)
+    }
+    
     const nft = await get<NFTEntity>(context.store, NFTEntity, interaction.id)
     plsBe<NFTEntity>(real, nft)
     plsNotBe<NFTEntity>(burned, nft)
