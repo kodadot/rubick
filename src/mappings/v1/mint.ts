@@ -8,8 +8,8 @@ import { create } from '../utils/entity'
 import { getCreateToken } from '../utils/getters'
 import { error, success } from '../utils/logger'
 import { Action, Context, getNftId, NFT, Optional } from '../utils/types'
-import { createEvent } from './event'
-import { handleMetadata } from './metadata'
+import { createEvent } from '../shared/event'
+import { handleMetadata } from '../shared/metadata'
 
 const OPERATION = Action.MINT
 

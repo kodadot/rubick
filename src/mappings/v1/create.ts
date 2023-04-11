@@ -8,7 +8,7 @@ import { unwrap } from '../utils/extract'
 import { getCreateCollection } from '../utils/getters'
 import { error, success } from '../utils/logger'
 import { Action, Collection, Context } from '../utils/types'
-import { handleMetadata } from './metadata'
+import { handleMetadata } from '../shared/metadata'
 
 const OPERATION = Action.CREATE
 

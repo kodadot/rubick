@@ -14,7 +14,7 @@ import { error, success } from '../utils/logger'
 import { Action, Context, RmrkInteraction } from '../utils/types'
 import { createEvent } from './event'
 
-const OPERATION = Action.BUY
+const OPERATION = Action.LIST
 
 export async function list(context: Context) {
   let interaction: Optional<RmrkInteraction> = null

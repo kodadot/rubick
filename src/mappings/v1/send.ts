@@ -7,7 +7,7 @@ import { isOwnerOrElseError, validateInteraction } from '../utils/consolidator'
 import { getInteraction } from '../utils/getters'
 import { error, success } from '../utils/logger'
 import { Action, Context, RmrkInteraction } from '../utils/types'
-import { createEvent } from './event'
+import { createEvent } from '../shared/event'
 
 const OPERATION = Action.SEND
 
