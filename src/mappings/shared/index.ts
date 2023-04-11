@@ -1,5 +1,4 @@
 export * from './burn'
-export * from './change'
 export * from './create'
 export * from './emote'
 export * from './event'

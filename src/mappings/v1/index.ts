@@ -1,11 +1,12 @@
 import { unwrapRemark, Interaction } from '@kodadot1/minimark/v1'
 import { unwrap } from '../utils'
 
-import { changeIssuer, burn as consume, createCollection, emote, list, send } from '../shared'
+import { burn as consume, createCollection, emote, list, send } from '../shared'
 import { mintItem } from '../shared/mint'
 import logger, { pending } from '../utils/logger'
 import { Context, RmrkInteraction } from '../utils/types'
 import { buy } from './buy'
+import { changeIssuer } from './change'
 
 export async function mainFrame(remark: string, context: Context): Promise<void> {
   const base = unwrap(context, (_: Context) => ({ value: remark }))
