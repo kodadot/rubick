@@ -1,7 +1,6 @@
 import type { Store } from '@kodadot1/metasquid/types'
 import { CreatedCollection, CreatedNFT } from '@kodadot1/minimark/v1'
 import { CreatedCollection as NewCreatedCollection, CreatedNFT as NewCreatedNFT } from '@kodadot1/minimark/v2'
-// import type { CreatedCollection, CreatedNFT } from '@kodadot1/minimark'
 
 import { CallHandlerContext } from '@subsquid/substrate-processor'
 import { Attribute, CollectionEvent, Interaction as Action, Interaction } from '../../model/generated'
