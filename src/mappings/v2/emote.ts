@@ -25,7 +25,7 @@ export async function emote(context: Context) {
     if (['RMRK1', 'RMRK2'].includes(interaction.namespace) === false) {
       throw new Error(`Unsupported namespace ${interaction.namespace} for emoting ${interaction.id}`)
     }
-    
+
     const nft = await get<NFTEntity>(context.store, NFTEntity, interaction.id)
     plsBe<NFTEntity>(real, nft)
     plsNotBe<NFTEntity>(burned, nft)
