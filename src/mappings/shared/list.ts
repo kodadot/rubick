@@ -20,10 +20,7 @@ export async function list(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
 
   try {
-    const { value, caller, timestamp, blockNumber, version } = unwrap(
-      context,
-      getInteraction
-    )
+    const { value, caller, timestamp, blockNumber, version } = unwrap(context, getInteraction)
     interaction = value
     const nft = await get<NFTEntity>(context.store, NFTEntity, interaction.id)
     validateInteraction(nft, interaction)
@@ -39,13 +36,7 @@ export async function list(context: Context) {
     success(OPERATION, `${nft.id} from ${caller}`)
     await context.store.save(nft)
     const event = nft.price === 0n ? Action.UNLIST : Action.LIST
-    await createEvent(
-      nft,
-      event,
-      { blockNumber, caller, timestamp, version },
-      String(price),
-      context.store
-    )
+    await createEvent(nft, event, { blockNumber, caller, timestamp, version }, String(price), context.store)
   } catch (e) {
     error(e, OPERATION, JSON.stringify(interaction))
   }

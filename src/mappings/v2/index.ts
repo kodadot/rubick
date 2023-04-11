@@ -1,7 +1,4 @@
-import {
-  Interaction,
-  unwrapRemarkV2 as unwrapRemark,
-} from '@kodadot1/minimark/v2'
+import { Interaction, unwrapRemarkV2 as unwrapRemark } from '@kodadot1/minimark/v2'
 
 import { burn, changeIssuer, emote, list } from '../shared'
 import { unwrap } from '../utils/extract'
@@ -17,10 +14,7 @@ import { mintItem } from './mint'
 import { send } from './send'
 import { setPriority } from './setpriority'
 
-export async function mainFrame(
-  remark: string,
-  context: Context
-): Promise<void> {
+export async function mainFrame(remark: string, context: Context): Promise<void> {
   const base = unwrap(context, (_: Context) => ({ value: remark }))
   try {
     const { interaction: event, version } = unwrapRemark(remark.toString())

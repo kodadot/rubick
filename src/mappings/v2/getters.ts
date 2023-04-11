@@ -25,9 +25,7 @@ import { SystemRemarkCall } from '../../types/calls'
 import { Context, InteractionExtra } from '../utils/types'
 import { extractExtra } from '../utils'
 
-export function getRemark<T extends keyof UnwrapValue = 'NONE'>(
-  ctx: Context
-): UnwrappedRemark<UnwrapValue[T]> {
+export function getRemark<T extends keyof UnwrapValue = 'NONE'>(ctx: Context): UnwrappedRemark<UnwrapValue[T]> {
   const { remark } = new SystemRemarkCall(ctx).asV1020
   return unwrapRemark<T>(remark.toString())
 }
@@ -44,9 +42,7 @@ export function getCreateToken(ctx: Context): UnwrappedRemark<Mint> {
   return getRemark<Interaction.MINT>(ctx)
 }
 
-export function getInteraction<T extends keyof UnwrapValue = 'NONE'>(
-  ctx: Context
-): UnwrappedRemark<UnwrapValue[T]> {
+export function getInteraction<T extends keyof UnwrapValue = 'NONE'>(ctx: Context): UnwrappedRemark<UnwrapValue[T]> {
   return getRemark<T>(ctx)
 }
 

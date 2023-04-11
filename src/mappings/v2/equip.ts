@@ -17,13 +17,7 @@ export async function equip(context: Context) {
   let interaction: Optional<Equip> = null
 
   try {
-    const {
-      value: equip,
-      caller,
-      timestamp,
-      blockNumber,
-      version,
-    } = unwrap(context, getEquip)
+    const { value: equip, caller, timestamp, blockNumber, version } = unwrap(context, getEquip)
     interaction = equip
     const nft = await get<NFTEntity>(context.store, NFTEntity, interaction.id)
     plsNotBe(burned, nft)

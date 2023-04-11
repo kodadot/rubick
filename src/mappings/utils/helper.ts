@@ -10,18 +10,11 @@ export { toBaseId as baseId } from '@kodadot1/minimark/v2'
 // Lenght is 47 or 48
 export const SS58_REGEX = /^[1-9A-HJ-NP-Za-km-z]{47}$/
 
-export const emoteId = (
-  { id, value: metadata }: RmrkInteraction,
-  caller: string
-) => `${id}-${metadata}-${caller}`
+export const emoteId = ({ id, value: metadata }: RmrkInteraction, caller: string) => `${id}-${metadata}-${caller}`
 
-export const eventId = (id: string, event: Action) =>
-  `${id}-${event}${nanoid()}`
+export const eventId = (id: string, event: Action) => `${id}-${event}${nanoid()}`
 
-export const ensureInteraction = ({
-  id,
-  value: metadata,
-}: RmrkInteraction): RmrkInteraction => ({
+export const ensureInteraction = ({ id, value: metadata }: RmrkInteraction): RmrkInteraction => ({
   id: trim(id),
   value: trimAll(metadata),
 })
@@ -46,9 +39,7 @@ export function onlyValue(call: ArchiveCallWithOptionalValue): any {
 }
 
 // Uint8Array
-export function addressOf(
-  address: ArchiveCallWithOptionalValue | string
-): string {
+export function addressOf(address: ArchiveCallWithOptionalValue | string): string {
   const value = typeof address === 'string' ? address : onlyValue(address)
   return ss58.codec('kusama').encode(decodeHex(value))
 }

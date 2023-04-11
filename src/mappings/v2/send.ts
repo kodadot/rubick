@@ -4,11 +4,7 @@ import { Optional } from '@kodadot1/metasquid/types'
 import { NFTEntity } from '../../model'
 import { createEvent } from '../shared/event'
 import { unwrap } from '../utils'
-import {
-  isMoreTransferable,
-  isOwnerOrElseError,
-  validateInteraction,
-} from '../utils/consolidator'
+import { isMoreTransferable, isOwnerOrElseError, validateInteraction } from '../utils/consolidator'
 import { findRootItemById } from '../utils/entity'
 import { getInteraction } from '../utils/getters'
 import { isDummyAddress } from '../utils/helper'
@@ -21,10 +17,7 @@ export async function send(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
 
   try {
-    const { value, caller, timestamp, blockNumber, version } = unwrap(
-      context,
-      getInteraction
-    )
+    const { value, caller, timestamp, blockNumber, version } = unwrap(context, getInteraction)
     interaction = value
 
     const nft = await get<NFTEntity>(context.store, NFTEntity, interaction.id)

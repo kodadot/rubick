@@ -1,9 +1,5 @@
 import type { Store } from '@kodadot1/metasquid/types'
-import {
-  CreatedCollection,
-  CreatedNFT,
-  InteractionValue,
-} from '@kodadot1/minimark/v1'
+import { CreatedCollection, CreatedNFT, InteractionValue } from '@kodadot1/minimark/v1'
 import {
   CreatedCollection as NewCreatedCollection,
   CreatedNFT as NewCreatedNFT,
@@ -13,18 +9,11 @@ import {
 import { CallHandlerContext } from '@subsquid/substrate-processor'
 import { VersionedRemark } from '@kodadot1/minimark/shared'
 import { BaseCall as SquidCall } from '@kodadot1/metasquid/types'
-import {
-  Attribute,
-  CollectionEvent,
-  Interaction as Action,
-  Interaction,
-} from '../../model/generated'
+import { Attribute, CollectionEvent, Interaction as Action, Interaction } from '../../model/generated'
 import { RemarkResult } from './extract'
 
 export const getNftId = (nft: any, blocknumber?: string | number): string => {
-  return `${blocknumber ? blocknumber + '-' : ''}${nft.collection}-${
-    nft.instance || nft.symbol || nft.name
-  }-${nft.sn}`
+  return `${blocknumber ? blocknumber + '-' : ''}${nft.collection}-${nft.instance || nft.symbol || nft.name}-${nft.sn}`
 }
 
 export function collectionEventFrom(
@@ -93,17 +82,9 @@ type NewType<IsNew extends boolean, Old, New> = IsNew extends false ? Old : New
 type Bool<T extends boolean = false> = T
 
 // Conditional types
-export type RmrkInteraction<T extends boolean = false> = T extends false
-  ? InteractionValue
-  : NewInteractionValue
-export type NFT<T extends boolean = false> = T extends false
-  ? CreatedNFT
-  : NewCreatedNFT
-export type Collection<T extends boolean = false> = NewType<
-  Bool<T>,
-  CreatedCollection,
-  NewCreatedCollection
->
+export type RmrkInteraction<T extends boolean = false> = T extends false ? InteractionValue : NewInteractionValue
+export type NFT<T extends boolean = false> = T extends false ? CreatedNFT : NewCreatedNFT
+export type Collection<T extends boolean = false> = NewType<Bool<T>, CreatedCollection, NewCreatedCollection>
 
 // TODO: remove once new minimark is imported
 export type BaseType = 'svg' | 'png' | 'audio' | 'video' | 'mixed' | string

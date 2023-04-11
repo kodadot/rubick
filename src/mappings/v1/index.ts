@@ -1,34 +1,20 @@
 import { unwrapRemark, Interaction } from '@kodadot1/minimark/v1'
 import { unwrap } from '../utils'
 
-import {
-  changeIssuer,
-  burn as consume,
-  createCollection,
-  emote,
-  list,
-  send,
-} from '../shared'
+import { changeIssuer, burn as consume, createCollection, emote, list, send } from '../shared'
 import { mintItem } from '../shared/mint'
 import logger, { pending } from '../utils/logger'
 import { Context, RmrkInteraction } from '../utils/types'
 import { buy } from './buy'
 
-export async function mainFrame(
-  remark: string,
-  context: Context
-): Promise<void> {
+export async function mainFrame(remark: string, context: Context): Promise<void> {
   const base = unwrap(context, (_: Context) => ({ value: remark }))
   try {
-    const { interaction: event, version } = unwrapRemark<RmrkInteraction>(
-      remark.toString()
-    )
+    const { interaction: event, version } = unwrapRemark<RmrkInteraction>(remark.toString())
     pending(event, base.blockNumber)
 
     if (version === '2.0.0') {
-      logger.error(
-        `[RMRK::2.0.0] should be handled by different handler ${remark}`
-      )
+      logger.error(`[RMRK::2.0.0] should be handled by different handler ${remark}`)
       return
     }
 

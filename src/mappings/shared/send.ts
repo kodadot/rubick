@@ -15,10 +15,7 @@ export async function send(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
 
   try {
-    const { value, caller, timestamp, blockNumber, version } = unwrap(
-      context,
-      getInteraction
-    )
+    const { value, caller, timestamp, blockNumber, version } = unwrap(context, getInteraction)
     interaction = value
 
     const nft = await get<NFTEntity>(context.store, NFTEntity, interaction.id)

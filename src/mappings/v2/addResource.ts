@@ -19,32 +19,17 @@ export async function addResource(context: Context) {
 
   try {
     const getter = getAddRes
-    const {
-      value: interaction,
-      caller,
-      timestamp,
-      blockNumber,
-      version,
-    } = unwrap(context, getter)
+    const { value: interaction, caller, timestamp, blockNumber, version } = unwrap(context, getter)
     const nft = await get<NFTEntity>(context.store, NFTEntity, interaction.id)
     plsNotBe(burned, nft)
     isIssuerOrElseError(nft, caller)
     const isPending = nft.currentOwner !== caller
     nft.updatedAt = timestamp
 
-    const final = await getOrCreate(
-      context.store,
-      Resource,
-      interaction.value.id,
-      { ...interaction.value }
-    )
+    const final = await getOrCreate(context.store, Resource, interaction.value.id, { ...interaction.value })
 
     if (interaction.value.metadata) {
-      const metadata = await handleMetadata(
-        interaction.value.metadata,
-        '',
-        context.store
-      )
+      const metadata = await handleMetadata(interaction.value.metadata, '', context.store)
       logger.debug(`[${OPERATION}] ${nft.id} metadata ${metadata?.id}`)
       final.meta = metadata
     }

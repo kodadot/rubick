@@ -1,10 +1,4 @@
-import {
-  CacheStatus,
-  Collector,
-  MetadataEntity,
-  Series,
-  Spotlight,
-} from '../../model/generated'
+import { CacheStatus, Collector, MetadataEntity, Series, Spotlight } from '../../model/generated'
 import { create, EntityWithId, getOrCreate } from './entity'
 import { camelCase } from './helper'
 import logger, { logError } from './logger'
@@ -110,10 +104,7 @@ enum MetadataQuery {
     RETURNING ce.id, me.id;`,
 }
 
-export async function updateMetadataCache(
-  timestamp: Date,
-  store: Store
-): Promise<void> {
+export async function updateMetadataCache(timestamp: Date, store: Store): Promise<void> {
   const lastUpdate = await getOrCreate(store, CacheStatus, METADATA_STATUS_ID, {
     id: METADATA_STATUS_ID,
     lastBlockTimestamp: new Date(0),
@@ -127,9 +118,7 @@ export async function updateMetadataCache(
       await store.save(lastUpdate)
       logger.info('💚 [METADATA CACHE UPDATE]')
     } catch (e) {
-      logError(e, (err) =>
-        logger.error(`[METADATA CACHE UPDATE] ${err.message}`)
-      )
+      logError(e, (err) => logger.error(`[METADATA CACHE UPDATE] ${err.message}`))
     }
   }
 }
@@ -138,16 +127,12 @@ function getPassedMinutes(timestamp: Date, lastBlockTimestamp: Date): number {
   return (timestamp.getTime() - lastBlockTimestamp.getTime()) / TO_MINUTES
 }
 
-export async function updateCache(
-  timestamp: Date,
-  store: Store
-): Promise<void> {
+export async function updateCache(timestamp: Date, store: Store): Promise<void> {
   let lastUpdate = await getOrCreate(store, CacheStatus, STATUS_ID, {
     id: STATUS_ID,
     lastBlockTimestamp: new Date(0),
   })
-  const passedMins =
-    (timestamp.getTime() - lastUpdate.lastBlockTimestamp.getTime()) / 60_000
+  const passedMins = (timestamp.getTime() - lastUpdate.lastBlockTimestamp.getTime()) / 60_000
   logger.info(`[CACHE UPDATE] PASSED TIME - ${passedMins} MINS`)
   if (passedMins > DELAY_MIN) {
     try {
@@ -165,11 +150,7 @@ export async function updateCache(
   }
 }
 
-async function updateEntityCache<T>(
-  store: Store,
-  entityConstructor: EntityConstructor<T>,
-  query: Query
-): Promise<T[]> {
+async function updateEntityCache<T>(store: Store, entityConstructor: EntityConstructor<T>, query: Query): Promise<T[]> {
   const result: any[] = await store.query(query)
   const entities = result.map((el) => {
     const entity: T = new entityConstructor()

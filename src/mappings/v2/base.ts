@@ -15,13 +15,7 @@ const OPERATION = Action.BASE
 export async function base(context: Context) {
   let base: Optional<CreatedBase>
   try {
-    const {
-      value: interaction,
-      caller,
-      timestamp,
-      blockNumber,
-      version,
-    } = unwrap(context, getCreateBase)
+    const { value: interaction, caller, timestamp, blockNumber, version } = unwrap(context, getCreateBase)
     const base = interaction.value as CreatedBase
     const id = baseId(blockNumber, base.symbol)
     const final = await createUnlessNotExist(id, Base, context)

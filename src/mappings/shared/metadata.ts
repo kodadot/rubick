@@ -7,11 +7,7 @@ import { MetadataEntity as Metadata } from '../../model/generated'
 import { fetchMetadata } from '../utils/metadata'
 import { attributeFrom, Store } from '../utils/types'
 
-export async function handleMetadata(
-  id: string,
-  name: string,
-  store: Store
-): Promise<Optional<Metadata>> {
+export async function handleMetadata(id: string, name: string, store: Store): Promise<Optional<Metadata>> {
   const meta = await get<Metadata>(store, Metadata, id)
   if (meta) {
     return meta

@@ -19,11 +19,7 @@ export async function changeIssuer(context: Context) {
     const { value, caller } = unwrap(context, getInteraction)
     interaction = value
     plsBe(withMeta, interaction)
-    const collection = await get<CollectionEntity>(
-      context.store,
-      CollectionEntity,
-      interaction.id
-    )
+    const collection = await get<CollectionEntity>(context.store, CollectionEntity, interaction.id)
     plsBe<CollectionEntity>(real, collection)
     isOwnerOrElseError(collection, caller)
     collection.currentOwner = interaction.value

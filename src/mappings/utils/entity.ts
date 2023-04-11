@@ -57,11 +57,7 @@ export async function get<T extends EntityWithId>(
   return store.findOneBy<T>(entityConstructor, where)
 }
 
-export function create<T extends EntityWithId>(
-  entityConstructor: EntityConstructor<T>,
-  id: string,
-  init: Partial<T>
-) {
+export function create<T extends EntityWithId>(entityConstructor: EntityConstructor<T>, id: string, init: Partial<T>) {
   const entity = new entityConstructor()
   entity.id = id
   Object.assign(entity, init)
@@ -70,13 +66,8 @@ export function create<T extends EntityWithId>(
 
 // RMRK2 Specific utils
 
-export async function findRootItemById(
-  store: Store,
-  id: string
-): Promise<NFTEntity> {
-  const result = await findByRawQuery(store, NFTEntity, rootOwnerQuery, [
-    id,
-  ]).then(takeFirst)
+export async function findRootItemById(store: Store, id: string): Promise<NFTEntity> {
+  const result = await findByRawQuery(store, NFTEntity, rootOwnerQuery, [id]).then(takeFirst)
   if (!result) {
     throw new Error(`Root item with id ${id} not found`)
   }

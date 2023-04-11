@@ -17,35 +17,21 @@ export async function acceptResource(context: Context) {
   let interaction: Optional<Accept> = null
 
   try {
-    const {
-      value: interaction,
-      caller,
-      timestamp,
-      blockNumber,
-      version,
-    } = unwrap(context, getAcceptResource)
+    const { value: interaction, caller, timestamp, blockNumber, version } = unwrap(context, getAcceptResource)
     const nft = await get<NFTEntity>(context.store, NFTEntity, interaction.id)
     plsNotBe(burned, nft)
     isOwnerOrElseError(nft, caller)
 
     switch (interaction.entity_type) {
       case 'NFT':
-        const pendingNFT = await get<NFTEntity>(
-          context.store,
-          NFTEntity,
-          interaction.entity_id
-        )
+        const pendingNFT = await get<NFTEntity>(context.store, NFTEntity, interaction.entity_id)
         plsNotBe(burned, nft)
         pendingNFT.updatedAt = timestamp
         pendingNFT.pending = false
         await context.store.save(nft)
         break
       case 'RES':
-        const res = await get<Resource>(
-          context.store,
-          Resource,
-          interaction.entity_id
-        )
+        const res = await get<Resource>(context.store, Resource, interaction.entity_id)
         res.pending = false
         await context.store.save(res)
         break
@@ -53,10 +39,7 @@ export async function acceptResource(context: Context) {
         throw new Error(`Unknown entity type ${interaction.entity_type}`)
     }
 
-    success(
-      OPERATION,
-      `${interaction.entity_type}::${interaction.entity_id} in ${nft.id} from ${caller}`
-    )
+    success(OPERATION, `${interaction.entity_type}::${interaction.entity_id} in ${nft.id} from ${caller}`)
     await context.store.save(nft)
     await createEvent(
       nft,

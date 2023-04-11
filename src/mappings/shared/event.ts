@@ -17,17 +17,11 @@ export async function createEvent(
 ) {
   try {
     const newEventId = eventId(final.id, interaction)
-    const event = create<Event>(
-      Event,
-      newEventId,
-      eventFrom(interaction, call, meta, currentOwner)
-    )
+    const event = create<Event>(Event, newEventId, eventFrom(interaction, call, meta, currentOwner))
     event.nft = final
     event.version = toVersion(call.version || final.version)
     await store.save(event)
   } catch (e) {
-    logError(e, (e) =>
-      logger.warn(`[[${interaction}]]: ${final.id} Reason: ${e.message}`)
-    )
+    logError(e, (e) => logger.warn(`[[${interaction}]]: ${final.id} Reason: ${e.message}`))
   }
 }

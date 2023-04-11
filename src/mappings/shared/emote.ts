@@ -17,10 +17,7 @@ export async function emote(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
 
   try {
-    const { value, caller, timestamp, version } = unwrap(
-      context,
-      getInteraction
-    )
+    const { value, caller, timestamp, version } = unwrap(context, getInteraction)
     interaction = value
     plsBe(withMeta, interaction)
     const nft = await get<NFTEntity>(context.store, NFTEntity, interaction.id)

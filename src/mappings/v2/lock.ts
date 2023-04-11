@@ -18,11 +18,7 @@ export async function lockCollection(context: Context) {
     const { value, caller } = unwrap(context, getInteraction)
     interaction = value
     plsBe(withMeta, interaction)
-    const collection = await get<CollectionEntity>(
-      context.store,
-      CollectionEntity,
-      interaction.id
-    )
+    const collection = await get<CollectionEntity>(context.store, CollectionEntity, interaction.id)
     plsBe<CollectionEntity>(real, collection)
     isOwnerOrElseError(collection, caller)
     // TODO: implement lock

@@ -18,13 +18,7 @@ export async function equippable(context: Context) {
 
   try {
     const getE = getAs<Interaction.EQUIPPABLE>()
-    const {
-      value: equip,
-      caller,
-      timestamp,
-      blockNumber,
-      version,
-    } = unwrap(context, getE)
+    const { value: equip, caller, timestamp, blockNumber, version } = unwrap(context, getE)
     interaction = equip
     const nft = await get<NFTEntity>(context.store, NFTEntity, interaction.id)
     plsBe(real, nft)

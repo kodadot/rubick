@@ -1,18 +1,7 @@
-import {
-  SubstrateCall,
-  SubstrateExtrinsic,
-} from '@subsquid/substrate-processor'
+import { SubstrateCall, SubstrateExtrinsic } from '@subsquid/substrate-processor'
 import { Call } from '../../types/support'
 import { addressOf } from './helper'
-import {
-  ArchiveCall,
-  BaseCall,
-  BatchArg,
-  CallWith,
-  Context,
-  Transfer,
-  UnwrapFunc,
-} from './types'
+import { ArchiveCall, BaseCall, BatchArg, CallWith, Context, Transfer, UnwrapFunc } from './types'
 const PREFIXES = ['0x726d726b', '0x524d524b', 'rmrk', 'RMRK']
 
 export interface RemarkResult extends BaseCall {
@@ -20,25 +9,16 @@ export interface RemarkResult extends BaseCall {
   extra?: BatchArg[]
 }
 
-const startsWithRemark = (
-  value: string,
-  prefixes: string[] = PREFIXES
-): boolean =>
+const startsWithRemark = (value: string, prefixes: string[] = PREFIXES): boolean =>
   prefixes.length === 0 || prefixes.some((word) => value.startsWith(word))
 
-const isSystemRemark = (
-  call: ArchiveCall,
-  prefixes: string[] = PREFIXES
-): boolean =>
-  call.__kind === 'System' &&
-  call.value.__kind === 'remark' &&
-  startsWithRemark(call.value.remark, prefixes)
+const isSystemRemark = (call: ArchiveCall, prefixes: string[] = PREFIXES): boolean =>
+  call.__kind === 'System' && call.value.__kind === 'remark' && startsWithRemark(call.value.remark, prefixes)
 
 const isUtilityBatch = (call?: SubstrateCall) =>
   call && (call.name === 'Utility.batch_all' || call.name === 'Utility.batch')
 
-const filterTransfers = ({ __kind, value }: ArchiveCall) =>
-  __kind === 'Balances' && value.__kind === 'transfer'
+const filterTransfers = ({ __kind, value }: ArchiveCall) => __kind === 'Balances' && value.__kind === 'transfer'
 
 const filterRemarks = (call: ArchiveCall) => isSystemRemark(call)
 
@@ -77,23 +57,15 @@ type RemarkOrBatch = string | SubstrateExtrinsic
 
 export function extractExtra(ctx: Context): Transfer[] {
   if (isUtilityBatch(ctx.call.parent)) {
-    return ctx.call.parent?.args.calls
-      .filter(filterTransfers)
-      .map(mapToSquidCall)
-      .map(toBalanceTransfer)
+    return ctx.call.parent?.args.calls.filter(filterTransfers).map(mapToSquidCall).map(toBalanceTransfer)
   }
 
   return []
 }
 
-export function extractRemark(
-  processed: RemarkOrBatch,
-  context: Context
-): RemarkResult[] {
+export function extractRemark(processed: RemarkOrBatch, context: Context): RemarkResult[] {
   if (typeof processed === 'string') {
-    return startsWithRemark(processed)
-      ? [toRemarkResult(processed, toBaseCall(context))]
-      : []
+    return startsWithRemark(processed) ? [toRemarkResult(processed, toBaseCall(context))] : []
   }
 
   return []

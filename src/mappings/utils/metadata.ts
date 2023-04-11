@@ -23,13 +23,10 @@ export const fetchMetadata = async <T>(metadata: string): Promise<T> => {
 export const fetchAllMetadata = async <T extends TokenMetadata>(
   metadata: string[]
 ): Promise<(Partial<MetadataEntity> & EntityWithId)[]> => {
-  const res = await Promise.allSettled(
-    metadata.map((meta) => fetchMetadata<T>(meta))
-  )
+  const res = await Promise.allSettled(metadata.map((meta) => fetchMetadata<T>(meta)))
   const fulfilled = res
     .map((result, index) => ({ ...result, id: metadata[index] }))
-    .filter((r) => r.status === 'fulfilled') as (PromiseFulfilledResult<T> &
-    EntityWithId)[]
+    .filter((r) => r.status === 'fulfilled') as (PromiseFulfilledResult<T> & EntityWithId)[]
   return fulfilled.map(({ value, id }) => makeCompatibleMetadata(id, value))
 }
 

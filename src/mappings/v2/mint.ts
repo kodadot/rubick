@@ -18,17 +18,10 @@ const OPERATION = Action.MINT
 export async function mintItem(context: Context): Promise<void> {
   let nft: Optional<Mint> = null
   try {
-    const { value, caller, timestamp, blockNumber, version } = unwrap(
-      context,
-      getCreateToken
-    )
+    const { value, caller, timestamp, blockNumber, version } = unwrap(context, getCreateToken)
     const { value: nft, recipient } = value as Mint
     plsBe(real, nft.collection)
-    const collection = await get<CollectionEntity>(
-      context.store,
-      CollectionEntity,
-      nft.collection
-    )
+    const collection = await get<CollectionEntity>(context.store, CollectionEntity, nft.collection)
     isOwnerOrElseError(collection, caller)
     const id = getNftId(nft, blockNumber)
     // const entity = await get<NFTEntity>(context.store, NFTEntity, id) // TODO: check if exists
@@ -76,13 +69,7 @@ export async function mintItem(context: Context): Promise<void> {
     await context.store.save(final)
     await context.store.save(collection)
     success(OPERATION, `${final.id} from ${caller}`)
-    await createEvent(
-      final,
-      Action.MINT,
-      { blockNumber, caller, timestamp, version },
-      '',
-      context.store
-    )
+    await createEvent(final, Action.MINT, { blockNumber, caller, timestamp, version }, '', context.store)
 
     if (final.royalty) {
       await createEvent(

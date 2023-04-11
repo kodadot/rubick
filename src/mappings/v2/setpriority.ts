@@ -21,28 +21,16 @@ export async function setPriority(context: Context) {
 
   try {
     const getter = getSetPriority
-    const {
-      value: interaction,
-      caller,
-      timestamp,
-      blockNumber,
-      version,
-    } = unwrap(context, getter)
+    const { value: interaction, caller, timestamp, blockNumber, version } = unwrap(context, getter)
     const nft = await get<NFTEntity>(context.store, NFTEntity, interaction.id)
     plsBe(real, nft)
     plsNotBe(burned, nft)
     isOwnerOrElseError(nft, caller)
     nft.updatedAt = timestamp
 
-    logger.info(
-      `[${OPERATION}] NEW PRIORITY ${interaction.value} for ${nft.id} from ${caller}`
-    )
+    logger.info(`[${OPERATION}] NEW PRIORITY ${interaction.value} for ${nft.id} from ${caller}`)
 
-    const resourceList = await findByIdList(
-      context.store,
-      Resource,
-      interaction.value
-    )
+    const resourceList = await findByIdList(context.store, Resource, interaction.value)
 
     if (resourceList.length !== interaction.value.length) {
       throw new Error(
