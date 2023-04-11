@@ -21,8 +21,7 @@ export async function lockCollection(context: Context) {
     const collection = await get<CollectionEntity>(context.store, CollectionEntity, interaction.id)
     plsBe<CollectionEntity>(real, collection)
     isOwnerOrElseError(collection, caller)
-    // TODO: implement lock
-    collection.max = Number(interaction.value)
+    collection.max = Number(collection.nftCount)
 
     success(OPERATION, `${collection.id} from ${caller}`)
     await context.store.save(collection)
