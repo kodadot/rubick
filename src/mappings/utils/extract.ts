@@ -10,7 +10,8 @@ export interface RemarkResult extends BaseCall {
 }
 
 const startsWithRemark = (value: string, prefixes: string[] = PREFIXES): boolean =>
-  prefixes.length === 0 || prefixes.some((word) => value.startsWith(word))
+  // eslint-disable-next-line unicorn/explicit-length-check
+  prefixes.length < 1 || prefixes.some((word) => value.startsWith(word))
 
 const isSystemRemark = (call: ArchiveCall, prefixes: string[] = PREFIXES): boolean =>
   call.__kind === 'System' && call.value.__kind === 'remark' && startsWithRemark(call.value.remark, prefixes)
