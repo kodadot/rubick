@@ -1,11 +1,16 @@
+default := 'squid'
+
 process: build
 	node -r dotenv/config lib/processor.js
 
 serve:
 	@npx squid-graphql-server
 
-up:
-  docker compose up
+up *FLAGS:
+  docker compose up {{FLAGS}}
+
+upd:
+	@just up -d
 
 pull:
   docker compose pull
@@ -32,11 +37,13 @@ explore:
 	--archive https://kusama.archive.subsquid.io/graphql \
 	--out kusamaVersions.jsonl
 
-bug: down up
+bug: down upd
 
 reset: migrate
 
 quickstart: migrate process
+
+quick: build reset process
 
 prod TAG:
 	gh pr create --base release-{{TAG}}
@@ -47,14 +54,16 @@ migrate:
 update-db:
 	npx squid-typeorm-migration generate
 
+db: update-db migrate
+
 test:
   npm run test:unit
 
-improve TAG:
-	npx sqd squid:update rubick@{{TAG}}
+improve TAG=default:
+	npx sqd deploy -m {{TAG}}.yaml .
 
-release TAG:
-	npx sqd squid:release rubick@{{TAG}}
+release TAG=default:
+	npx sqd deploy -m {{TAG}}.yaml .
 
 kill TAG:
 	npx sqd squid:kill "rubick@{{TAG}}"
@@ -62,13 +71,15 @@ kill TAG:
 tail TAG:
 	npx sqd squid logs rubick@{{TAG}} -f
 
-brutal TAG:
-	npx sqd squid:update rubick@{{TAG}} --hardReset
+brutal TAG=default:
+	npx sqd deploy —hard -m {{TAG}}.yaml .
 
 update-deps:
-	npx npm-check-updates -u
+	npx npm-check-updates -ux
 
 exec:
 	docker exec -it rubick-db-1 psql -U postgres -d squid
 
 check: codegen build
+
+kek: bug quick

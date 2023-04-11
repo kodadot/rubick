@@ -19,4 +19,7 @@ export class Emote {
 
     @Column_("text", {nullable: false})
     value!: string
+
+    @Column_("text", {nullable: false})
+    version!: string
 }

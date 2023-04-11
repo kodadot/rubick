@@ -1,69 +1,46 @@
-import Axios from 'axios'
-import { ensure } from './helper'
-import logger from './logger'
-import { SanitizerFunc, SomethingWithMeta } from './types'
 
+import { ensure } from '@kodadot1/metasquid'
+import { TokenMetadata } from '@kodadot1/metasquid/types'
+import { $obtain } from '@kodadot1/minipfs'
+import { MetadataEntity } from '../../model'
+import { EntityWithId } from './entity'
+import logger from './logger'
+import { attributeFrom } from './types'
 export const BASE_URL = 'https://image.w.kodadot.xyz/'
 
-const api = Axios.create({
-  baseURL: BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  withCredentials: false,
-})
 
-export const sanitizeIpfsUrl = (ipfsUrl: string): string => {
-
-  const rr = /^ipfs:\/\/ipfs/
-  if (rr.test(ipfsUrl)) {
-    return ipfsUrl.replace('ipfs://', BASE_URL)
-  }
-
-  const r = /^ipfs:\/\//
-  if (r.test(ipfsUrl)) {
-    return ipfsUrl.replace('ipfs://', `${BASE_URL}ipfs/`)
-  }
-
-  return ipfsUrl
-}
-
-export const fetchMetadata = async <T>(
-  rmrk: SomethingWithMeta,
-  sanitizer: SanitizerFunc = sanitizeIpfsUrl
-): Promise<T> => {
+export const fetchMetadata = async <T>(metadata: string): Promise<T> => {
   try {
-    if (!rmrk.metadata) {
-      return ensure<T>({})
+    if (!metadata) {
+      return ensure<T>({});
     }
-
-    const { status, data } = await api.get(sanitizer(rmrk.metadata))
-    logger.watch('[IPFS]', status, rmrk.metadata)
-    if (status < 400) {
-      return data as T
-    }
+    return await $obtain<T>(metadata, ['rmrk', 'infura_kodadot1'], true);
   } catch (e) {
-    logger.warn('IPFS Err', e)
+    logger.error(`[MINIPFS] ${e}}`);
   }
 
-  return ensure<T>({})
-}
+  return ensure<T>({});
+};
 
-export const fetchMimeType = async (ipfsLink?: string, sanitizer: SanitizerFunc = sanitizeIpfsUrl): Promise<string | undefined> => {
-  if (!ipfsLink) {
-    return undefined
-  }
+export const fetchAllMetadata = async <T extends TokenMetadata>(
+  metadata: string[],
+): Promise<(Partial<MetadataEntity> & EntityWithId)[]> => {
+  const res = await Promise.allSettled(
+    metadata.map((meta) => fetchMetadata<T>(meta)),
+  );
+  const fulfilled = res
+    .map((result, index) => ({ ...result, id: metadata[index] }))
+    .filter((r) => r.status === 'fulfilled') as (PromiseFulfilledResult<T> &
+  EntityWithId)[];
+  return fulfilled.map(({ value, id }) => makeCompatibleMetadata(id, value));
+};
 
-  const assetUrl = sanitizer(ipfsLink)
-
-  try {
-    const { headers } = await api.head(assetUrl)
-    return headers['content-type']
-  } catch (e: any) {
-    logger.warn(`[MIME TYPE] Unable to access type of ${assetUrl}\n\nReason ${e.message}`)
-    return undefined
-  }
-}
-
-
-export default api
+export const makeCompatibleMetadata = (id: string, metadata: TokenMetadata): Partial<MetadataEntity> & EntityWithId => ({
+  id,
+  description: metadata.description || '',
+  image: metadata.image || metadata.thumbnailUri || metadata.mediaUri,
+  animationUrl: metadata.animation_url || metadata.mediaUri,
+  attributes: metadata.attributes?.map(attributeFrom) || [],
+  name: metadata.name,
+  type: metadata.type || '',
+});
