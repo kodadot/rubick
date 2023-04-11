@@ -1,12 +1,12 @@
 import { real, burned, plsBe, plsNotBe } from '@kodadot1/metasquid/consolidator'
 import { isTransferable } from '@kodadot1/minimark/v2'
-import { CollectionEntity, NFTEntity } from '../../model/generated'
+import { Base, CollectionEntity, NFTEntity } from '../../model/generated'
 import { BatchArg, ExtraCall, RmrkInteraction, Transfer } from './types'
 import { serializer } from './serializer'
 
 import { isAddress } from './helper'
 
-type Entity = CollectionEntity | NFTEntity
+type Entity = CollectionEntity | NFTEntity | Base
 
 export function transferable({ transferable }: NFTEntity) {
   return !!transferable
