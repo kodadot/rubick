@@ -13,9 +13,12 @@ import { getCreateCollection } from './getters'
 const OPERATION = Action.CREATE
 
 export async function createCollection(context: Context): Promise<void> {
-  let collection: Optional<Collection> = undefined
+  let collection: Optional<Collection>
   try {
-    const { value, caller, timestamp, blockNumber, version } = unwrap(context, getCreateCollection);
+    const { value, caller, timestamp, blockNumber, version } = unwrap(
+      context,
+      getCreateCollection
+    )
     collection = value.value
     plsBe<string>(real, collection.id)
     const entity = await get<CollectionEntity>(
@@ -43,7 +46,11 @@ export async function createCollection(context: Context): Promise<void> {
     final.hash = md5(collection.id)
 
     if (final.metadata) {
-      const metadata = await handleMetadata(final.metadata, final.name, context.store)
+      const metadata = await handleMetadata(
+        final.metadata,
+        final.name,
+        context.store
+      )
       final.meta = metadata
       final.image = metadata?.image
       final.media = metadata?.animationUrl
@@ -51,7 +58,7 @@ export async function createCollection(context: Context): Promise<void> {
         final.name = metadata.name
       }
     }
-    
+
     await context.store.save(final).then(() => {
       success(OPERATION, final.id)
     })
