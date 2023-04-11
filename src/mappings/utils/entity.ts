@@ -69,8 +69,7 @@ export function create<T extends EntityWithId>(
 }
 
 
-// Specific utils
-
+// RMRK2 Specific utils
 
 export async function findRootItemById(store: Store, id: string): Promise<NFTEntity> {
   const result = await findByRawQuery(store, NFTEntity, rootOwnerQuery, [id]).then(takeFirst)
