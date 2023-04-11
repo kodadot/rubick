@@ -3,7 +3,7 @@ import { getOrFail as get } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
 
 import { CollectionEntity } from '../../model'
-import { unwrap } from '../shared'
+import { unwrap } from '../utils'
 import { isOwnerOrElseError, withMeta } from '../utils/consolidator'
 import { getInteraction } from '../utils/getters'
 import { error, success } from '../utils/logger'
