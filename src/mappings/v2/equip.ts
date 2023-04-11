@@ -17,7 +17,13 @@ export async function equip(context: Context) {
   let interaction: Optional<Equip> = null
 
   try {
-    const { value: equip, caller, timestamp, blockNumber, version } = unwrap(context, getEquip);
+    const {
+      value: equip,
+      caller,
+      timestamp,
+      blockNumber,
+      version,
+    } = unwrap(context, getEquip)
     interaction = equip
     const nft = await get<NFTEntity>(context.store, NFTEntity, interaction.id)
     plsNotBe(burned, nft)
@@ -28,8 +34,13 @@ export async function equip(context: Context) {
 
     success(OPERATION, `${nft.id} from ${caller}`)
     await context.store.save(nft)
-    await createEvent(nft, OPERATION, { blockNumber, caller, timestamp, version }, `${interaction.id}::${interaction.baseslot}`, context.store)
-
+    await createEvent(
+      nft,
+      OPERATION,
+      { blockNumber, caller, timestamp, version },
+      `${interaction.id}::${interaction.baseslot}`,
+      context.store
+    )
   } catch (e) {
     error(e, OPERATION, JSON.stringify(interaction))
   }
