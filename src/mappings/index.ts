@@ -16,7 +16,11 @@ export async function handleRemark(context: Context): Promise<void> {
   }
 }
 
-export async function versionRouter(value: string, context: Context, version: VersionedRemark): Promise<void> {
+export async function versionRouter(
+  value: string,
+  context: Context,
+  version: VersionedRemark
+): Promise<void> {
   // logger.debug(`[${event}]::${version}`)
 
   if (version === '2.0.0') {
@@ -31,5 +35,3 @@ export async function versionRouter(value: string, context: Context, version: Ve
   // await updateCache(new Date(), context.store)
   await updateMetadataCache(new Date(), context.store)
 }
-
-
