@@ -15,7 +15,10 @@ export async function send(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
 
   try {
-    const { value, caller, timestamp, blockNumber, version } = unwrap(context, getInteraction);
+    const { value, caller, timestamp, blockNumber, version } = unwrap(
+      context,
+      getInteraction
+    )
     interaction = value
 
     const nft = await get<NFTEntity>(context.store, NFTEntity, interaction.id)
@@ -28,7 +31,14 @@ export async function send(context: Context) {
 
     success(OPERATION, `${nft.id} to ${interaction.value}`)
     await context.store.save(nft)
-    await createEvent(nft, Action.SEND, { blockNumber, caller, timestamp, version }, interaction.value || '', context.store, originalOwner)
+    await createEvent(
+      nft,
+      Action.SEND,
+      { blockNumber, caller, timestamp, version },
+      interaction.value || '',
+      context.store,
+      originalOwner
+    )
   } catch (e) {
     error(e, OPERATION, JSON.stringify(interaction))
   }
