@@ -15,12 +15,12 @@ export async function createOrElseThrow<T extends EntityWithId>(
   id: string,
   init: Partial<T>
 ): Promise<T> {
-    const entity = await get(store, entityConstructor, id)
-    if (entity) {
-        throw new Error(`Entity with id ${id} already exists`)
-    }
+  const entity = await get(store, entityConstructor, id)
+  if (entity) {
+    throw new Error(`Entity with id ${id} already exists`)
+  }
 
-    return create(entityConstructor, id, init)
+  return create(entityConstructor, id, init)
 }
 
 /**
@@ -68,11 +68,15 @@ export function create<T extends EntityWithId>(
   return entity
 }
 
-
 // RMRK2 Specific utils
 
-export async function findRootItemById(store: Store, id: string): Promise<NFTEntity> {
-  const result = await findByRawQuery(store, NFTEntity, rootOwnerQuery, [id]).then(takeFirst)
+export async function findRootItemById(
+  store: Store,
+  id: string
+): Promise<NFTEntity> {
+  const result = await findByRawQuery(store, NFTEntity, rootOwnerQuery, [
+    id,
+  ]).then(takeFirst)
   if (!result) {
     throw new Error(`Root item with id ${id} not found`)
   }
