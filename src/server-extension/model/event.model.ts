@@ -1,4 +1,4 @@
-import { Field, ObjectType } from 'type-graphql';
+import { Field, Int, ObjectType } from "type-graphql";
 
 @ObjectType()
 export class EventEntity {
@@ -48,22 +48,55 @@ export class LastEventEntity {
   @Field(() => String, { nullable: false })
   value!: String;
 
-  @Field(() => String, { nullable: false, name: 'currentOwner' })
+  @Field(() => String, { nullable: false, name: "currentOwner" })
   current_owner!: String;
 
   @Field(() => String, { nullable: true })
   image!: String;
 
-  @Field(() => String, { nullable: true, name: 'animationUrl' })
+  @Field(() => String, { nullable: true, name: "animationUrl" })
   animation_url!: string | undefined | null;
 
-  @Field(() => String, { nullable: false, name: 'collectionId' })
+  @Field(() => String, { nullable: false, name: "collectionId" })
   collection_id!: string;
 
-  @Field(() => String, { nullable: false, name: 'collectionName' })
+  @Field(() => String, { nullable: false, name: "collectionName" })
   collection_name!: string;
 
+  @Field(() => [Resource], { nullable: true })
+  resources!: Resource[];
+
   constructor(props: Partial<LastEventEntity>) {
+    Object.assign(this, props);
+  }
+}
+
+@ObjectType()
+export class Resource {
+  @Field(() => String, { nullable: false })
+  id!: string;
+
+  @Field(() => String, { nullable: true })
+  src!: string;
+
+  @Field(() => String, { nullable: true })
+  metadata!: string;
+
+  @Field(() => String, { nullable: true })
+  slot!: string;
+
+  @Field(() => String, { nullable: true })
+  thumb!: string;
+
+  @Field(() => Int, { nullable: false })
+  priority!: number;
+
+  @Field(() => Boolean, { nullable: false })
+  pending!: boolean;
+
+  nftId!: string;
+
+  constructor(props: Partial<Resource>) {
     Object.assign(this, props);
   }
 }
