@@ -3,7 +3,12 @@ import { Optional } from '@kodadot1/metasquid/types'
 
 import { NFTEntity } from '../../model'
 import { unwrap } from '../utils'
-import { isBuyLegalOrElseError, isInteractive, isMoreTransferable, isPositiveOrElseError } from '../utils/consolidator'
+import {
+  isBuyLegalOrElseError,
+  isInteractive,
+  isMoreTransferable,
+  isPositiveOrElseError,
+} from '../utils/consolidator'
 import { getInteractionWithExtra } from '../utils/getters'
 import { error, success } from '../utils/logger'
 import { Action, Context, RmrkInteraction } from '../utils/types'
@@ -16,9 +21,17 @@ export async function buy(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
 
   try {
-    const { value, caller, timestamp, blockNumber, extra } = unwrap(context, getBuy);
+    const { value, caller, timestamp, blockNumber, extra } = unwrap(
+      context,
+      getBuy
+    )
     interaction = value
-    const nft = await getWith<NFTEntity>(context.store, NFTEntity, interaction.id, { collection: true })
+    const nft = await getWith<NFTEntity>(
+      context.store,
+      NFTEntity,
+      interaction.id,
+      { collection: true }
+    )
     isInteractive(nft)
     isPositiveOrElseError(nft.price, true)
     isMoreTransferable(nft, blockNumber)
@@ -33,7 +46,14 @@ export async function buy(context: Context) {
 
     success(OPERATION, `${nft.id} from ${caller}`)
     await context.store.save(nft)
-    await createEvent(nft, OPERATION, { blockNumber, caller, timestamp }, String(originalPrice), context.store, originalOwner)
+    await createEvent(
+      nft,
+      OPERATION,
+      { blockNumber, caller, timestamp },
+      String(originalPrice),
+      context.store,
+      originalOwner
+    )
   } catch (e) {
     error(e, OPERATION, JSON.stringify(interaction))
   }
