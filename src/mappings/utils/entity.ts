@@ -15,12 +15,12 @@ export async function createOrElseThrow<T extends EntityWithId>(
   id: string,
   init: Partial<T>
 ): Promise<T> {
-    const entity = await get(store, entityConstructor, id)
-    if (entity) {
-        throw new Error(`Entity with id ${id} already exists`)
-    }
+  const entity = await get(store, entityConstructor, id)
+  if (entity) {
+    throw new Error(`Entity with id ${id} already exists`)
+  }
 
-    return create(entityConstructor, id, init)
+  return create(entityConstructor, id, init)
 }
 
 /**
@@ -57,17 +57,12 @@ export async function get<T extends EntityWithId>(
   return store.findOneBy<T>(entityConstructor, where)
 }
 
-export function create<T extends EntityWithId>(
-  entityConstructor: EntityConstructor<T>,
-  id: string,
-  init: Partial<T>
-) {
+export function create<T extends EntityWithId>(entityConstructor: EntityConstructor<T>, id: string, init: Partial<T>) {
   const entity = new entityConstructor()
   entity.id = id
   Object.assign(entity, init)
   return entity
 }
-
 
 // RMRK2 Specific utils
 

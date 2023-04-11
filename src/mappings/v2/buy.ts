@@ -16,7 +16,7 @@ export async function buy(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
 
   try {
-    const { value, caller, timestamp, blockNumber, extra } = unwrap(context, getBuy);
+    const { value, caller, timestamp, blockNumber, extra } = unwrap(context, getBuy)
     interaction = value
     const nft = await getWith<NFTEntity>(context.store, NFTEntity, interaction.id, { collection: true })
     isInteractive(nft)
@@ -33,7 +33,14 @@ export async function buy(context: Context) {
 
     success(OPERATION, `${nft.id} from ${caller}`)
     await context.store.save(nft)
-    await createEvent(nft, OPERATION, { blockNumber, caller, timestamp }, String(originalPrice), context.store, originalOwner)
+    await createEvent(
+      nft,
+      OPERATION,
+      { blockNumber, caller, timestamp },
+      String(originalPrice),
+      context.store,
+      originalOwner
+    )
   } catch (e) {
     error(e, OPERATION, JSON.stringify(interaction))
   }

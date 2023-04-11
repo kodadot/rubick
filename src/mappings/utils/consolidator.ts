@@ -1,19 +1,18 @@
-import { BatchArg, ExtraCall, RmrkInteraction, Transfer } from './types'
+import { real, burned, plsBe, plsNotBe } from '@kodadot1/metasquid/consolidator'
+import { isTransferable } from '@kodadot1/minimark/v2'
 import { CollectionEntity, NFTEntity } from '../../model/generated'
+import { BatchArg, ExtraCall, RmrkInteraction, Transfer } from './types'
 import { serializer } from './serializer'
 
-import { real, burned, plsBe, plsNotBe } from '@kodadot1/metasquid/consolidator'
-import { isTransferable} from '@kodadot1/minimark/v2'
 import { isAddress } from './helper'
 
 type Entity = CollectionEntity | NFTEntity
-
 
 export function transferable({ transferable }: NFTEntity) {
   return !!transferable
 }
 
-export function withMeta(interaction: RmrkInteraction): interaction is RmrkInteraction  {
+export function withMeta(interaction: RmrkInteraction): interaction is RmrkInteraction {
   return !!interaction.value
 }
 
@@ -24,7 +23,6 @@ export function isOwner(entity: Entity, caller: string) {
 export function isIssuer(entity: Entity, caller: string) {
   return entity.issuer === caller
 }
-
 
 export function isOwnerOrElseError(entity: Entity, caller: string) {
   if (!isOwner(entity, caller)) {
@@ -60,7 +58,9 @@ export function isMoreTransferable({ blockNumber, transferable }: NFTEntity, cur
   const transfer = Number(transferable || 1)
   const canTransfer = isTransferable({ blockNumber: block, transferable: transfer }, Number(currentBlock))
   if (!canTransfer) {
-    throw new ReferenceError(`[CONSOLIDATE isMoreTransferable] Entity: ${blockNumber} Transferable: ${transferable} Current: ${currentBlock}`)
+    throw new ReferenceError(
+      `[CONSOLIDATE isMoreTransferable] Entity: ${blockNumber} Transferable: ${transferable} Current: ${currentBlock}`
+    )
   }
 }
 
@@ -71,18 +71,23 @@ export function isPositiveOrElseError(entity: bigint | number, excludeZero?: boo
 }
 
 export const isBalanceTransfer = ({ callIndex }: BatchArg): boolean => callIndex === '0x0400'
-const canBuy = (nft: NFTEntity) => ({ to, value }: Transfer) => isOwner(nft, to) && BigInt(value) >= BigInt(nft.price ?? 0)
+const canBuy =
+  (nft: NFTEntity) =>
+  ({ to, value }: Transfer) =>
+    isOwner(nft, to) && BigInt(value) >= BigInt(nft.price ?? 0)
 
 export function isBuyLegalOrElseError(entity: NFTEntity, extraCalls: Transfer[]) {
   const cb = canBuy(entity)
   const result = extraCalls.some(cb)
   if (!result) {
-    throw new ReferenceError(`[CONSOLIDATE ILLEGAL BUY] Entity: ${entity.id} CALLS: ${JSON.stringify(extraCalls, serializer)}`)
+    throw new ReferenceError(
+      `[CONSOLIDATE ILLEGAL BUY] Entity: ${entity.id} CALLS: ${JSON.stringify(extraCalls, serializer)}`
+    )
   }
 }
 
 // kodadot/rubick#6
-function paperCut({id}: NFTEntity, { remarkCount }: ExtraCall) {
+function paperCut({ id }: NFTEntity, { remarkCount }: ExtraCall) {
   if (remarkCount > 1) {
     throw new ReferenceError(`[CONSOLIDATE] Entity: ${id} should have only one remark per batch, got: ${remarkCount}`)
   }

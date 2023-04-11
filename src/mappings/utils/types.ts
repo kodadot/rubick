@@ -1,33 +1,41 @@
 import type { Store } from '@kodadot1/metasquid/types'
-import { CreatedCollection, CreatedNFT } from '@kodadot1/minimark/v1'
-import { CreatedCollection as NewCreatedCollection, CreatedNFT as NewCreatedNFT } from '@kodadot1/minimark/v2'
+import { CreatedCollection, CreatedNFT, InteractionValue } from '@kodadot1/minimark/v1'
+import {
+  CreatedCollection as NewCreatedCollection,
+  CreatedNFT as NewCreatedNFT,
+  InteractionValue as NewInteractionValue,
+} from '@kodadot1/minimark/v2'
 
 import { CallHandlerContext } from '@subsquid/substrate-processor'
-import { Attribute, CollectionEvent, Interaction as Action, Interaction } from '../../model/generated'
-import { RemarkResult } from './extract'
-import { InteractionValue as NewInteractionValue } from '@kodadot1/minimark/v2'
-import { InteractionValue } from '@kodadot1/minimark/v1'
 import { VersionedRemark } from '@kodadot1/minimark/shared'
 import { BaseCall as SquidCall } from '@kodadot1/metasquid/types'
-
-export { Action, Store }
+import { Attribute, CollectionEvent, Interaction as Action, Interaction } from '../../model/generated'
+import { RemarkResult } from './extract'
 
 export const getNftId = (nft: any, blocknumber?: string | number): string => {
-  return `${blocknumber ? blocknumber + '-' : '' }${nft.collection}-${nft.instance || nft.symbol || nft.name}-${nft.sn}`
+  return `${blocknumber ? blocknumber + '-' : ''}${nft.collection}-${nft.instance || nft.symbol || nft.name}-${nft.sn}`
 }
 
-
-export function collectionEventFrom(interaction: Action.MINT | Action.CHANGEISSUER,  { blockNumber, caller, timestamp }: RemarkResult, meta: string): CollectionEvent {
+export function collectionEventFrom(
+  interaction: Action.MINT | Action.CHANGEISSUER,
+  { blockNumber, caller, timestamp }: RemarkResult,
+  meta: string
+): CollectionEvent {
   return new CollectionEvent({
     interaction,
     blockNumber,
     caller,
     timestamp,
-    meta
+    meta,
   })
 }
 
-export function eventFrom<T>(interaction: T, { blockNumber, caller, timestamp }: BaseCall, meta: string, currentOwner?: string): IEvent<T> {
+export function eventFrom<T>(
+  interaction: T,
+  { blockNumber, caller, timestamp }: BaseCall,
+  meta: string,
+  currentOwner?: string
+): IEvent<T> {
   return {
     interaction,
     blockNumber: BigInt(blockNumber),
@@ -39,31 +47,34 @@ export function eventFrom<T>(interaction: T, { blockNumber, caller, timestamp }:
 }
 
 export function attributeFrom(attribute: MetadataAttribute): Attribute {
-  return new Attribute({}, {
-    display: String(attribute.display_type),
-    trait: String(attribute.trait_type),
-    value: String(attribute.value)
-  })
+  return new Attribute(
+    {},
+    {
+      display: String(attribute.display_type),
+      trait: String(attribute.trait_type),
+      value: String(attribute.value),
+    }
+  )
 }
 
-export type Context = CallHandlerContext<Store> 
+export type Context = CallHandlerContext<Store>
 
 export type Optional<T> = T | null
-export type UnwrapFunc<T> = (ctx: Context) => T;
-export type SanitizerFunc = (url: string) => string;
-export type CallWith<T> = BaseCall & T;
+export type UnwrapFunc<T> = (ctx: Context) => T
+export type SanitizerFunc = (url: string) => string
+export type CallWith<T> = BaseCall & T
 
 export type BaseCall = SquidCall & {
   version?: VersionedRemark
 }
 
 export interface IEvent<T = Action> {
-  interaction: T;
-  blockNumber: bigint,
-  caller: string,
-  currentOwner: string,
-  timestamp: Date,
-  meta: string;
+  interaction: T
+  blockNumber: bigint
+  caller: string
+  currentOwner: string
+  timestamp: Date
+  meta: string
 }
 
 // TODO: use
@@ -73,10 +84,10 @@ type Bool<T extends boolean = false> = T
 // Conditional types
 export type RmrkInteraction<T extends boolean = false> = T extends false ? InteractionValue : NewInteractionValue
 export type NFT<T extends boolean = false> = T extends false ? CreatedNFT : NewCreatedNFT
-export type Collection <T extends boolean = false> = NewType<Bool<T>, CreatedCollection, NewCreatedCollection>
+export type Collection<T extends boolean = false> = NewType<Bool<T>, CreatedCollection, NewCreatedCollection>
 
 // TODO: remove once new minimark is imported
-export type BaseType = 'svg' | 'png' | 'audio' | 'video' | 'mixed' | string;
+export type BaseType = 'svg' | 'png' | 'audio' | 'video' | 'mixed' | string
 type Theme = string | Record<string, string>
 type Themes = Record<string, Theme>
 
@@ -88,24 +99,24 @@ export type Base = {
   metadata?: string
 }
 export type EntityConstructor<T> = {
-  new (...args: any[]): T;
-};
+  new (...args: any[]): T
+}
 
 export type ArchiveCall = {
-  __kind: string,
+  __kind: string
   value: any
 }
 
 export type ArchiveCallWithOptionalValue = {
-  __kind: string,
+  __kind: string
   value?: any
 }
 
 export type RmrkType = Collection | NFT | RmrkInteraction
 
 export type BatchArg = {
-  args: Record<string, any>,
-  callIndex: string,  
+  args: Record<string, any>
+  callIndex: string
 }
 
 export type SomethingWithMeta = {
@@ -119,9 +130,9 @@ export type TokenMetadata = {
   image: string
   animation_url?: string
   attributes?: MetadataAttribute[]
-  mediaUri?: string;
-  type?: string;
-  thumbnailUri?: string;
+  mediaUri?: string
+  type?: string
+  thumbnailUri?: string
 }
 
 export type MetadataAttribute = {
@@ -131,7 +142,7 @@ export type MetadataAttribute = {
 }
 
 export type Transfer = {
-  to: string,
+  to: string
   value: bigint
 }
 
@@ -158,3 +169,6 @@ export enum DisplayType {
   'number',
   'boost_percentage',
 }
+
+export { Interaction as Action } from '../../model/generated'
+export { type Store } from '@kodadot1/metasquid/types'

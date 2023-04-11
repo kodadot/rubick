@@ -3,7 +3,12 @@ import { Optional } from '@kodadot1/metasquid/types'
 
 import { NFTEntity } from '../../model'
 import { unwrap } from '../utils'
-import { isMoreTransferable, isOwnerOrElseError, isPositiveOrElseError, validateInteraction } from '../utils/consolidator'
+import {
+  isMoreTransferable,
+  isOwnerOrElseError,
+  isPositiveOrElseError,
+  validateInteraction,
+} from '../utils/consolidator'
 import { getInteraction } from '../utils/getters'
 import { error, success } from '../utils/logger'
 import { Action, Context, RmrkInteraction } from '../utils/types'
@@ -15,7 +20,7 @@ export async function list(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
 
   try {
-    const { value, caller, timestamp, blockNumber, version } = unwrap(context, getInteraction);
+    const { value, caller, timestamp, blockNumber, version } = unwrap(context, getInteraction)
     interaction = value
     const nft = await get<NFTEntity>(context.store, NFTEntity, interaction.id)
     validateInteraction(nft, interaction)

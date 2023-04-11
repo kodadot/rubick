@@ -10,7 +10,7 @@ export function getRemarkString(ctx: Context): string {
 }
 
 export function getRemark<T = InteractionValue>(ctx: Context): UnwrappedRemark<T | InteractionValue> {
-  const remark  = getRemarkString(ctx)
+  const remark = getRemarkString(ctx)
   return unwrapRemark<T>(remark)
 }
 
@@ -30,5 +30,5 @@ export function getInteraction(ctx: Context): UnwrappedRemark<InteractionValue> 
 export function getInteractionWithExtra(ctx: Context): UnwrappedRemark<InteractionValue> & InteractionExtra {
   const { value, ...rest } = getRemark<InteractionValue>(ctx)
   const extra = extractExtra(ctx)
-  return { ...rest, value: ensureInteraction(value), extra  }
+  return { ...rest, value: ensureInteraction(value), extra }
 }

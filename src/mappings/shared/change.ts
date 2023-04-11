@@ -16,7 +16,7 @@ export async function changeIssuer(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
 
   try {
-    const { value, caller } = unwrap(context, getInteraction);
+    const { value, caller } = unwrap(context, getInteraction)
     interaction = value
     plsBe(withMeta, interaction)
     const collection = await get<CollectionEntity>(context.store, CollectionEntity, interaction.id)

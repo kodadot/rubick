@@ -31,5 +31,3 @@ export async function versionRouter(value: string, context: Context, version: Ve
   // await updateCache(new Date(), context.store)
   await updateMetadataCache(new Date(), context.store)
 }
-
-

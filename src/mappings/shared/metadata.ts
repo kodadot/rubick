@@ -3,22 +3,16 @@ import { Optional, TokenMetadata } from '@kodadot1/metasquid/types'
 import { isEmpty } from '@kodadot1/minimark/utils'
 
 import { logger } from '@kodadot1/metasquid/logger'
-import {
-  MetadataEntity as Metadata
-} from '../../model/generated'
+import { MetadataEntity as Metadata } from '../../model/generated'
 import { fetchMetadata } from '../utils/metadata'
 import { attributeFrom, Store } from '../utils/types'
 
-export async function handleMetadata(
-  id: string,
-  name: string,
-  store: Store
-): Promise<Optional<Metadata>> {
+export async function handleMetadata(id: string, name: string, store: Store): Promise<Optional<Metadata>> {
   const meta = await get<Metadata>(store, Metadata, id)
   if (meta) {
     return meta
   }
-  
+
   const start = Date.now()
   const logId = id.split('/').slice(-1).at(0)
   logger.info(`▶️ [META] ${logId}`)

@@ -16,7 +16,7 @@ export async function burn(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
 
   try {
-    const { value, caller, timestamp, blockNumber, version } = unwrap(context, getInteraction);
+    const { value, caller, timestamp, blockNumber, version } = unwrap(context, getInteraction)
     interaction = value
     const nft = await getWith<NFTEntity>(context.store, NFTEntity, interaction.id, { collection: true })
     plsNotBe<NFTEntity>(burned, nft)
@@ -26,7 +26,7 @@ export async function burn(context: Context) {
     nft.updatedAt = timestamp
 
     plsBe(real, nft.collection)
-    
+
     nft.collection.updatedAt = timestamp
     nft.collection.supply -= 1
 

@@ -15,7 +15,7 @@ export async function lockCollection(context: Context) {
   let interaction: Optional<RmrkInteraction> = null
 
   try {
-    const { value, caller } = unwrap(context, getInteraction);
+    const { value, caller } = unwrap(context, getInteraction)
     interaction = value
     plsBe(withMeta, interaction)
     const collection = await get<CollectionEntity>(context.store, CollectionEntity, interaction.id)
@@ -23,7 +23,6 @@ export async function lockCollection(context: Context) {
     isOwnerOrElseError(collection, caller)
     // TODO: implement lock
     collection.max = Number(interaction.value)
-    
 
     success(OPERATION, `${collection.id} from ${caller}`)
     await context.store.save(collection)

@@ -13,16 +13,12 @@ import { getCreateCollection } from './getters'
 const OPERATION = Action.CREATE
 
 export async function createCollection(context: Context): Promise<void> {
-  let collection: Optional<Collection> = undefined
+  let collection: Optional<Collection>
   try {
-    const { value, caller, timestamp, blockNumber, version } = unwrap(context, getCreateCollection);
+    const { value, caller, timestamp, blockNumber, version } = unwrap(context, getCreateCollection)
     collection = value.value
     plsBe<string>(real, collection.id)
-    const entity = await get<CollectionEntity>(
-      context.store,
-      CollectionEntity,
-      collection.id
-    )
+    const entity = await get<CollectionEntity>(context.store, CollectionEntity, collection.id)
 
     plsNotBe<CollectionEntity>(real, entity as CollectionEntity)
 
@@ -51,7 +47,7 @@ export async function createCollection(context: Context): Promise<void> {
         final.name = metadata.name
       }
     }
-    
+
     await context.store.save(final).then(() => {
       success(OPERATION, final.id)
     })

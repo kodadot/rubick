@@ -18,7 +18,7 @@ export async function equippable(context: Context) {
 
   try {
     const getE = getAs<Interaction.EQUIPPABLE>()
-    const { value: equip, caller, timestamp, blockNumber, version } = unwrap(context, getE);
+    const { value: equip, caller, timestamp, blockNumber, version } = unwrap(context, getE)
     interaction = equip
     const nft = await get<NFTEntity>(context.store, NFTEntity, interaction.id)
     plsBe(real, nft)
@@ -30,8 +30,13 @@ export async function equippable(context: Context) {
 
     success(OPERATION, `${nft.id} from ${caller}`)
     await context.store.save(nft)
-    await createEvent(nft, OPERATION, { blockNumber, caller, timestamp, version }, `${interaction.id}::${interaction.slot}`, context.store)
-
+    await createEvent(
+      nft,
+      OPERATION,
+      { blockNumber, caller, timestamp, version },
+      `${interaction.id}::${interaction.slot}`,
+      context.store
+    )
   } catch (e) {
     error(e, OPERATION, JSON.stringify(interaction))
   }
