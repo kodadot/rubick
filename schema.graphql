@@ -146,6 +146,17 @@ type Base @entity {
     # logs: [Call!] @derivedFrom (field: "base") // Rename to event
 }
 
+type BasePart @entity {
+    id: ID! # baseId.partId base-12126274-SKBS.Eyebrows2white
+    partId: String! # Eyebrows2white // maybe call it symbol?
+    base: Base!
+    equippable: [String!]!
+    metadata: String
+    src: String
+    type: BasePartType!
+    z: Int!
+}
+
 
 # https://github.com/rmrk-team/rmrk-spec/blob/master/standards/rmrk2.0.0/entities/nft.md#resources-and-resource
 type Resource @entity {
