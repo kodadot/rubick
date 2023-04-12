@@ -1,25 +1,26 @@
 import { plsBe, real } from '@kodadot1/metasquid/consolidator'
-import md5 from 'md5'
 import { create, getOrFail as get } from '@kodadot1/metasquid/entity'
 import { Mint, resolveRoyalty } from '@kodadot1/minimark/v2'
+import md5 from 'md5'
 import { unwrap } from '../utils'
 import { isOwnerOrElseError } from '../utils/consolidator'
 
 import { CollectionEntity, NFTEntity } from '../../model/generated'
 import { createEvent } from '../shared/event'
 import { handleMetadata } from '../shared/metadata'
+import { findRootItemById } from '../utils/entity'
+import { isDummyAddress } from '../utils/helper'
 import logger, { error, success } from '../utils/logger'
-import { Action, Context, getNftId, Optional } from '../utils/types'
+import { Action, Context, Optional, getNftId } from '../utils/types'
 import { getCreateToken } from './getters'
 
 const OPERATION = Action.MINT
 
-// TODO: MINT IS NOT CORRECTLY IMPLEMENTED
 export async function mintItem(context: Context): Promise<void> {
   let nft: Optional<Mint> = null
   try {
     const { value, caller, timestamp, blockNumber, version } = unwrap(context, getCreateToken)
-    const { value: nft, recipient } = value as Mint
+    const { value: nft, recipient: targetOwner } = value as Mint
     plsBe(real, nft.collection)
     const collection = await get<CollectionEntity>(context.store, CollectionEntity, nft.collection)
     isOwnerOrElseError(collection, caller)
@@ -30,7 +31,6 @@ export async function mintItem(context: Context): Promise<void> {
     final.id = id
     final.hash = md5(id)
     final.issuer = caller
-    final.currentOwner = recipient || caller
     final.blockNumber = BigInt(blockNumber)
     final.name = nft.name
     final.instance = nft.symbol
@@ -66,6 +66,23 @@ export async function mintItem(context: Context): Promise<void> {
       final.recipient = royalty.receiver
     }
 
+    const recipient = targetOwner || caller
+    const isRecipientNFT = !isDummyAddress(recipient)
+    
+    if (isRecipientNFT) {
+      const parent = await get<NFTEntity>(context.store, NFTEntity, recipient)
+      const isCallerTheOwner = parent.currentOwner === caller
+      const rootRecipientNFT = await findRootItemById(context.store, recipient)
+
+      final.currentOwner = rootRecipientNFT.currentOwner
+      final.pending = !isCallerTheOwner
+      final.parent = parent
+    } else {
+      final.currentOwner = recipient
+      final.parent = null
+      final.pending = false
+    }
+
     await context.store.save(final)
     await context.store.save(collection)
     success(OPERATION, `${final.id} from ${caller}`)
@@ -78,6 +95,17 @@ export async function mintItem(context: Context): Promise<void> {
         { blockNumber, caller, timestamp, version },
         String(final.royalty || ''),
         context.store
+      )
+    }
+
+    if (final.currentOwner !== caller) {
+      await createEvent(
+        final,
+        Action.SEND,
+        { blockNumber, caller, timestamp, version },
+        final.currentOwner || '',
+        context.store,
+        caller
       )
     }
   } catch (e) {
