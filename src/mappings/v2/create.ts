@@ -36,6 +36,7 @@ export async function createCollection(context: Context): Promise<void> {
     final.updatedAt = timestamp
     final.nftCount = 0
     final.supply = 0
+    final.burned = false
     final.hash = md5(collection.id)
 
     if (final.metadata) {
