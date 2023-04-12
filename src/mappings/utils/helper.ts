@@ -2,6 +2,8 @@ import * as ss58 from '@subsquid/ss58'
 import { assertNotNull, decodeHex } from '@subsquid/substrate-processor'
 import { trim, trimAll } from '@kodadot1/minimark/utils'
 import { nanoid } from 'nanoid'
+import { compact, map, uniq } from 'lodash'
+import { CollectionEntity } from '../../model'
 import { Action, ArchiveCallWithOptionalValue, RmrkInteraction } from './types'
 
 export { isEmpty, trim, trimAll } from '@kodadot1/minimark/utils'
@@ -65,4 +67,29 @@ export const isValidAddressPolkadotAddress = (address: string) => {
 
 export function metadataOf({ metadata }: { metadata: string }): string {
   return metadata ?? ''
+}
+
+export function calculateCollectionOwnerCount(
+  collection: CollectionEntity,
+  newOwner?: string,
+  originalOwner?: string
+): number {
+  const allOwners: string[] = compact([
+    ...map(collection.nfts, 'currentOwner').filter((owner) => owner !== originalOwner),
+    newOwner,
+  ])
+
+  return allOwners.filter((owner) => owner !== collection.issuer).length
+}
+
+export function calculateCollectionDistribution(
+  collection: CollectionEntity,
+  newOwner?: string,
+  originalOwner?: string
+): number {
+  const allUniqOwners: string[] = uniq(
+    compact([...map(collection.nfts, 'currentOwner').filter((owner) => owner !== originalOwner), newOwner])
+  )
+
+  return allUniqOwners.filter((owner) => owner !== collection.issuer).length
 }

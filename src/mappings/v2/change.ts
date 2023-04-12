@@ -1,5 +1,5 @@
 import { plsBe } from '@kodadot1/metasquid/consolidator'
-import { getOrFail as get } from '@kodadot1/metasquid/entity'
+import { getWith, getOrFail as get } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
 
 import { ChangeIssuer } from '@kodadot1/minimark/v2'
@@ -8,6 +8,7 @@ import { unwrap } from '../utils'
 import { isOwnerOrElseError, withMeta } from '../utils/consolidator'
 import { error, success } from '../utils/logger'
 import { Action, Context } from '../utils/types'
+import { calculateCollectionDistribution, calculateCollectionOwnerCount } from '../utils/helper'
 import { getChangeIssuer } from './getters'
 
 const OPERATION = Action.CHANGEISSUER
@@ -25,10 +26,17 @@ export async function changeIssuer(context: Context) {
       ? await get<Base>(context.store, Base, interaction.id)
       : await get<CollectionEntity>(context.store, CollectionEntity, interaction.id)
     isOwnerOrElseError(entity, caller)
-    entity.currentOwner = interaction.value
+    entity.currentOwner = interaction.newissuer
 
-    success(OPERATION, `${entity.id} from ${caller}`)
+    if (entity instanceof CollectionEntity) {
+      const collectionWithNfts = await getWith<CollectionEntity>(context.store, CollectionEntity, interaction.id, { nfts: true })
+
+      entity.ownerCount = calculateCollectionOwnerCount(collectionWithNfts)
+      entity.distribution = calculateCollectionDistribution(collectionWithNfts)
+    }
+
     await context.store.save(entity)
+    success(OPERATION, `${entity.id} from ${caller}`)
   } catch (e) {
     error(e, OPERATION, JSON.stringify(interaction))
   }
