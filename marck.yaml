@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: marck
-version: 1
+version: 2
 description: |-
   SubSquid indexer for Kusama NFTs by KodaDot
 build:
