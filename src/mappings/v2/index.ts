@@ -15,6 +15,7 @@ import { lockCollection } from './lock'
 import { mintItem } from './mint'
 import { send } from './send'
 import { setPriority } from './setpriority'
+import { addTheme } from './addTheme'
 
 export async function mainFrame(remark: string, context: Context): Promise<void> {
   const base = unwrap(context, (_: Context) => ({ value: remark }))
@@ -63,8 +64,10 @@ export async function mainFrame(remark: string, context: Context): Promise<void>
       case Interaction.LOCK:
         await lockCollection(context)
         break
-      case Interaction.DESTROY:
       case Interaction.THEMEADD:
+        await addTheme(context)
+        break
+      case Interaction.DESTROY:
       case Interaction.EQUIPPABLE:
       case Interaction.SETPROPERTY:
       case Interaction.EQUIP:
