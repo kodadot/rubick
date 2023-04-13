@@ -64,7 +64,7 @@ export async function send(context: Context) {
       nft,
       Action.SEND,
       { blockNumber, caller, timestamp, version },
-      interaction.value || '',
+      nft.currentOwner || '',
       context.store,
       originalOwner
     )
