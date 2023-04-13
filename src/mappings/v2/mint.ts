@@ -1,6 +1,6 @@
 import { plsBe, real } from '@kodadot1/metasquid/consolidator'
 import md5 from 'md5'
-import { create, getWith } from '@kodadot1/metasquid/entity'
+import { create, getOrFail as get } from '@kodadot1/metasquid/entity'
 import { Mint, resolveRoyalty } from '@kodadot1/minimark/v2'
 import { unwrap } from '../utils'
 import { isOwnerOrElseError } from '../utils/consolidator'
@@ -10,7 +10,7 @@ import { createEvent } from '../shared/event'
 import { handleMetadata } from '../shared/metadata'
 import logger, { error, success } from '../utils/logger'
 import { Action, Context, getNftId, Optional } from '../utils/types'
-import { calculateCollectionOwnerCount, calculateCollectionDistribution } from '../utils/helper'
+import { calculateCollectionOwnerCountAndDistribution } from '../utils/helper'
 import { getCreateToken } from './getters'
 
 const OPERATION = Action.MINT
@@ -22,10 +22,8 @@ export async function mintItem(context: Context): Promise<void> {
     const { value, caller, timestamp, blockNumber, version } = unwrap(context, getCreateToken)
     const { value: nft, recipient } = value as Mint
     plsBe(real, nft.collection)
-    const collection = await getWith<CollectionEntity>(context.store, CollectionEntity, nft.collection, {
-      nfts: true,
-    })
-        isOwnerOrElseError(collection, caller)
+    const collection = await get<CollectionEntity>(context.store, CollectionEntity, nft.collection)
+    isOwnerOrElseError(collection, caller)
     const id = getNftId(nft, blockNumber)
     // const entity = await get<NFTEntity>(context.store, NFTEntity, id) // TODO: check if exists
     // plsNotBe<NFTEntity>(real, entity as NFTEntity)
@@ -52,8 +50,13 @@ export async function mintItem(context: Context): Promise<void> {
     collection.updatedAt = timestamp
     collection.nftCount += 1
     collection.supply += 1
-    collection.ownerCount = calculateCollectionOwnerCount(collection, final.currentOwner)
-    collection.distribution = calculateCollectionDistribution(collection, final.currentOwner)
+    const { ownerCount, distribution } = await calculateCollectionOwnerCountAndDistribution(
+      context.store,
+      collection.id,
+      final.currentOwner
+    )
+    collection.ownerCount = ownerCount
+    collection.distribution = distribution
 
     if (final.metadata) {
       const metadata = await handleMetadata(final.metadata, '', context.store)

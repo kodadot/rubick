@@ -2,14 +2,14 @@ import { getWith } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
 
 import { plsBe } from '@kodadot1/metasquid/consolidator'
-import { CollectionEntity, NFTEntity } from '../../model'
+import { NFTEntity } from '../../model'
 import { createEvent } from '../shared/event'
 import { unwrap } from '../utils'
 import { isOwnerOrElseError, realAddress, validateInteraction } from '../utils/consolidator'
 import { getInteraction } from '../utils/getters'
 import { error, success } from '../utils/logger'
 import { Action, Context, RmrkInteraction } from '../utils/types'
-import { calculateCollectionOwnerCount, calculateCollectionDistribution } from '../utils/helper'
+import { calculateCollectionOwnerCountAndDistribution } from '../utils/helper'
 
 const OPERATION = Action.SEND
 
@@ -23,9 +23,6 @@ export async function send(context: Context) {
     const nft = await getWith<NFTEntity>(context.store, NFTEntity, interaction.id, {
       collection: true,
     })
-    const collectionWithNfts = await getWith<CollectionEntity>(context.store, CollectionEntity, interaction.id, {
-      nfts: true,
-    })
     validateInteraction(nft, interaction)
     isOwnerOrElseError(nft, caller)
     plsBe(realAddress, interaction.value)
@@ -33,12 +30,16 @@ export async function send(context: Context) {
     nft.currentOwner = interaction.value
     nft.price = BigInt(0)
     nft.updatedAt = timestamp
-
-    nft.collection.ownerCount = calculateCollectionOwnerCount(collectionWithNfts, nft.currentOwner, originalOwner)
-    nft.collection.distribution = calculateCollectionDistribution(collectionWithNfts, nft.currentOwner, originalOwner)
+    const { ownerCount, distribution } = await calculateCollectionOwnerCountAndDistribution(
+      context.store,
+      nft.collection.id,
+      nft.currentOwner,
+      originalOwner
+    )
+    nft.collection.ownerCount = ownerCount
+    nft.collection.distribution = distribution
 
     await context.store.save(nft)
-    await context.store.save(nft.collection)
     success(OPERATION, `${nft.id} to ${interaction.value}`)
     await createEvent(
       nft,

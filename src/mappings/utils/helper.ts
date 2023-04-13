@@ -3,8 +3,7 @@ import { assertNotNull, decodeHex } from '@subsquid/substrate-processor'
 import { trim, trimAll } from '@kodadot1/minimark/utils'
 import { nanoid } from 'nanoid'
 import { compact, map, uniq } from 'lodash'
-import { CollectionEntity } from '../../model'
-import { Action, ArchiveCallWithOptionalValue, RmrkInteraction } from './types'
+import { Action, ArchiveCallWithOptionalValue, RmrkInteraction, Store } from './types'
 
 export { isEmpty, trim, trimAll } from '@kodadot1/minimark/utils'
 export { toBaseId as baseId } from '@kodadot1/minimark/v2'
@@ -69,27 +68,36 @@ export function metadataOf({ metadata }: { metadata: string }): string {
   return metadata ?? ''
 }
 
-export function calculateCollectionOwnerCount(
-  collection: CollectionEntity,
+export async function calculateCollectionOwnerCountAndDistribution(
+  store: Store,
+  collectionId: string,
   newOwner?: string,
   originalOwner?: string
-): number {
-  const allOwners: string[] = compact([
-    ...map(collection.nfts, 'currentOwner').filter((owner) => owner !== originalOwner),
-    newOwner,
-  ])
+): Promise<{ ownerCount: number; distribution: number }> {
+  const query: string = `
+  SELECT COUNT(DISTINCT current_owner) AS distribution,
+       COUNT(current_owner) AS owner_count
+  ${
+    newOwner &&
+    `
+  ,(SELECT max(CASE
+                  WHEN current_owner = '${newOwner}' THEN 0
+                  ELSE 1
+              END)
+   FROM nft_entity) AS adjustment
+  `
+  } 
+  FROM nft_entity
+  WHERE collection_id = '${collectionId}'
+  ${newOwner && `AND current_owner != '${originalOwner}'`}
+  `
+  const queryResult: { owner_count: number; distribution: number; adjustment?: number }[] = await store.query(query)
+  const result = queryResult[0]
 
-  return allOwners.filter((owner) => owner !== collection.issuer).length
-}
+  const adjustedResults = {
+    ownerCount: result.owner_count - (result.adjustment ?? 0),
+    distribution: result.distribution - (result.adjustment ?? 0),
+  }
 
-export function calculateCollectionDistribution(
-  collection: CollectionEntity,
-  newOwner?: string,
-  originalOwner?: string
-): number {
-  const allUniqOwners: string[] = uniq(
-    compact([...map(collection.nfts, 'currentOwner').filter((owner) => owner !== originalOwner), newOwner])
-  )
-
-  return allUniqOwners.filter((owner) => owner !== collection.issuer).length
+  return adjustedResults
 }

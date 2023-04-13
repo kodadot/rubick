@@ -8,7 +8,7 @@ import { getInteractionWithExtra } from '../utils/getters'
 import { error, success } from '../utils/logger'
 import { Action, Context, RmrkInteraction } from '../utils/types'
 import { createEvent } from '../shared/event'
-import { calculateCollectionOwnerCount, calculateCollectionDistribution } from '../utils/helper'
+import { calculateCollectionOwnerCountAndDistribution } from '../utils/helper'
 
 const OPERATION = Action.BUY
 
@@ -19,10 +19,7 @@ export async function buy(context: Context) {
     const { value, caller, timestamp, blockNumber, extra, version } = unwrap(context, getInteractionWithExtra)
     interaction = value
     const nft = await getWith<NFTEntity>(context.store, NFTEntity, interaction.id, {
-      collection: true
-    })
-    const collectionWithNfts = await getWith<CollectionEntity>(context.store, CollectionEntity, interaction.id, {
-      nfts: true,
+      collection: true,
     })
     isInteractive(nft)
     isPositiveOrElseError(nft.price, true)
@@ -34,15 +31,20 @@ export async function buy(context: Context) {
     nft.updatedAt = timestamp
 
     nft.collection.updatedAt = timestamp
-    nft.collection.volume += nft.price
-    if (nft.price > nft.collection.highestSale) {
-      nft.collection.highestSale = nft.price
+    nft.collection.volume += originalPrice
+    if (originalPrice > nft.collection.highestSale) {
+      nft.collection.highestSale = originalPrice
     }
-    nft.collection.ownerCount = calculateCollectionOwnerCount(collectionWithNfts, nft.currentOwner, originalOwner)
-    nft.collection.distribution = calculateCollectionDistribution(collectionWithNfts, nft.currentOwner, originalOwner)
+    const { ownerCount, distribution } = await calculateCollectionOwnerCountAndDistribution(
+      context.store,
+      nft.collection.id,
+      nft.currentOwner,
+      originalOwner
+    )
+    nft.collection.ownerCount = ownerCount
+    nft.collection.distribution = distribution
 
     await context.store.save(nft)
-    await context.store.save(nft.collection)
     success(OPERATION, `${nft.id} from ${caller}`)
     await createEvent(
       nft,

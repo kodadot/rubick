@@ -37,7 +37,6 @@ export async function list(context: Context) {
     }
 
     await context.store.save(nft)
-    await context.store.save(nft.collection)
     success(OPERATION, `${nft.id} from ${caller}`)
     const event = nft.price === 0n ? Action.UNLIST : Action.LIST
     await createEvent(nft, event, { blockNumber, caller, timestamp, version }, String(price), context.store)

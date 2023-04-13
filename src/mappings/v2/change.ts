@@ -1,5 +1,5 @@
 import { plsBe } from '@kodadot1/metasquid/consolidator'
-import { getWith, getOrFail as get } from '@kodadot1/metasquid/entity'
+import { getOrFail as get } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
 
 import { ChangeIssuer } from '@kodadot1/minimark/v2'
@@ -8,7 +8,7 @@ import { unwrap } from '../utils'
 import { isOwnerOrElseError, withMeta } from '../utils/consolidator'
 import { error, success } from '../utils/logger'
 import { Action, Context } from '../utils/types'
-import { calculateCollectionDistribution, calculateCollectionOwnerCount } from '../utils/helper'
+import { calculateCollectionOwnerCountAndDistribution } from '../utils/helper'
 import { getChangeIssuer } from './getters'
 
 const OPERATION = Action.CHANGEISSUER
@@ -29,10 +29,9 @@ export async function changeIssuer(context: Context) {
     entity.currentOwner = interaction.newissuer
 
     if (entity instanceof CollectionEntity) {
-      const collectionWithNfts = await getWith<CollectionEntity>(context.store, CollectionEntity, interaction.id, { nfts: true })
-
-      entity.ownerCount = calculateCollectionOwnerCount(collectionWithNfts)
-      entity.distribution = calculateCollectionDistribution(collectionWithNfts)
+      const { ownerCount, distribution } = await calculateCollectionOwnerCountAndDistribution(context.store, entity.id)
+      entity.ownerCount = ownerCount
+      entity.distribution = distribution
     }
 
     await context.store.save(entity)

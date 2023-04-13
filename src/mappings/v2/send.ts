@@ -1,13 +1,13 @@
 import { getWith, getOrFail as get } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
 
-import { CollectionEntity, NFTEntity } from '../../model'
+import { NFTEntity } from '../../model'
 import { createEvent } from '../shared/event'
 import { unwrap } from '../utils'
 import { isMoreTransferable, isOwnerOrElseError, validateInteraction } from '../utils/consolidator'
 import { findRootItemById } from '../utils/entity'
 import { getInteraction } from '../utils/getters'
-import { calculateCollectionDistribution, calculateCollectionOwnerCount, isDummyAddress } from '../utils/helper'
+import { calculateCollectionOwnerCountAndDistribution, isDummyAddress } from '../utils/helper'
 import { error, success } from '../utils/logger'
 import { Action, Context, RmrkInteraction } from '../utils/types'
 
@@ -22,9 +22,6 @@ export async function send(context: Context) {
 
     const nft = await getWith<NFTEntity>(context.store, NFTEntity, interaction.id, {
       collection: true,
-    })
-    const collectionWithNfts = await getWith<CollectionEntity>(context.store, CollectionEntity, interaction.id, {
-      nfts: true,
     })
     validateInteraction(nft, interaction)
     isOwnerOrElseError(nft, caller)
@@ -52,19 +49,16 @@ export async function send(context: Context) {
       nft.pending = false
     }
 
-    nft.collection.ownerCount = calculateCollectionOwnerCount(
-      collectionWithNfts,
+    const { ownerCount, distribution } = await calculateCollectionOwnerCountAndDistribution(
+      context.store,
+      nft.collection.id,
       nft.currentOwner ?? undefined,
       originalOwner
     )
-    nft.collection.distribution = calculateCollectionDistribution(
-      collectionWithNfts,
-      nft.currentOwner ?? undefined,
-      originalOwner
-    )
+    nft.collection.ownerCount = ownerCount
+    nft.collection.distribution = distribution
 
     await context.store.save(nft)
-    await context.store.save(nft.collection)
     success(OPERATION, `${nft.id} to ${interaction.value}`)
     await createEvent(
       nft,
