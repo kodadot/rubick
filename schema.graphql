@@ -141,11 +141,21 @@ type Base @entity {
     meta: MetadataEntity
     metadata: String
     # parts: [BasePart!] @derivedFrom(field: "base")
-    # themes: [BaseTheme!] @derivedFrom(field: "base")
+    themes: [Theme!] @derivedFrom(field: "base")
     # attachedToResources: [Resource!] @derivedFrom (field: "base")
     # logs: [Call!] @derivedFrom (field: "base") // Rename to event
 }
 
+
+type Theme @entity {
+    id: ID!
+    name: String!
+    base: Base!
+    themeColor1: String
+    themeColor2: String
+    themeColor3: String
+    themeColor4: String
+}
 
 # https://github.com/rmrk-team/rmrk-spec/blob/master/standards/rmrk2.0.0/entities/nft.md#resources-and-resource
 type Resource @entity {

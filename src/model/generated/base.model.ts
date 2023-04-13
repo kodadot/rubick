@@ -1,6 +1,7 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
 import {BaseType} from "./_baseType"
 import {MetadataEntity} from "./metadataEntity.model"
+import {Theme} from "./theme.model"
 
 @Entity_()
 export class Base {
@@ -29,4 +30,7 @@ export class Base {
 
     @Column_("text", {nullable: true})
     metadata!: string | undefined | null
+
+    @OneToMany_(() => Theme, e => e.base)
+    themes!: Theme[]
 }
