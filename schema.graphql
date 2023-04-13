@@ -161,6 +161,7 @@ type Part @entity {
     base: Base!
     equippable: [String!]
     metadata: String
+    meta: MetadataEntity
     src: String
     thumb: String # RMRK GraphQL does not have this
     # resources: [ResourcePart!] @derivedFrom (field: "resource")
