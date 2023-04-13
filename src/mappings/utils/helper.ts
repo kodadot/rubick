@@ -2,7 +2,6 @@ import * as ss58 from '@subsquid/ss58'
 import { assertNotNull, decodeHex } from '@subsquid/substrate-processor'
 import { trim, trimAll } from '@kodadot1/minimark/utils'
 import { nanoid } from 'nanoid'
-import { compact, map, uniq } from 'lodash'
 import { Action, ArchiveCallWithOptionalValue, RmrkInteraction, Store } from './types'
 
 export { isEmpty, trim, trimAll } from '@kodadot1/minimark/utils'
@@ -89,7 +88,7 @@ export async function calculateCollectionOwnerCountAndDistribution(
   } 
   FROM nft_entity
   WHERE collection_id = '${collectionId}'
-  ${newOwner && `AND current_owner != '${originalOwner}'`}
+  ${originalOwner && `AND current_owner != '${originalOwner}'`}
   `
   const queryResult: { owner_count: number; distribution: number; adjustment?: number }[] = await store.query(query)
   const result = queryResult[0]
