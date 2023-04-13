@@ -39,7 +39,7 @@ export async function addResource(context: Context) {
     final.metadata = interaction.value.metadata
     final.src = interaction.value.src
     final.thumb = interaction.value.thumb
-    final.priority = 0
+    final.priority = 99
 
     success(OPERATION, `${nft.id} from ${caller}`)
     await context.store.save(nft)
