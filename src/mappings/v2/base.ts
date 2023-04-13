@@ -43,7 +43,6 @@ export async function base(context: Context) {
         part.id = partId
         part.metadata = basePart.metadata
         part.type = basePart.type as PartType
-        
 
         if (basePart.metadata) {
           const metadata = await handleMetadata(basePart.metadata, '', context.store)
