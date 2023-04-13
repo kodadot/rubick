@@ -29,6 +29,7 @@ type NFTEntity @entity {
   emoteCount: Int!
   emotes: [Emote!] @derivedFrom(field: "nft")
   events: [Event!] @derivedFrom(field: "nft")
+  equipped: Part
   hash: String! @index @unique
   id: ID!
   instance: String
