@@ -157,7 +157,7 @@ type Base @entity {
 
 type Part @entity {
     id: ID! # baseId.partId base-12126274-SKBS.Eyebrows2white
-    partId: String! # Eyebrows2white // maybe call it symbol? // slot?  
+    name: String! # Eyebrows2white // RMRK calls it part_id
     base: Base!
     equippable: [String!]
     metadata: String
@@ -168,10 +168,10 @@ type Part @entity {
     z: Int!
 }
 
-type ResourcePart @entity {
-    resource: Resource!
-    part: Part!
-}
+# type ResourcePart @entity {
+#     resource: Resource!
+#     part: Part!
+# }
 
 
 type Theme @entity {

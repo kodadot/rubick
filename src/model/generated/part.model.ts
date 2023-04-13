@@ -12,7 +12,7 @@ export class Part {
     id!: string
 
     @Column_("text", {nullable: false})
-    partId!: string
+    name!: string
 
     @Index_()
     @ManyToOne_(() => Base, {nullable: true})
