@@ -1,6 +1,6 @@
 import { real, burned, plsBe, plsNotBe } from '@kodadot1/metasquid/consolidator'
 import { isTransferable } from '@kodadot1/minimark/v2'
-import { Base, CollectionEntity, NFTEntity } from '../../model/generated'
+import { Base, CollectionEntity, NFTEntity, Resource } from '../../model/generated'
 import { BatchArg, ExtraCall, RmrkInteraction, Transfer } from './types'
 import { serializer } from './serializer'
 
@@ -10,6 +10,10 @@ type Entity = CollectionEntity | NFTEntity | Base
 
 export function transferable({ transferable }: NFTEntity) {
   return !!transferable
+}
+
+export function pending({ pending }: NFTEntity | Resource) {
+  return pending
 }
 
 export function withMeta(interaction: RmrkInteraction): interaction is RmrkInteraction {
