@@ -138,6 +138,7 @@ enum Interaction {
   UNLIST
   PAY_ROYALTY
   ROYALTY
+  UNEQUIP
 }
 
 # Remarkably specific types
