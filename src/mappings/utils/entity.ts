@@ -1,8 +1,8 @@
 import { takeFirst } from '@kodadot1/metasquid'
 import { findByRawQuery } from '@kodadot1/metasquid/entity'
 import { FindOptionsWhere } from 'typeorm'
-import { NFTEntity } from '../../model'
-import { rootOwnerQuery } from '../../server-extension/query/nft'
+import { NFTEntity, Resource } from '../../model'
+import { parentBaseResouceQuery, rootOwnerQuery } from '../../server-extension/query/nft'
 import { EntityConstructor, Store } from './types'
 
 export type EntityWithId = {
@@ -70,6 +70,15 @@ export async function findRootItemById(store: Store, id: string): Promise<NFTEnt
   const result = await findByRawQuery(store, NFTEntity, rootOwnerQuery, [id]).then(takeFirst)
   if (!result) {
     throw new Error(`Root item with id ${id} not found`)
+  }
+
+  return result
+}
+
+export async function findParentBaseResouce(store: Store, id: string, baseId: string): Promise<Resource> {
+  const result = await findByRawQuery(store, Resource, parentBaseResouceQuery, [id, baseId]).then(takeFirst)
+  if (!result) {
+    throw new Error(`Parent resource with id ${id} not found`)
   }
 
   return result
