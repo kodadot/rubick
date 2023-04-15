@@ -1,11 +1,11 @@
 import { plsBe, real } from '@kodadot1/metasquid/consolidator'
 import { create, getOrFail as get } from '@kodadot1/metasquid/entity'
-import { Mint, resolveRoyalty } from '@kodadot1/minimark/v2'
+import { Mint, resolveRoyalty, toPropertyId } from '@kodadot1/minimark/v2'
 import md5 from 'md5'
 import { unwrap } from '../utils'
 import { isOwnerOrElseError } from '../utils/consolidator'
 
-import { CollectionEntity, NFTEntity } from '../../model/generated'
+import { CollectionEntity, NFTEntity, Property } from '../../model/generated'
 import { createEvent } from '../shared/event'
 import { handleMetadata } from '../shared/metadata'
 import { findRootItemById } from '../utils/entity'
@@ -83,14 +83,6 @@ export async function mintItem(context: Context): Promise<void> {
       final.pending = false
     }
 
-    const { ownerCount, distribution } = await calculateCollectionOwnerCountAndDistribution(
-      context.store,
-      collection.id,
-      final.currentOwner || ''
-    )
-    collection.ownerCount = ownerCount
-    collection.distribution = distribution
-
     await context.store.save(final)
     await context.store.save(collection)
     success(OPERATION, `${final.id} from ${caller}`)
@@ -125,6 +117,26 @@ export async function mintItem(context: Context): Promise<void> {
         `NFT::${final.id}`,
         context.store
       )
+    }
+
+    if (nft.properties) {
+      const properties = Object.entries(nft.properties)
+      const saveList: Property[] = []
+      for (const [key, value] of properties) {
+        if (!value.value) {
+          continue
+        }
+        const propertyId = toPropertyId(final.id, key, value.value)
+        const property = create<Property>(Property, propertyId, {})
+        property.id = propertyId
+        property.key = key
+        property.value = value.value
+        property.nft = final
+        property.mutable = value._mutation?.allowed || false
+        saveList.push(property)
+      }
+
+      await context.store.save(saveList)
     }
   } catch (e) {
     if (e instanceof Error) {
