@@ -3,6 +3,7 @@ import * as marshal from "./marshal"
 import {CollectionEntity} from "./collectionEntity.model"
 import {Emote} from "./emote.model"
 import {Event} from "./event.model"
+import {Part} from "./part.model"
 import {MetadataEntity} from "./metadataEntity.model"
 import {Resource} from "./resource.model"
 
@@ -37,6 +38,10 @@ export class NFTEntity {
 
     @OneToMany_(() => Event, e => e.nft)
     events!: Event[]
+
+    @Index_()
+    @ManyToOne_(() => Part, {nullable: true})
+    equipped!: Part | undefined | null
 
     @Index_({unique: true})
     @Column_("text", {nullable: false})

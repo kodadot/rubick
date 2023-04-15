@@ -1,12 +1,10 @@
-import { burned, plsBe, plsNotBe, real } from '@kodadot1/metasquid/consolidator'
-import { getOrFail as get } from '@kodadot1/metasquid/entity'
+import { getWith } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
-import { Equippable, Interaction } from '@kodadot1/minimark/v2'
+import { Equippable, Interaction, resolveEquippable, toPartId } from '@kodadot1/minimark/v2'
 
-import { NFTEntity } from '../../model'
-import { createEvent } from '../shared/event'
+import { Part } from '../../model'
 import { unwrap } from '../utils'
-import { isOwnerOrElseError } from '../utils/consolidator'
+import { isIssuerOrElseError } from '../utils/consolidator'
 import { error, success } from '../utils/logger'
 import { Action, Context } from '../utils/types'
 import { getAs } from './getters'
@@ -20,23 +18,36 @@ export async function equippable(context: Context) {
     const getE = getAs<Interaction.EQUIPPABLE>()
     const { value: equip, caller, timestamp, blockNumber, version } = unwrap(context, getE)
     interaction = equip
-    const nft = await get<NFTEntity>(context.store, NFTEntity, interaction.id)
-    plsBe(real, nft)
-    plsNotBe(burned, nft)
-    isOwnerOrElseError(nft, caller)
-    nft.updatedAt = timestamp
+    const id = toPartId(interaction.id, interaction.slot)
+    const part = await getWith<Part>(context.store, Part, id, { base: true })
+    isIssuerOrElseError(part.base, caller)
 
-    // TODO: add logic for EQUIPing resource
+    const equipOption = resolveEquippable(interaction.value)
 
-    success(OPERATION, `${nft.id} from ${caller}`)
-    await context.store.save(nft)
-    await createEvent(
-      nft,
-      OPERATION,
-      { blockNumber, caller, timestamp, version },
-      `${interaction.id}::${interaction.slot}`,
-      context.store
-    )
+    if (!part.equippable) {
+      part.equippable = []
+    }
+
+    if (part.type !== 'slot') {
+      throw new Error(`Part ${part.id} is not a slot`)
+    }
+
+    switch (equipOption.operation) {
+      case '+':
+        const set = new Set([...part.equippable, ...equipOption.collections])
+        part.equippable = [...set]
+        break
+      case '-':
+        const toRemove = new Set(equipOption.collections)
+        part.equippable = part.equippable.filter((e) => !toRemove.has(e))
+        break
+      case '*':
+        part.equippable = equipOption.collections
+        break
+    }
+
+    success(OPERATION, `${part.id} from ${caller}`)
+    await context.store.save(part)
   } catch (e) {
     error(e, OPERATION, JSON.stringify(interaction))
   }

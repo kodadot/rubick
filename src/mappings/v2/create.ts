@@ -24,20 +24,25 @@ export async function createCollection(context: Context): Promise<void> {
 
     const final = create<CollectionEntity>(CollectionEntity, collection.id, {})
 
-    final.name = (collection.name || '').trim()
-    final.max = Number(collection.max) || 0
-    final.issuer = caller
-    final.currentOwner = caller
-    final.symbol = collection.symbol.trim()
     final.blockNumber = BigInt(blockNumber)
-    final.metadata = collection.metadata
     final.createdAt = timestamp
-    final.version = version
-    final.updatedAt = timestamp
-    final.nftCount = 0
-    final.supply = 0
+    final.currentOwner = caller
+    final.distribution = 0
+    final.floor = BigInt(0)
     final.burned = false
     final.hash = md5(collection.id)
+    final.highestSale = BigInt(0)
+    final.issuer = caller
+    final.max = Number(collection.max) || 0
+    final.metadata = collection.metadata
+    final.name = (collection.name || '').trim()
+    final.nftCount = 0
+    final.ownerCount = 0
+    final.supply = 0
+    final.symbol = collection.symbol.trim()
+    final.updatedAt = timestamp
+    final.version = version
+    final.volume = BigInt(0)
 
     if (final.metadata) {
       const metadata = await handleMetadata(final.metadata, final.name, context.store)

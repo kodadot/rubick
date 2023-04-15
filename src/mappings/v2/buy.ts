@@ -7,7 +7,7 @@ import { createEvent } from '../shared/event'
 import { unwrap } from '../utils'
 import { isBuyLegalOrElseError, isInteractive, isMoreTransferable, isPositiveOrElseError } from '../utils/consolidator'
 import { findRootItemById } from '../utils/entity'
-import { isDummyAddress } from '../utils/helper'
+import { calculateCollectionOwnerCountAndDistribution, isDummyAddress } from '../utils/helper'
 import { error, success } from '../utils/logger'
 import { Action, Context } from '../utils/types'
 import { getBuy } from './getters'
@@ -35,6 +35,10 @@ export async function buy(context: Context) {
     nft.updatedAt = timestamp
 
     nft.collection.updatedAt = timestamp
+    nft.collection.volume += originalPrice
+    if (originalPrice > nft.collection.highestSale) {
+      nft.collection.highestSale = originalPrice
+    }
 
     if (isRecipientNFT) {
       const parent = await get<NFTEntity>(context.store, NFTEntity, recipient)
@@ -50,8 +54,18 @@ export async function buy(context: Context) {
       nft.pending = false
     }
 
-    success(OPERATION, `${nft.id} from ${caller}`)
+    const { ownerCount, distribution } = await calculateCollectionOwnerCountAndDistribution(
+      context.store,
+      nft.collection.id,
+      nft.currentOwner ?? undefined,
+      originalOwner
+    )
+    nft.collection.ownerCount = ownerCount
+    nft.collection.distribution = distribution
+
     await context.store.save(nft)
+    await context.store.save(nft.collection)
+    success(OPERATION, `${nft.id} from ${caller}`)
     await createEvent(
       nft,
       OPERATION,

@@ -18,5 +18,5 @@ export async function genericRepositoryQuery<T extends ObjectLiteral, V>(reposit
  * @returns ["id1", "id2"] -> "'id1','id2'"
  */
 export function toSqlInParams(list: string[]): string {
-  return JSON.stringify(list).replace(/\"/g, '\'').replace(/[\[|\]]/g, '')
+  return JSON.stringify(list).replace(/"/g, '\'').replace(/[[\]|]/g, '')
 }

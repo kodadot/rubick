@@ -8,6 +8,7 @@ import { isOwnerOrElseError, withMeta } from '../utils/consolidator'
 import { getInteraction } from '../utils/getters'
 import { error, success } from '../utils/logger'
 import { Action, Context, RmrkInteraction } from '../utils/types'
+import { calculateCollectionOwnerCountAndDistribution } from '../utils/helper'
 
 const OPERATION = Action.CHANGEISSUER
 
@@ -23,9 +24,15 @@ export async function changeIssuer(context: Context) {
     plsBe<CollectionEntity>(real, collection)
     isOwnerOrElseError(collection, caller)
     collection.currentOwner = interaction.value
+    const { ownerCount, distribution } = await calculateCollectionOwnerCountAndDistribution(
+      context.store,
+      collection.id,
+    )
+    collection.ownerCount = ownerCount
+    collection.distribution = distribution
 
-    success(OPERATION, `${collection.id} from ${caller}`)
     await context.store.save(collection)
+    success(OPERATION, `${collection.id} from ${caller}`)
   } catch (e) {
     error(e, OPERATION, JSON.stringify(interaction))
   }

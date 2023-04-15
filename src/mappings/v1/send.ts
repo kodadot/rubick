@@ -1,4 +1,4 @@
-import { getOrFail as get } from '@kodadot1/metasquid/entity'
+import { getWith } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
 
 import { plsBe } from '@kodadot1/metasquid/consolidator'
@@ -9,6 +9,7 @@ import { isOwnerOrElseError, realAddress, validateInteraction } from '../utils/c
 import { getInteraction } from '../utils/getters'
 import { error, success } from '../utils/logger'
 import { Action, Context, RmrkInteraction } from '../utils/types'
+import { calculateCollectionOwnerCountAndDistribution } from '../utils/helper'
 
 const OPERATION = Action.SEND
 
@@ -19,7 +20,9 @@ export async function send(context: Context) {
     const { value, caller, timestamp, blockNumber, version } = unwrap(context, getInteraction)
     interaction = value
 
-    const nft = await get<NFTEntity>(context.store, NFTEntity, interaction.id)
+    const nft = await getWith<NFTEntity>(context.store, NFTEntity, interaction.id, {
+      collection: true,
+    })
     validateInteraction(nft, interaction)
     isOwnerOrElseError(nft, caller)
     plsBe(realAddress, interaction.value)
@@ -27,9 +30,17 @@ export async function send(context: Context) {
     nft.currentOwner = interaction.value
     nft.price = BigInt(0)
     nft.updatedAt = timestamp
+    const { ownerCount, distribution } = await calculateCollectionOwnerCountAndDistribution(
+      context.store,
+      nft.collection.id,
+      nft.currentOwner,
+      originalOwner
+    )
+    nft.collection.ownerCount = ownerCount
+    nft.collection.distribution = distribution
 
-    success(OPERATION, `${nft.id} to ${interaction.value}`)
     await context.store.save(nft)
+    success(OPERATION, `${nft.id} to ${interaction.value}`)
     await createEvent(
       nft,
       Action.SEND,

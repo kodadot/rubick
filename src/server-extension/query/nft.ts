@@ -49,3 +49,9 @@ export const rootOwnerQuery = `with recursive part as (
    from part
    where parent_id is null
    limit 1`
+
+export const parentBaseResouceQuery = `
+    SELECT *  FROM resource r 
+    WHERE r.nft_id = $1
+    AND r.base_id = $2
+`

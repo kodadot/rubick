@@ -20,4 +20,5 @@ export enum Interaction {
     UNLIST = "UNLIST",
     PAY_ROYALTY = "PAY_ROYALTY",
     ROYALTY = "ROYALTY",
+    UNEQUIP = "UNEQUIP",
 }

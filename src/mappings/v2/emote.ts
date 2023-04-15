@@ -43,7 +43,7 @@ export async function emote(context: Context) {
     emote = create<Emote>(Emote, id, {
       id,
       caller,
-      value: interaction.value,
+      value: interaction.emotion,
       version: toVersion(version),
     })
 

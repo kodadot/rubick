@@ -22,12 +22,21 @@ export class CollectionEntity {
     @Column_("text", {nullable: true})
     currentOwner!: string | undefined | null
 
+    @Column_("int4", {nullable: false})
+    distribution!: number
+
     @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.map((val: any) => val.toJSON()), from: obj => obj == null ? undefined : marshal.fromList(obj, val => new CollectionEvent(undefined, marshal.nonNull(val)))}, nullable: true})
     events!: (CollectionEvent)[] | undefined | null
+
+    @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+    floor!: bigint
 
     @Index_({unique: true})
     @Column_("text", {nullable: false})
     hash!: string
+
+    @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+    highestSale!: bigint
 
     @PrimaryColumn_()
     id!: string
@@ -62,6 +71,9 @@ export class CollectionEntity {
     nfts!: NFTEntity[]
 
     @Column_("int4", {nullable: false})
+    ownerCount!: number
+
+    @Column_("int4", {nullable: false})
     supply!: number
 
     @Column_("text", {nullable: false})
@@ -72,4 +84,7 @@ export class CollectionEntity {
 
     @Column_("text", {nullable: false})
     version!: string
+
+    @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+    volume!: bigint
 }
