@@ -1,7 +1,10 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
+import * as marshal from "./marshal"
 import {BaseType} from "./_baseType"
 import {MetadataEntity} from "./metadataEntity.model"
+import {Part} from "./part.model"
 import {Theme} from "./theme.model"
+import {BaseEvent} from "./_baseEvent"
 
 @Entity_()
 export class Base {
@@ -31,6 +34,12 @@ export class Base {
     @Column_("text", {nullable: true})
     metadata!: string | undefined | null
 
+    @OneToMany_(() => Part, e => e.base)
+    parts!: Part[]
+
     @OneToMany_(() => Theme, e => e.base)
     themes!: Theme[]
+
+    @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.map((val: any) => val.toJSON()), from: obj => obj == null ? undefined : marshal.fromList(obj, val => new BaseEvent(undefined, marshal.nonNull(val)))}, nullable: true})
+    events!: (BaseEvent)[] | undefined | null
 }

@@ -34,6 +34,7 @@ type NFTEntity @entity {
   emoteCount: Int!
   emotes: [Emote!] @derivedFrom(field: "nft")
   events: [Event!] @derivedFrom(field: "nft")
+  equipped: Part
   hash: String! @index @unique
   id: ID!
   instance: String
@@ -102,6 +103,14 @@ type CollectionEvent @jsonField {
   meta: String!
 }
 
+type BaseEvent @jsonField {
+  blockNumber: String
+  timestamp: DateTime
+  caller: String!
+  interaction: String!
+  meta: String!
+}
+
 type Emote @entity {
   id: ID!
   nft: NFTEntity!
@@ -134,6 +143,7 @@ enum Interaction {
   UNLIST
   PAY_ROYALTY
   ROYALTY
+  UNEQUIP
 }
 
 # Remarkably specific types
@@ -145,11 +155,30 @@ type Base @entity {
     currentOwner: String!  
     meta: MetadataEntity
     metadata: String
-    # parts: [BasePart!] @derivedFrom(field: "base")
+    parts: [Part!] @derivedFrom(field: "base")
     themes: [Theme!] @derivedFrom(field: "base")
     # attachedToResources: [Resource!] @derivedFrom (field: "base")
-    # logs: [Call!] @derivedFrom (field: "base") // Rename to event
+    events: [BaseEvent!]
 }
+
+type Part @entity {
+    id: ID! # baseId.partId base-12126274-SKBS.Eyebrows2white
+    name: String! # Eyebrows2white // RMRK calls it part_id
+    base: Base!
+    equippable: [String!]
+    metadata: String
+    meta: MetadataEntity
+    src: String
+    thumb: String # RMRK GraphQL does not have this
+    # resources: [ResourcePart!] @derivedFrom (field: "resource")
+    type: PartType!
+    z: Int!
+}
+
+# type ResourcePart @entity {
+#     resource: Resource!
+#     part: Part!
+# }
 
 
 type Theme @entity {
@@ -165,12 +194,13 @@ type Theme @entity {
 # https://github.com/rmrk-team/rmrk-spec/blob/master/standards/rmrk2.0.0/entities/nft.md#resources-and-resource
 type Resource @entity {
     id: ID!
-    # base: Base
+    base: Base
     src: String
     meta: MetadataEntity
     metadata: String
-    slot: String
+    slot: Part
     thumb: String
+    parts: [String!]
     # parts: [ResourcePart!] @derivedFrom (field: "resource")
     priority: Int! # 0 is highest priority, need to check if this is correct
     pending: Boolean!
@@ -185,7 +215,7 @@ enum BaseType {
     png
 }
 
-enum BasePartType {
+enum PartType {
     fixed
     slot
 }

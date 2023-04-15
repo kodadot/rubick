@@ -29,4 +29,8 @@ export const debug = (action: Action, message: Record<any, any>, serialize?: boo
   logger.debug(`[${action}] ${JSON.stringify(message, serialize ? serializer : undefined, 2)}`)
 }
 
+export const warn = (action: Action, message: string) => {
+  logger.warn(`⚠️ [${action}] ${message}`)
+}
+
 export { logger as default } from '@kodadot1/metasquid/logger'

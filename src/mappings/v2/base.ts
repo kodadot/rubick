@@ -1,7 +1,7 @@
 import { Optional } from '@kodadot1/metasquid/types'
-import { CreatedBase } from '@kodadot1/minimark/v2'
+import { CreatedBase, toPartId } from '@kodadot1/minimark/v2'
 
-import { Base, BaseType } from '../../model'
+import { Base, BaseType, Part, PartType } from '../../model'
 import { handleMetadata } from '../shared'
 import { unwrap } from '../utils/extract'
 import { baseId } from '../utils/helper'
@@ -32,6 +32,29 @@ export async function base(context: Context) {
     }
 
     await context.store.save(final)
+
+    // id of part is partId
+    if (base.parts.length > 0) {
+      for (const basePart of base.parts) {
+        const partId = toPartId(id, basePart.id)
+        const part = await createUnlessNotExist(partId, Part, context)
+        part.name = basePart.id
+        part.base = final
+        part.id = partId
+        part.metadata = basePart.metadata
+        part.type = basePart.type as PartType
+
+        if (basePart.metadata) {
+          const metadata = await handleMetadata(basePart.metadata, '', context.store)
+          part.meta = metadata
+        }
+
+        await context.store.save(part)
+      }
+    }
+
+    // TODO: themes
+    // if (base.themes) {}
   } catch (e) {
     error(e, OPERATION, JSON.stringify(base))
   }
