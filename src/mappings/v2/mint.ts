@@ -1,18 +1,17 @@
 import { plsBe, real } from '@kodadot1/metasquid/consolidator'
 import { create, getOrFail as get } from '@kodadot1/metasquid/entity'
-import { Mint, resolveRoyalty } from '@kodadot1/minimark/v2'
+import { Mint, resolveRoyalty, toPropertyId } from '@kodadot1/minimark/v2'
 import md5 from 'md5'
 import { unwrap } from '../utils'
 import { isOwnerOrElseError } from '../utils/consolidator'
 
-import { CollectionEntity, NFTEntity } from '../../model/generated'
+import { CollectionEntity, NFTEntity, Property } from '../../model/generated'
 import { createEvent } from '../shared/event'
 import { handleMetadata } from '../shared/metadata'
 import { findRootItemById } from '../utils/entity'
-import { isDummyAddress } from '../utils/helper'
+import { calculateCollectionOwnerCountAndDistribution, isDummyAddress } from '../utils/helper'
 import logger, { error, success } from '../utils/logger'
 import { Action, Context, Optional, getNftId } from '../utils/types'
-import { calculateCollectionOwnerCountAndDistribution } from '../utils/helper'
 import { getCreateToken } from './getters'
 
 const OPERATION = Action.MINT
@@ -50,13 +49,6 @@ export async function mintItem(context: Context): Promise<void> {
     collection.updatedAt = timestamp
     collection.nftCount += 1
     collection.supply += 1
-    const { ownerCount, distribution } = await calculateCollectionOwnerCountAndDistribution(
-      context.store,
-      collection.id,
-      final.currentOwner
-    )
-    collection.ownerCount = ownerCount
-    collection.distribution = distribution
 
     if (final.metadata) {
       const metadata = await handleMetadata(final.metadata, '', context.store)
@@ -115,6 +107,36 @@ export async function mintItem(context: Context): Promise<void> {
         context.store,
         caller
       )
+    }
+
+    if (final.parent !== null && final.pending === false) {
+      await createEvent(
+        final.parent,
+        Action.ACCEPT,
+        { blockNumber, caller, timestamp, version },
+        `NFT::${final.id}`,
+        context.store
+      )
+    }
+
+    if (nft.properties) {
+      const properties = Object.entries(nft.properties)
+      const saveList: Property[] = []
+      for (const [key, value] of properties) {
+        if (!value.value) {
+          continue
+        }
+        const propertyId = toPropertyId(final.id, key, value.value)
+        const property = create<Property>(Property, propertyId, {})
+        property.id = propertyId
+        property.key = key
+        property.value = value.value
+        property.nft = final
+        property.mutable = value._mutation?.allowed || false
+        saveList.push(property)
+      }
+
+      await context.store.save(saveList)
     }
   } catch (e) {
     if (e instanceof Error) {

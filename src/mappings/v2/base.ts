@@ -1,5 +1,5 @@
 import { Optional } from '@kodadot1/metasquid/types'
-import { CreatedBase, toPartId } from '@kodadot1/minimark/v2'
+import { CreatedBase, toPartId, toThemeId } from '@kodadot1/minimark/v2'
 
 import { Base, BaseType, Part, PartType } from '../../model'
 import { handleMetadata } from '../shared'
@@ -52,9 +52,21 @@ export async function base(context: Context) {
         await context.store.save(part)
       }
     }
-
     // TODO: themes
-    // if (base.themes) {}
+    // if (base.themes) {
+    //   const keys = ['theme_color_1', 'theme_color_2', 'theme_color_3', 'theme_color_4']
+    //   const themes = Object.entries(base.themes)
+    //   for (const [name, theme] of themes) {
+    //     const themeId = toThemeId(id, name)
+    //     for (const key of keys) {
+    //       const value = theme[key]
+    //       if (value && key !== 'base') {
+    //         const camelKey = camelCase(key) as keyof Omit<Theme, 'base'>
+    //         final[camelKey] = value
+    //       }
+    //     }
+    //   }
+    // }
   } catch (e) {
     error(e, OPERATION, JSON.stringify(base))
   }

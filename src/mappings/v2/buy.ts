@@ -75,7 +75,6 @@ export async function buy(context: Context) {
       originalOwner
     )
 
-
     if (nft.currentOwner !== caller) {
       await createEvent(
         nft,
@@ -84,6 +83,17 @@ export async function buy(context: Context) {
         nft.currentOwner || '',
         context.store,
         caller
+      )
+    }
+
+    if (nft.parent !== null && nft.pending === false) {
+      await createEvent(
+        nft.parent,
+        Action.ACCEPT,
+        { blockNumber, caller, timestamp, version },
+        `NFT::${interaction.id}`,
+        context.store,
+        originalOwner
       )
     }
   } catch (e) {

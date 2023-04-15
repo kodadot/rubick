@@ -47,6 +47,7 @@ type NFTEntity @entity {
   parent: NFTEntity # = nft_id
   pending: Boolean!
   price: BigInt!
+  properties: [Property!] @derivedFrom (field: "nft")
   resources: [Resource!] @derivedFrom (field: "nft")
   royalty: Float
   recipient: String
@@ -175,11 +176,6 @@ type Part @entity {
     z: Int!
 }
 
-# type ResourcePart @entity {
-#     resource: Resource!
-#     part: Part!
-# }
-
 
 type Theme @entity {
     id: ID!
@@ -218,6 +214,15 @@ enum BaseType {
 enum PartType {
     fixed
     slot
+}
+
+type Property @entity {
+    id: ID! 
+    key: String!
+    value: String!
+    type: String!
+    mutable: Boolean!
+    nft: NFTEntity!
 }
 
 # Cachce and tables
