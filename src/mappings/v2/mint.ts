@@ -9,10 +9,9 @@ import { CollectionEntity, NFTEntity } from '../../model/generated'
 import { createEvent } from '../shared/event'
 import { handleMetadata } from '../shared/metadata'
 import { findRootItemById } from '../utils/entity'
-import { isDummyAddress } from '../utils/helper'
+import { calculateCollectionOwnerCountAndDistribution, isDummyAddress } from '../utils/helper'
 import logger, { error, success } from '../utils/logger'
 import { Action, Context, Optional, getNftId } from '../utils/types'
-import { calculateCollectionOwnerCountAndDistribution } from '../utils/helper'
 import { getCreateToken } from './getters'
 
 const OPERATION = Action.MINT
@@ -50,13 +49,6 @@ export async function mintItem(context: Context): Promise<void> {
     collection.updatedAt = timestamp
     collection.nftCount += 1
     collection.supply += 1
-    const { ownerCount, distribution } = await calculateCollectionOwnerCountAndDistribution(
-      context.store,
-      collection.id,
-      final.currentOwner
-    )
-    collection.ownerCount = ownerCount
-    collection.distribution = distribution
 
     if (final.metadata) {
       const metadata = await handleMetadata(final.metadata, '', context.store)
@@ -91,6 +83,14 @@ export async function mintItem(context: Context): Promise<void> {
       final.pending = false
     }
 
+    const { ownerCount, distribution } = await calculateCollectionOwnerCountAndDistribution(
+      context.store,
+      collection.id,
+      final.currentOwner || ''
+    )
+    collection.ownerCount = ownerCount
+    collection.distribution = distribution
+
     await context.store.save(final)
     await context.store.save(collection)
     success(OPERATION, `${final.id} from ${caller}`)
@@ -115,6 +115,16 @@ export async function mintItem(context: Context): Promise<void> {
         context.store,
         caller
       )
+    }
+
+    if (final.parent !== null && final.pending === false) {
+      await createEvent(
+        final.parent,
+        Action.ACCEPT,
+        { blockNumber, caller, timestamp, version },
+        `NFT::${final.id}`,
+        context.store,
+      )  
     }
   } catch (e) {
     if (e instanceof Error) {
