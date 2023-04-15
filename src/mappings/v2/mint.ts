@@ -123,8 +123,8 @@ export async function mintItem(context: Context): Promise<void> {
         Action.ACCEPT,
         { blockNumber, caller, timestamp, version },
         `NFT::${final.id}`,
-        context.store,
-      )  
+        context.store
+      )
     }
   } catch (e) {
     if (e instanceof Error) {

@@ -20,7 +20,11 @@ export async function equip(context: Context) {
   try {
     const { value: equip, caller, timestamp, blockNumber, version } = unwrap(context, getEquip)
     interaction = equip
-    const nft = await getWith<NFTEntity>(context.store, NFTEntity, interaction.id, { parent: true, equipped: true, collection: true })
+    const nft = await getWith<NFTEntity>(context.store, NFTEntity, interaction.id, {
+      parent: true,
+      equipped: true,
+      collection: true,
+    })
     plsNotBe(burned, nft)
     isOwnerOrElseError(nft, caller)
     plsBe(real, nft.parent)

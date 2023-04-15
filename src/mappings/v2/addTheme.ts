@@ -13,7 +13,7 @@ import { getThemeAdd } from './getters'
 
 const OPERATION = Action.THEMEADD
 
-export async function addTheme(context: Context) { 
+export async function addTheme(context: Context) {
   let interaction: Optional<ThemeAdd> = null
 
   try {
@@ -26,10 +26,9 @@ export async function addTheme(context: Context) {
     const id = toThemeId(interaction.base_id, interaction.name)
     const final = await createUnlessNotExist(id, Theme, context)
 
-
     final.name = interaction.name
     final.base = base
-    
+
     const keys = ['theme_color_1', 'theme_color_2', 'theme_color_3', 'theme_color_4']
 
     for (const key of keys) {
@@ -37,8 +36,8 @@ export async function addTheme(context: Context) {
       if (value && key !== 'base') {
         const camelKey = camelCase(key) as keyof Omit<Theme, 'base'>
         final[camelKey] = value
+      }
     }
-  }
     // logger.success(`[${OPERATION}] NEW PRIORITY ${interaction.value} for ${nft.id} from ${caller}`)
 
     success(OPERATION, `< ${interaction.name}, ${interaction.value} > for ${interaction.base_id} from ${caller}`)

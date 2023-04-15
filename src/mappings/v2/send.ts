@@ -69,7 +69,6 @@ export async function send(context: Context) {
       originalOwner
     )
 
-
     if (nft.parent !== null && nft.pending === false) {
       await createEvent(
         nft.parent,
@@ -78,7 +77,7 @@ export async function send(context: Context) {
         `NFT::${interaction.id}`,
         context.store,
         originalOwner
-      )  
+      )
     }
   } catch (e) {
     error(e, OPERATION, JSON.stringify(interaction))

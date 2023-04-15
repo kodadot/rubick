@@ -31,7 +31,7 @@ export async function changeIssuer(context: Context) {
     if (!isDummyAddress(interaction.value)) {
       throw new Error(`Cannot change issuer to value that is not address address ${interaction.value}`)
     }
-    
+
     await context.store.save(entity)
     success(OPERATION, `${entity.id} from ${caller}`)
   } catch (e) {
