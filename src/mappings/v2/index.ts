@@ -18,6 +18,7 @@ import { setPriority } from './setpriority'
 import { addTheme } from './addTheme'
 import { equip } from './equip'
 import { equippable } from './equippable'
+import { setProperty } from './setProperty'
 
 export async function mainFrame(remark: string, context: Context): Promise<void> {
   const base = unwrap(context, (_: Context) => ({ value: remark }))
@@ -75,8 +76,10 @@ export async function mainFrame(remark: string, context: Context): Promise<void>
       case Interaction.EQUIPPABLE:
         await equippable(context)
         break
-      case Interaction.DESTROY:
       case Interaction.SETPROPERTY:
+        await setProperty(context)
+        break
+      case Interaction.DESTROY:
         pending(event, `::${base.blockNumber}::${base.value}`)
         break
       default:
