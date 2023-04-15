@@ -86,6 +86,17 @@ export async function buy(context: Context) {
         caller
       )
     }
+
+    if (nft.parent !== null && nft.pending === false) {
+      await createEvent(
+        nft.parent,
+        Action.ACCEPT,
+        { blockNumber, caller, timestamp, version },
+        `NFT::${interaction.id}`,
+        context.store,
+        originalOwner
+      )  
+    }
   } catch (e) {
     error(e, OPERATION, JSON.stringify(interaction))
   }
