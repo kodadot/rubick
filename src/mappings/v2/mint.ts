@@ -12,6 +12,7 @@ import { findRootItemById } from '../utils/entity'
 import { isDummyAddress } from '../utils/helper'
 import logger, { error, success } from '../utils/logger'
 import { Action, Context, Optional, getNftId } from '../utils/types'
+import { calculateCollectionOwnerCountAndDistribution } from '../utils/helper'
 import { getCreateToken } from './getters'
 
 const OPERATION = Action.MINT
@@ -49,6 +50,13 @@ export async function mintItem(context: Context): Promise<void> {
     collection.updatedAt = timestamp
     collection.nftCount += 1
     collection.supply += 1
+    const { ownerCount, distribution } = await calculateCollectionOwnerCountAndDistribution(
+      context.store,
+      collection.id,
+      final.currentOwner
+    )
+    collection.ownerCount = ownerCount
+    collection.distribution = distribution
 
     if (final.metadata) {
       const metadata = await handleMetadata(final.metadata, '', context.store)
@@ -68,7 +76,7 @@ export async function mintItem(context: Context): Promise<void> {
 
     const recipient = targetOwner || caller
     const isRecipientNFT = !isDummyAddress(recipient)
-    
+
     if (isRecipientNFT) {
       const parent = await get<NFTEntity>(context.store, NFTEntity, recipient)
       const isCallerTheOwner = parent.currentOwner === caller

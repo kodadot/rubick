@@ -1,4 +1,4 @@
-import { getOrFail as get } from '@kodadot1/metasquid/entity'
+import { getWith } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
 
 import { NFTEntity } from '../../model'
@@ -22,7 +22,7 @@ export async function list(context: Context) {
   try {
     const { value, caller, timestamp, blockNumber, version } = unwrap(context, getInteraction)
     interaction = value
-    const nft = await get<NFTEntity>(context.store, NFTEntity, interaction.id)
+    const nft = await getWith<NFTEntity>(context.store, NFTEntity, interaction.id, { collection: true })
     validateInteraction(nft, interaction)
     isOwnerOrElseError(nft, caller)
     const price = BigInt(interaction.value || '0')
@@ -32,9 +32,12 @@ export async function list(context: Context) {
     isPositiveOrElseError(price)
     nft.price = price
     nft.updatedAt = timestamp
+    if (nft.collection.floor === 0n || nft.price < nft.collection.floor) {
+      nft.collection.floor = nft.price
+    }
 
-    success(OPERATION, `${nft.id} from ${caller}`)
     await context.store.save(nft)
+    success(OPERATION, `${nft.id} from ${caller}`)
     const event = nft.price === 0n ? Action.UNLIST : Action.LIST
     await createEvent(nft, event, { blockNumber, caller, timestamp, version }, String(price), context.store)
   } catch (e) {

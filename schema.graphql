@@ -2,8 +2,11 @@ type CollectionEntity @entity {
   blockNumber: BigInt
   createdAt: DateTime!
   currentOwner: String
+  distribution: Int!
   events: [CollectionEvent!]
+  floor: BigInt!
   hash: String! @unique
+  highestSale: BigInt!
   id: ID!
   image: String
   issuer: String
@@ -14,10 +17,12 @@ type CollectionEntity @entity {
   name: String @index
   nftCount: Int!
   nfts: [NFTEntity!] @derivedFrom(field: "collection")
+  ownerCount: Int!
   supply: Int!
   symbol: String!
   updatedAt: DateTime!
   version: String!
+  volume: BigInt!
 }
 
 type NFTEntity @entity {

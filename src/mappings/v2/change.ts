@@ -8,6 +8,7 @@ import { unwrap } from '../utils'
 import { isOwnerOrElseError, withMeta } from '../utils/consolidator'
 import { error, success } from '../utils/logger'
 import { Action, Context } from '../utils/types'
+import { calculateCollectionOwnerCountAndDistribution } from '../utils/helper'
 import { getChangeIssuer } from './getters'
 
 const OPERATION = Action.CHANGEISSUER
@@ -25,10 +26,16 @@ export async function changeIssuer(context: Context) {
       ? await get<Base>(context.store, Base, interaction.id)
       : await get<CollectionEntity>(context.store, CollectionEntity, interaction.id)
     isOwnerOrElseError(entity, caller)
-    entity.currentOwner = interaction.value
+    entity.currentOwner = interaction.newissuer
 
-    success(OPERATION, `${entity.id} from ${caller}`)
+    if (entity instanceof CollectionEntity) {
+      const { ownerCount, distribution } = await calculateCollectionOwnerCountAndDistribution(context.store, entity.id)
+      entity.ownerCount = ownerCount
+      entity.distribution = distribution
+    }
+
     await context.store.save(entity)
+    success(OPERATION, `${entity.id} from ${caller}`)
   } catch (e) {
     error(e, OPERATION, JSON.stringify(interaction))
   }
