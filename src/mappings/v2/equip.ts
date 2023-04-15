@@ -1,5 +1,5 @@
 import { burned, plsBe, plsNotBe, real } from '@kodadot1/metasquid/consolidator'
-import { getOrFail as get, getWith } from '@kodadot1/metasquid/entity'
+import { getOrFail as get, getWhere, getWith } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
 import { Equip, baseIdFromPartId } from '@kodadot1/minimark/v2'
 
@@ -20,7 +20,7 @@ export async function equip(context: Context) {
   try {
     const { value: equip, caller, timestamp, blockNumber, version } = unwrap(context, getEquip)
     interaction = equip
-    const nft = await getWith<NFTEntity>(context.store, NFTEntity, interaction.id, { parent: true, equipped: true })
+    const nft = await getWith<NFTEntity>(context.store, NFTEntity, interaction.id, { parent: true, equipped: true, collection: true })
     plsNotBe(burned, nft)
     isOwnerOrElseError(nft, caller)
     plsBe(real, nft.parent)
@@ -47,6 +47,15 @@ export async function equip(context: Context) {
     plsNotBe(pending, resource)
 
     const part = await get<Part>(context.store, Part, interaction.baseslot)
+    if (part.type !== 'slot') {
+      throw new Error(`Part ${part.id} is not a slot`)
+    }
+
+    const isEqquipable = part.equippable?.some((e) => e === nft.collection?.id || e === '*')
+
+    if (!isEqquipable) {
+      throw new Error(`Part ${part.id} is not equippable by ${nft.collection?.id}`)
+    }
 
     nft.equipped = part
 
