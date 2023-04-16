@@ -55,3 +55,19 @@ export const parentBaseResouceQuery = `
     WHERE r.nft_id = $1
     AND r.base_id = $2
 `
+
+export const childItemsQuery = `SELECT
+        ne.id,
+        ne.name,
+        ne.image,
+        ne.media,
+        ne.pending,
+        r.metadata as resource_metadata,
+        r.thumb as resource_thumb,
+        r.src as resource_src
+    FROM nft_entity ne
+            LEFT JOIN resource r
+                    ON ne.id = r.nft_id
+                        AND r.slot_id = ne.equipped_id
+    WHERE ne.parent_id = $1
+`
