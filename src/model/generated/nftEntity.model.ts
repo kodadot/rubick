@@ -5,6 +5,7 @@ import {Emote} from "./emote.model"
 import {Event} from "./event.model"
 import {Part} from "./part.model"
 import {MetadataEntity} from "./metadataEntity.model"
+import {Property} from "./property.model"
 import {Resource} from "./resource.model"
 
 @Entity_()
@@ -82,6 +83,9 @@ export class NFTEntity {
 
     @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
     price!: bigint
+
+    @OneToMany_(() => Property, e => e.nft)
+    properties!: Property[]
 
     @OneToMany_(() => Resource, e => e.nft)
     resources!: Resource[]
