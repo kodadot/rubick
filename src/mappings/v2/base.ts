@@ -5,7 +5,7 @@ import { Base, BaseType, Part, PartType } from '../../model'
 import { handleMetadata } from '../shared'
 import { unwrap } from '../utils/extract'
 import { baseId } from '../utils/helper'
-import logger, { error } from '../utils/logger'
+import logger, { error, success } from '../utils/logger'
 import { Action, Context } from '../utils/types'
 import { createUnlessNotExist } from '../utils/verbose'
 import { getCreateBase } from './getters'
@@ -17,7 +17,7 @@ export async function base(context: Context) {
   try {
     const { value: interaction, caller, timestamp, blockNumber, version } = unwrap(context, getCreateBase)
     const base = interaction.value as CreatedBase
-    const id = baseId(blockNumber, base.symbol)
+    const id = baseId(base.symbol, blockNumber)
     const final = await createUnlessNotExist(id, Base, context)
     final.issuer = caller
     final.currentOwner = caller
@@ -59,6 +59,8 @@ export async function base(context: Context) {
         await context.store.save(part)
       }
     }
+    
+    success(OPERATION, `${final.id} from ${caller}`)
     // TODO: themes
     // if (base.themes) {
     //   const keys = ['theme_color_1', 'theme_color_2', 'theme_color_3', 'theme_color_4']
