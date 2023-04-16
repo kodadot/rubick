@@ -82,7 +82,7 @@ export class Resource {
   @Field(() => String, { nullable: true })
   metadata!: string;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String, { nullable: true, name: "slotId" })
   slot_id!: string;
 
   @Field(() => String, { nullable: true })
