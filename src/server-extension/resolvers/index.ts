@@ -1,5 +1,17 @@
+/* eslint-disable unicorn/prefer-export-from */
 import { Field, ObjectType, Query, Resolver } from 'type-graphql'
 import type { EntityManager } from 'typeorm'
+
+import { CollectionChartResolver } from './collectionChart'
+import { CollectionEventResolver } from './collectionEvent'
+import { PassionFeedResolver } from "./passionFeed";
+import { SalesFeedResolver } from "./salesFeed";
+import { HotDashboardResolver } from "./hotDashboard";
+import { CountResolver } from './count'
+import { EmoteResolver } from './emote'
+import { EventResolver } from './event'
+import { SeriesResolver } from './series'
+import { SpotlightResolver } from './spotlight'
 
 @ObjectType()
 export class Hello {
@@ -11,23 +23,27 @@ export class Hello {
   }
 }
 
+
 @Resolver()
 export class HelloResolver {
-  constructor(private tx: () => Promise<EntityManager>) {}
+  constructor(
+    private tx: () => Promise<EntityManager>) {}
 
   @Query(() => Hello)
   async hello(): Promise<Hello> {
-    return new Hello(`Hey, this is you custom API extension`)
+      return new Hello(`Hey, this is you custom API extension`)
   }
 }
 
-export { CollectionChartResolver } from './collectionChart'
-export { CollectionEventResolver } from './collectionEvent'
-export { PassionFeedResolver } from './passionFeed'
-export { SalesFeedResolver } from './salesFeed'
-export { HotDashboardResolver } from './hotDashboard'
-export { CountResolver } from './count'
-export { EmoteResolver } from './emote'
-export { EventResolver } from './event'
-export { SeriesResolver } from './series'
-export { SpotlightResolver } from './spotlight'
+export {
+  CollectionChartResolver,
+  CollectionEventResolver,
+  CountResolver,
+  EventResolver,
+  SeriesResolver,
+  SpotlightResolver,
+  PassionFeedResolver,
+  SalesFeedResolver,
+  HotDashboardResolver,
+  EmoteResolver,
+}
