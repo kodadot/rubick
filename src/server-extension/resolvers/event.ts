@@ -1,14 +1,14 @@
-import { Arg, Info, Query, Resolver } from "type-graphql";
-import { GraphQLResolveInfo } from "graphql";
-import type { EntityManager } from "typeorm";
-import { NFTEntity } from "../../model/generated";
-import { LastEventEntity, Resource } from "../model/event.model";
-import { lastEventQuery, resourcesByNFT } from "../query/event";
-import { makeQuery, toSqlInParams } from "../utils";
-import { Interaction } from "../../model";
-import { passionQuery } from "../query/nft";
-import { PassionFeedEntity } from "../model/passion.model";
-import { groupBy } from "lodash";
+import { GraphQLResolveInfo } from "graphql"
+import { groupBy } from "lodash"
+import { Arg, Info, Query, Resolver } from "type-graphql"
+import type { EntityManager } from "typeorm"
+import { Interaction } from "../../model"
+import { NFTEntity } from "../../model/generated"
+import { LastEventEntity, ResourceEntity } from "../model/event.model"
+import { PassionFeedEntity } from "../model/passion.model"
+import { lastEventQuery, resourcesByNFT } from "../query/event"
+import { passionQuery } from "../query/nft"
+import { makeQuery, toSqlInParams } from "../utils"
 
 type FieldName = {
   name: {
@@ -47,7 +47,7 @@ export class EventResolver {
 
     if (isResourcesQueried) {
       const whereCondition = `r.nft_id IN (${toSqlInParams(lastEvents.map((i) => String(i.id)))})`;
-      const resources: [Resource] = await makeQuery(this.tx, NFTEntity, resourcesByNFT(whereCondition));
+      const resources: [ResourceEntity] = await makeQuery(this.tx, NFTEntity, resourcesByNFT(whereCondition));
       const resourcesById = groupBy(resources, "nft_id");
 
       lastEvents.map((event) => (event.resources = resourcesById[String(event.id)] ?? []));
