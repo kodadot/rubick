@@ -38,6 +38,6 @@ export class Part {
     @Column_("varchar", {length: 5, nullable: false})
     type!: PartType
 
-    @Column_("int4", {nullable: false})
-    z!: number
+    @Column_("int4", {nullable: true})
+    z!: number | undefined | null
 }

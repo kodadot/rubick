@@ -173,7 +173,7 @@ type Part @entity {
     thumb: String # RMRK GraphQL does not have this
     # resources: [ResourcePart!] @derivedFrom (field: "resource")
     type: PartType!
-    z: Int!
+    z: Int
 }
 
 
