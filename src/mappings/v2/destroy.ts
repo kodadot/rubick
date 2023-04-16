@@ -18,9 +18,9 @@ export async function destroy(context: Context) {
     const { value, caller } = unwrap(context, getInteraction)
     interaction = value
     const collection = await get<CollectionEntity>(context.store, CollectionEntity, interaction.id)
-    
+
     isIssuerOrElseError(collection, caller)
-    
+
     if (collection.supply > 0) {
       throw new Error(`Cannot change issuer of collection with supply ${collection.supply}`)
     }

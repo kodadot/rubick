@@ -59,7 +59,7 @@ export async function base(context: Context) {
         await context.store.save(part)
       }
     }
-    
+
     success(OPERATION, `${final.id} from ${caller}`)
     // TODO: themes
     // if (base.themes) {
