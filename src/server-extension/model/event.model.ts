@@ -83,7 +83,7 @@ export class Resource {
   metadata!: string;
 
   @Field(() => String, { nullable: true })
-  slot!: string;
+  slot_id!: string;
 
   @Field(() => String, { nullable: true })
   thumb!: string;
