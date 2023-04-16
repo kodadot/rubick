@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from "type-graphql";
+import { Field, Int, ObjectType } from "type-graphql"
 
 @ObjectType()
 export class EventEntity {
@@ -31,28 +31,28 @@ export class HistoryEntity {
 @ObjectType()
 export class LastEventEntity {
   @Field(() => String, { nullable: false })
-  id!: String;
+  id!: string;
 
   @Field(() => String, { nullable: false })
-  name!: String;
+  name!: string;
 
   @Field(() => String, { nullable: false })
-  issuer!: String;
+  issuer!: string;
 
   @Field(() => Date, { nullable: false })
   timestamp!: Date;
 
   @Field(() => String, { nullable: false })
-  metadata!: String;
+  metadata!: string;
 
   @Field(() => String, { nullable: false })
-  value!: String;
+  value!: string;
 
   @Field(() => String, { nullable: false, name: "currentOwner" })
-  current_owner!: String;
+  current_owner!: string;
 
   @Field(() => String, { nullable: true })
-  image!: String;
+  image!: string;
 
   @Field(() => String, { nullable: true, name: "animationUrl" })
   animation_url!: string | undefined | null;
@@ -63,8 +63,8 @@ export class LastEventEntity {
   @Field(() => String, { nullable: false, name: "collectionName" })
   collection_name!: string;
 
-  @Field(() => [Resource], { nullable: true })
-  resources!: Resource[];
+  @Field(() => [ResourceEntity], { nullable: true })
+  resources!: ResourceEntity[];
 
   constructor(props: Partial<LastEventEntity>) {
     Object.assign(this, props);
@@ -72,7 +72,7 @@ export class LastEventEntity {
 }
 
 @ObjectType()
-export class Resource {
+export class ResourceEntity {
   @Field(() => String, { nullable: false })
   id!: string;
 
@@ -82,8 +82,8 @@ export class Resource {
   @Field(() => String, { nullable: true })
   metadata!: string;
 
-  @Field(() => String, { nullable: true })
-  slot!: string;
+  @Field(() => String, { nullable: true, name: "slotId" })
+  slot_id!: string;
 
   @Field(() => String, { nullable: true })
   thumb!: string;
@@ -96,7 +96,7 @@ export class Resource {
 
   nftId!: string;
 
-  constructor(props: Partial<Resource>) {
+  constructor(props: Partial<ResourceEntity>) {
     Object.assign(this, props);
   }
 }

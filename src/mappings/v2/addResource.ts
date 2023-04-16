@@ -1,5 +1,5 @@
 import { burned, plsNotBe } from '@kodadot1/metasquid/consolidator'
-import { getOrCreate, getOrFail as get, getOptional } from '@kodadot1/metasquid/entity'
+import { getOrFail as get, getOptional, getOrCreate } from '@kodadot1/metasquid/entity'
 import { Optional } from '@kodadot1/metasquid/types'
 import { Resadd } from '@kodadot1/minimark/v2'
 
@@ -8,7 +8,7 @@ import { handleMetadata } from '../shared'
 import { createEvent } from '../shared/event'
 import { unwrap } from '../utils'
 import { isIssuerOrElseError } from '../utils/consolidator'
-import logger, { error, success } from '../utils/logger'
+import logger, { error, success, warn } from '../utils/logger'
 import { Action, Context } from '../utils/types'
 import { getAddRes } from './getters'
 
@@ -43,11 +43,17 @@ export async function addResource(context: Context) {
 
     if (interaction.value.base) {
       const base = await getOptional<Base>(context.store, Base, interaction.value.base)
+      if (!base) {
+        warn(OPERATION, `Base ${interaction.value.base} not found`)
+      }
       final.base = base
     }
 
     if (interaction.value.slot) {
       const part = await getOptional<Part>(context.store, Part, interaction.value.slot)
+      if (!part) {
+        warn(OPERATION, `Base ${interaction.value.base} not found`)
+      }
       final.slot = part
     }
 

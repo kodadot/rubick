@@ -55,7 +55,7 @@ export const resourcesByNFT = (whereCondition: string) => `
   SELECT r.id as id,
         r.src as src,
         r.metadata as metadata,
-        r.slot as slot,
+        r.slot_id,
         r.thumb as thumb,
         r.priority as priority,
         r.pending as pending,
