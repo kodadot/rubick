@@ -1,5 +1,6 @@
 type CollectionEntity @entity {
   blockNumber: BigInt
+  burned: Boolean!
   createdAt: DateTime!
   currentOwner: String
   distribution: Int!

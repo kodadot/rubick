@@ -29,6 +29,7 @@ export async function createCollection(context: Context): Promise<void> {
     final.currentOwner = caller
     final.distribution = 0
     final.floor = BigInt(0)
+    final.burned = false
     final.hash = md5(collection.id)
     final.highestSale = BigInt(0)
     final.issuer = caller

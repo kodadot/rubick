@@ -13,6 +13,9 @@ export class CollectionEntity {
     @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
     blockNumber!: bigint | undefined | null
 
+    @Column_("bool", {nullable: false})
+    burned!: boolean
+
     @Column_("timestamp with time zone", {nullable: false})
     createdAt!: Date
 

@@ -6,19 +6,20 @@ import logger, { pending } from '../utils/logger'
 import { Context } from '../utils/types'
 import { acceptResource } from './accept'
 import { addResource } from './addResource'
+import { addTheme } from './addTheme'
 import { base as createBase } from './base'
 import { buy } from './buy'
 import { changeIssuer } from './change'
 import { createCollection } from './create'
+import { destroy } from './destroy'
 import { emote } from './emote'
-import { lockCollection } from './lock'
-import { mintItem } from './mint'
-import { send } from './send'
-import { setPriority } from './setpriority'
-import { addTheme } from './addTheme'
 import { equip } from './equip'
 import { equippable } from './equippable'
-import { setProperty } from './setProperty'
+import { lockCollection } from './lock'
+import { mintItem } from './mint'
+import { setProperty } from './propertySet'
+import { send } from './send'
+import { setPriority } from './setpriority'
 
 export async function mainFrame(remark: string, context: Context): Promise<void> {
   const base = unwrap(context, (_: Context) => ({ value: remark }))
@@ -80,7 +81,7 @@ export async function mainFrame(remark: string, context: Context): Promise<void>
         await setProperty(context)
         break
       case Interaction.DESTROY:
-        pending(event, `::${base.blockNumber}::${base.value}`)
+        await destroy(context)
         break
       default:
         logger.fatal(`[SKIP] ${event}::${base.value}::${base.blockNumber}`)
