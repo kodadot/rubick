@@ -18,7 +18,7 @@ import { setPriority } from './setpriority'
 import { addTheme } from './addTheme'
 import { equip } from './equip'
 import { equippable } from './equippable'
-import { setProperty } from './setProperty'
+import { setProperty } from './propertySet'
 
 export async function mainFrame(remark: string, context: Context): Promise<void> {
   const base = unwrap(context, (_: Context) => ({ value: remark }))
