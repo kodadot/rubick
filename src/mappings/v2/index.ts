@@ -19,6 +19,7 @@ import { addTheme } from './addTheme'
 import { equip } from './equip'
 import { equippable } from './equippable'
 import { setProperty } from './propertySet'
+import { destroy } from './destroy'
 
 export async function mainFrame(remark: string, context: Context): Promise<void> {
   const base = unwrap(context, (_: Context) => ({ value: remark }))
@@ -80,7 +81,7 @@ export async function mainFrame(remark: string, context: Context): Promise<void>
         await setProperty(context)
         break
       case Interaction.DESTROY:
-        pending(event, `::${base.blockNumber}::${base.value}`)
+        await destroy(context)
         break
       default:
         logger.fatal(`[SKIP] ${event}::${base.value}::${base.blockNumber}`)
