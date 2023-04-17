@@ -133,6 +133,7 @@ export async function mintItem(context: Context): Promise<void> {
         property.value = value.value
         property.nft = final
         property.mutable = value._mutation?.allowed || false
+        property.type = value.type
         saveList.push(property)
       }
 
