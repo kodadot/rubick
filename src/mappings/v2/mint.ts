@@ -123,7 +123,7 @@ export async function mintItem(context: Context): Promise<void> {
       const properties = Object.entries(nft.properties)
       const saveList: Property[] = []
       for (const [key, value] of properties) {
-        if (!value.value) {
+        if (!value.value || key === 'royaltyInfo') {
           continue
         }
         const propertyId = toPropertyId(final.id, key, value.value)
@@ -133,7 +133,7 @@ export async function mintItem(context: Context): Promise<void> {
         property.value = value.value
         property.nft = final
         property.mutable = value._mutation?.allowed || false
-        property.type = value.type
+        property.type = value.type || 'string'
         saveList.push(property)
       }
 
