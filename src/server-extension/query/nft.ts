@@ -71,3 +71,15 @@ export const childItemsQuery = `SELECT
                         AND r.slot_id = ne.equipped_id
     WHERE ne.parent_id = $1
 `
+
+export const nestedChildrenQuery = `WITH RECURSIVE part AS (
+    SELECT id, name, current_owner, parent_id, price
+    FROM nft_entity
+    WHERE parent_id = $1
+    UNION
+    SELECT pe.id, pe.name, pe.current_owner, pe.parent_id, pe.price
+    FROM nft_entity pe
+             JOIN part p ON p.id = pe.parent_id
+)
+   select id, name, current_owner, price
+   from part`
