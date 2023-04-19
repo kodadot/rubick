@@ -10,6 +10,7 @@ import { getInteraction } from '../utils/getters'
 import { calculateCollectionOwnerCountAndDistribution, isDummyAddress } from '../utils/helper'
 import { error, success } from '../utils/logger'
 import { Action, Context, RmrkInteraction } from '../utils/types'
+import { manageChildTransfer } from './children'
 
 const OPERATION = Action.SEND
 
@@ -79,6 +80,8 @@ export async function send(context: Context) {
         originalOwner
       )
     }
+
+    await manageChildTransfer(context, nft, originalOwner, { blockNumber, caller, timestamp, version })
   } catch (e) {
     error(e, OPERATION, JSON.stringify(interaction))
   }
