@@ -72,7 +72,7 @@ tail TAG:
 	npx sqd squid logs rubick@{{TAG}} -f
 
 brutal TAG=default:
-	npx sqd deploy —hard -m {{TAG}}.yaml .
+	npx sqd deploy -r -m {{TAG}}.yaml .
 
 update-deps:
 	npx npm-check-updates -ux
