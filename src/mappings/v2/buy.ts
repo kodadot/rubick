@@ -11,6 +11,7 @@ import { calculateCollectionOwnerCountAndDistribution, isDummyAddress } from '..
 import { error, success } from '../utils/logger'
 import { Action, Context } from '../utils/types'
 import { getBuy } from './getters'
+import { manageChildTransfer } from './children'
 
 const OPERATION = Action.BUY
 
@@ -96,6 +97,8 @@ export async function buy(context: Context) {
         originalOwner
       )
     }
+
+    await manageChildTransfer(context, nft, originalOwner, { blockNumber, caller, timestamp, version },)
   } catch (e) {
     error(e, OPERATION, JSON.stringify(interaction))
   }
