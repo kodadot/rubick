@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@kodadot1/metasquid": "^0.1.6-rc.0",
-    "@kodadot1/minimark": "0.1.7-rc.3",
+    "@kodadot1/minimark": "0.1.9-rc.0",
     "@kodadot1/minipfs": "^0.3.0-rc.0",
     "@subsquid/archive-registry": "2.1.12",
     "@subsquid/big-decimal": "^0.0.0",
@@ -29,7 +29,7 @@
     "nanoid": "3.3.4",
     "pg": "^8.10.0",
     "type-graphql": "^1.2.0-rc.1",
-    "typeorm": "0.3.12"
+    "typeorm": "0.3.15"
   },
   "devDependencies": {
     "@subsquid/substrate-metadata-explorer": "1.1.2",
@@ -41,6 +41,6 @@
     "eslint-config-unjs": "^0.1.0",
     "prettier": "^2.8.7",
     "ts-node": "^10.9.1",
-    "typescript": "~5.0.3"
+    "typescript": "~5.0.4"
   }
 }
