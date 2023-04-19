@@ -8,7 +8,7 @@ import { Action, BaseCall, Context } from '../utils/types'
 export async function manageChildTransfer(context: Context, nft: NFTEntity, originalOwner: string | undefined, call: BaseCall) {
   const children = await findAllNestedChildrenByParentId(context.store, nft.id)
 
-  logger.debug(`Found ${children.length} children of ${nft.id}`)
+  logger.info(`[CHILDREN of ${nft.id}] - FOUND ${children.length}`)
 
   for (const child of children) {
     child.currentOwner = nft.currentOwner
@@ -21,5 +21,5 @@ export async function manageChildTransfer(context: Context, nft: NFTEntity, orig
     }
   }
 
-  logger.debug(`Updated ${children.length} children of ${nft.id}`)
+  logger.info(`☑️ [CHILDREN of ${nft.id}] UPDATED ${children.length}`)
 }
