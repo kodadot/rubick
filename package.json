@@ -12,7 +12,7 @@
     "query-node:start": "squid-graphql-server --subscriptions --max-root-fields 50 --dumb-cache in-memory --dumb-cache-ttl 1000 --dumb-cache-size 100 --dumb-cache-max-age 1000"
   },
   "dependencies": {
-    "@kodadot1/metasquid": "^0.1.5-rc.0",
+    "@kodadot1/metasquid": "^0.1.6-rc.0",
     "@kodadot1/minimark": "0.1.7-rc.3",
     "@kodadot1/minipfs": "^0.3.0-rc.0",
     "@subsquid/archive-registry": "2.1.12",
