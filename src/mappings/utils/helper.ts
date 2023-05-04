@@ -90,8 +90,7 @@ export async function calculateCollectionOwnerCountAndDistribution(
   WHERE collection_id = '${collectionId}'
   ${originalOwner && `AND current_owner != '${originalOwner}'`}
   `
-  const queryResult: { owner_count: number; distribution: number; adjustment?: number }[] = await store.query(query)
-  const result = queryResult[0]
+  const [result]: { owner_count: number; distribution: number; adjustment?: number }[] = await store.query(query)
 
   const adjustedResults = {
     ownerCount: result.owner_count - (result.adjustment ?? 0),

@@ -26,6 +26,9 @@ export class ChildItemEntity {
     @Field(() => String, { nullable: true, defaultValue: '', name: 'resourceThumb' })
     resource_thumb!: string
 
+    @Field(() => String, { nullable: true })
+    z!: string
+
     constructor(props: Partial<ChildItemEntity>) {
         Object.assign(this, props);
     }
