@@ -64,11 +64,13 @@ export const childItemsQuery = `SELECT
         ne.pending,
         r.metadata as resource_metadata,
         r.thumb as resource_thumb,
-        r.src as resource_src
+        r.src as resource_src,
+        p.z as z
     FROM nft_entity ne
             LEFT JOIN resource r
                     ON ne.id = r.nft_id
                         AND r.slot_id = ne.equipped_id
+            LEFT JOIN part p on p.meta_id = r.id
     WHERE ne.parent_id = $1
 `
 
