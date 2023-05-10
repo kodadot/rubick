@@ -43,9 +43,10 @@ export async function base(context: Context) {
         part.id = partId
         part.metadata = basePart.metadata
         part.type = basePart.type as PartType || PartType.fixed
+        part.z = basePart.z
+        
         if (basePart.type === PartType.slot) {
           part.equippable = Array.isArray(basePart.equippable) ? basePart.equippable : ['*']
-          part.z = basePart.z
         }
 
         part.src = basePart.src
