@@ -9,7 +9,7 @@ import { getCreateToken } from '../utils/getters'
 import { error, success } from '../utils/logger'
 import { Action, Context, getNftId, NFT, Optional } from '../utils/types'
 import { createEvent } from '../shared/event'
-import { handleMetadata } from '../shared/metadata'
+import { handleMetadata, isLewd } from '../shared/metadata'
 import { calculateCollectionOwnerCountAndDistribution } from '../utils/helper'
 
 const OPERATION = Action.MINT
@@ -34,6 +34,7 @@ export async function mintItem(context: Context): Promise<void> {
     final.blockNumber = BigInt(blockNumber)
     final.name = nft.name
     final.instance = nft.instance
+    final.lewd = false
     final.transferable = nft.transferable
     final.collection = collection
     final.sn = nft.sn
@@ -62,6 +63,10 @@ export async function mintItem(context: Context): Promise<void> {
       final.meta = metadata
       final.image = metadata?.image
       final.media = metadata?.animationUrl
+      if (metadata && isLewd(metadata)) {
+        final.lewd = true
+        collection.lewd = true
+      }
     }
 
     await context.store.save(final)

@@ -60,6 +60,9 @@ export class NFTEntity {
     @Column_("text", {nullable: true})
     issuer!: string | undefined | null
 
+    @Column_("bool", {nullable: false})
+    lewd!: boolean
+
     @Column_("text", {nullable: true})
     media!: string | undefined | null
 

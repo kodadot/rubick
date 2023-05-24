@@ -11,6 +11,7 @@ type CollectionEntity @entity {
   id: ID!
   image: String
   issuer: String
+  lewd: Boolean!
   max: Int!
   media: String
   meta: MetadataEntity
@@ -41,6 +42,7 @@ type NFTEntity @entity {
   instance: String
   image: String
   issuer: String
+  lewd: Boolean!
   media: String
   meta: MetadataEntity
   metadata: String
