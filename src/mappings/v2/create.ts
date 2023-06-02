@@ -4,7 +4,7 @@ import { Optional } from '@kodadot1/metasquid/types'
 
 import md5 from 'md5'
 import { CollectionEntity } from '../../model'
-import { handleMetadata } from '../shared'
+import { handleMetadata, isLewd } from '../shared'
 import { unwrap } from '../utils/extract'
 import { error, success } from '../utils/logger'
 import { Action, Collection, Context } from '../utils/types'
@@ -33,6 +33,7 @@ export async function createCollection(context: Context): Promise<void> {
     final.hash = md5(collection.id)
     final.highestSale = BigInt(0)
     final.issuer = caller
+    final.lewd = false
     final.max = Number(collection.max) || 0
     final.metadata = collection.metadata
     final.name = (collection.name || '').trim()
@@ -49,6 +50,7 @@ export async function createCollection(context: Context): Promise<void> {
       final.meta = metadata
       final.image = metadata?.image
       final.media = metadata?.animationUrl
+      final.lewd = metadata ? isLewd(metadata) : false
       if (metadata?.name && !final.name) {
         final.name = metadata.name
       }

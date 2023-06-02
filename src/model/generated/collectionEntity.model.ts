@@ -47,6 +47,9 @@ export class CollectionEntity {
     @Column_("text", {nullable: true})
     issuer!: string | undefined | null
 
+    @Column_("bool", {nullable: false})
+    lewd!: boolean
+
     @Column_("int4", {nullable: false})
     max!: number
 

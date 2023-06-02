@@ -7,7 +7,7 @@ import { isOwnerOrElseError } from '../utils/consolidator'
 
 import { CollectionEntity, NFTEntity, Property } from '../../model/generated'
 import { createEvent } from '../shared/event'
-import { handleMetadata } from '../shared/metadata'
+import { handleMetadata, isLewd } from '../shared/metadata'
 import { findRootItemById } from '../utils/entity'
 import { calculateCollectionOwnerCountAndDistribution, isDummyAddress } from '../utils/helper'
 import logger, { error, success } from '../utils/logger'
@@ -34,6 +34,7 @@ export async function mintItem(context: Context): Promise<void> {
     final.blockNumber = BigInt(blockNumber)
     final.name = nft.name
     final.instance = nft.symbol
+    final.lewd = false
     final.transferable = nft.transferable
     final.collection = collection
     final.sn = nft.sn
@@ -55,6 +56,10 @@ export async function mintItem(context: Context): Promise<void> {
       final.meta = metadata
       final.image = metadata?.image
       final.media = metadata?.animationUrl
+      if (metadata && isLewd(metadata)) {
+        final.lewd = true
+        collection.lewd = true
+      }
       if (metadata?.name && !final.name) {
         final.name = metadata.name
       }

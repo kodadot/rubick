@@ -3,7 +3,7 @@ import { Optional, TokenMetadata } from '@kodadot1/metasquid/types'
 import { isEmpty } from '@kodadot1/minimark/utils'
 
 import { logger } from '@kodadot1/metasquid/logger'
-import { MetadataEntity as Metadata } from '../../model/generated'
+import { Attribute, MetadataEntity as Metadata, MetadataEntity } from '../../model/generated'
 import { fetchMetadata } from '../utils/metadata'
 import { attributeFrom, Store } from '../utils/types'
 
@@ -41,4 +41,12 @@ export async function handleMetadata(id: string, name: string, store: Store): Pr
     logger.info(message)
   }
   return final
+}
+
+export const isLewd = (metadata: MetadataEntity) => {
+  return Boolean(
+    metadata.attributes?.find((item) => {
+      return item.trait === 'NSFW'
+    })
+  )
 }
