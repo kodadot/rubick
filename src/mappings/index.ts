@@ -19,12 +19,11 @@ export async function handleRemark(context: Context): Promise<void> {
 export async function versionRouter(value: string, context: Context, version: VersionedRemark): Promise<void> {
   // logger.debug(`[${event}]::${version}`)
 
-  if (version === '2.0.0') {
-    await mainFrameV2(value, context)
-  }
+  // if (version === '2.0.0') {
+  //   await mainFrameV2(value, context)
+  // }
 
-  // TODO: Enable when v1 is ready
-  // await mainFrameV1(value, context)
+  await mainFrameV1(value, context)
 
   // TODO: use data from the base or something
   // const date = new Date(context.block.timestamp)
