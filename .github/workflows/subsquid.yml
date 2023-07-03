@@ -23,4 +23,4 @@ jobs:
           sqd auth -k ${{ secrets.DEPLOYMENT_KEY }}
       - name: deploy subsquid
         id: deploy
-        run: sqd deploy -u -m {{ env.VERSION }}.yaml .
+        run: sqd deploy -u -m ${{ env.VERSION }}.yaml .
