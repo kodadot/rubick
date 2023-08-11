@@ -114,6 +114,7 @@ async function mint(context: Context): Promise<void> {
     final.updatedAt = timestamp
     final.nftCount = 0
     final.supply = 0
+    final.volume = 0n
 
     if (final.metadata) {
       const metadata = await handleMetadata(final.metadata, final.name, context.store)
