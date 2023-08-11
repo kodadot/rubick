@@ -4,7 +4,6 @@ import { Context } from './utils/types'
 
 import { getRemarkString } from './utils/getters'
 import { mainFrame as mainFrameV1 } from './v1'
-import { mainFrame as mainFrameV2 } from './v2'
 import { updateCache, updateMetadataCache } from './utils/cache'
 
 export async function handleRemark(context: Context): Promise<void> {
@@ -26,7 +25,7 @@ export async function versionRouter(value: string, context: Context, version: Ve
   await mainFrameV1(value, context)
 
   // TODO: use data from the base or something
-  // const date = new Date(context.block.timestamp)
-  // await updateCache(new Date(), context.store)
-  await updateMetadataCache(new Date(), context.store)
+  const date = new Date(context.block.timestamp)
+  // await updateCache(date, context.store)
+  await updateMetadataCache(date, context.store)
 }
