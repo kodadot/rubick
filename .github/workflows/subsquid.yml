@@ -13,7 +13,7 @@ jobs:
         with:
           node-version: 16
       - name: install @subsquid/cli
-        run: npm install --location=global @subsquid/cli
+        run: npm install --location=global @subsquid/cli@0.7.4
       - name: auth subsquid
         run: |
           BRANCH=${{ github.ref_name }}
