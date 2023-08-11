@@ -30,6 +30,7 @@ type CollectionEntity @entity {
   updatedAt: DateTime!
   nftCount: Int!
   supply: Int!
+  volume: BigInt
 }
 
 type NFTEntity @entity {

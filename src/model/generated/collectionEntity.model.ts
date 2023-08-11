@@ -59,4 +59,7 @@ export class CollectionEntity {
 
     @Column_("int4", {nullable: false})
     supply!: number
+
+    @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+    volume!: bigint | undefined | null
 }
