@@ -73,6 +73,7 @@ export async function calculateCollectionOwnerCountAndDistribution(
   newOwner?: string,
   originalOwner?: string
 ): Promise<{ ownerCount: number; distribution: number }> {
+  const safeCollectionId = collectionId.replace(/'/g, "''")
   let query: string = `
   SELECT COUNT(DISTINCT current_owner) AS distribution,
        COUNT(current_owner) AS owner_count
@@ -87,7 +88,7 @@ export async function calculateCollectionOwnerCountAndDistribution(
   `
   } 
   FROM nft_entity
-  WHERE collection_id = '${collectionId}'
+  WHERE collection_id = '${safeCollectionId}'
   `
 
   if (originalOwner) {
