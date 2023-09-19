@@ -11,6 +11,7 @@ import { Action, Context, getNftId, NFT, Optional } from '../utils/types'
 import { createEvent } from '../shared/event'
 import { handleMetadata, isLewd } from '../shared/metadata'
 import { calculateCollectionOwnerCountAndDistribution } from '../utils/helper'
+import { handleTokenEntity } from '../shared/handleTokenEntity'
 
 const OPERATION = Action.MINT
 
@@ -67,6 +68,11 @@ export async function mintItem(context: Context): Promise<void> {
         final.lewd = true
         collection.lewd = true
       }
+    }
+
+    const token = await handleTokenEntity(context, collection, final)
+    if (token) {
+      final.token = token
     }
 
     await context.store.save(final)
