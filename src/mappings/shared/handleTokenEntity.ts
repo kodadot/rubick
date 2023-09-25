@@ -16,8 +16,6 @@ export async function handleTokenEntity(context: Context, collection: CE, nft: N
     nft.resources[0].thumb
   if (!nftMedia || nftMedia === '') {
     warn(OPERATION, `MISSING NFT MEDIA ${nft.id}`)
-    await new Promise((resolve) => setTimeout(resolve, 5000))
-
     return
   }
 
