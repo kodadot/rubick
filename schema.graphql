@@ -72,7 +72,7 @@ type NFTEntity @entity {
   transferable: Int
   updatedAt: DateTime!
   version: String!
-  token: TokenEntity!
+  token: TokenEntity
 }
 
 type MetadataEntity @entity {

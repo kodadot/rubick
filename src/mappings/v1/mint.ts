@@ -70,10 +70,8 @@ export async function mintItem(context: Context): Promise<void> {
       }
     }
 
-    const token = await handleTokenEntity(context, collection, final)
-    if (token) {
-      final.token = token
-    }
+    final.token  = await handleTokenEntity(context, collection, final)
+
 
     await context.store.save(final)
     await context.store.save(collection)
