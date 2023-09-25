@@ -7,6 +7,7 @@ import {Part} from "./part.model"
 import {MetadataEntity} from "./metadataEntity.model"
 import {Property} from "./property.model"
 import {Resource} from "./resource.model"
+import {TokenEntity} from "./tokenEntity.model"
 
 @Entity_()
 export class NFTEntity {
@@ -110,4 +111,8 @@ export class NFTEntity {
 
     @Column_("text", {nullable: false})
     version!: string
+
+    @Index_()
+    @ManyToOne_(() => TokenEntity, {nullable: true})
+    token!: TokenEntity | undefined | null
 }

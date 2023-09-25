@@ -9,9 +9,10 @@ import { CollectionEntity, NFTEntity, Property } from '../../model/generated'
 import { createEvent } from '../shared/event'
 import { handleMetadata, isLewd } from '../shared/metadata'
 import { findRootItemById } from '../utils/entity'
-import { calculateCollectionOwnerCountAndDistribution, isDummyAddress } from '../utils/helper'
+import { isDummyAddress } from '../utils/helper'
 import logger, { error, success } from '../utils/logger'
 import { Action, Context, Optional, getNftId } from '../utils/types'
+import { handleTokenEntity } from '../shared/handleTokenEntity'
 import { getCreateToken } from './getters'
 
 const OPERATION = Action.MINT
@@ -87,6 +88,8 @@ export async function mintItem(context: Context): Promise<void> {
       final.parent = null
       final.pending = false
     }
+
+    final.token = await handleTokenEntity(context, collection, final)
 
     await context.store.save(final)
     await context.store.save(collection)

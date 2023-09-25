@@ -27,6 +27,20 @@ type CollectionEntity @entity {
   volume: BigInt!
 }
 
+type TokenEntity @entity {
+  id: ID!
+  blockNumber: BigInt
+  collection: CollectionEntity
+  nfts: [NFTEntity!] @derivedFrom(field: "token")
+  hash: String! @index
+  image: String
+  media: String
+  name: String @index
+  updatedAt: DateTime!
+  createdAt: DateTime!
+  count: Int!
+}
+
 type NFTEntity @entity {
   blockNumber: BigInt
   burned: Boolean!
@@ -58,6 +72,7 @@ type NFTEntity @entity {
   transferable: Int
   updatedAt: DateTime!
   version: String!
+  token: TokenEntity
 }
 
 type MetadataEntity @entity {
