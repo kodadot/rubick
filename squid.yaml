@@ -32,4 +32,4 @@ scale:
   addons:
     postgres:
       storage: 10G
-      profile: small
+      profile: medium
