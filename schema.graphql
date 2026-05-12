@@ -1,4 +1,6 @@
 type CollectionEntity @entity {
+  attributes: [Attribute!]
+  baseUri: String
   blockNumber: BigInt
   burned: Boolean!
   createdAt: DateTime!
@@ -11,6 +13,7 @@ type CollectionEntity @entity {
   id: ID!
   image: String
   issuer: String
+  kind: Kind
   lewd: Boolean!
   max: Int!
   media: String
@@ -20,11 +23,15 @@ type CollectionEntity @entity {
   nftCount: Int!
   nfts: [NFTEntity!] @derivedFrom(field: "collection")
   ownerCount: Int!
+  recipient: String
+  royalty: Float
   supply: Int!
   symbol: String!
   updatedAt: DateTime!
   version: String!
   volume: BigInt!
+  type: CollectionType
+  settings: CollectionSettings
 }
 
 type TokenEntity @entity {
@@ -42,6 +49,7 @@ type TokenEntity @entity {
 }
 
 type NFTEntity @entity {
+  attributes: [Attribute!]
   blockNumber: BigInt
   burned: Boolean!
   collection: CollectionEntity!
@@ -64,8 +72,8 @@ type NFTEntity @entity {
   parent: NFTEntity # = nft_id
   pending: Boolean!
   price: BigInt!
-  properties: [Property!] @derivedFrom (field: "nft")
-  resources: [Resource!] @derivedFrom (field: "nft")
+  properties: [Property!] @derivedFrom(field: "nft")
+  resources: [Resource!] @derivedFrom(field: "nft")
   royalty: Float
   recipient: String
   sn: String
@@ -89,6 +97,13 @@ type Attribute @jsonField {
   display: String
   trait: String
   value: String!
+}
+
+type CollectionSettings @jsonField {
+  value: String
+  startBlock: BigInt
+  endBlock: BigInt
+  price: BigInt
 }
 
 interface EventType {
@@ -165,88 +180,101 @@ enum Interaction {
   UNEQUIP
 }
 
+enum CollectionType {
+  HolderOf
+  Issuer
+  Public
+}
+
+enum Kind {
+  poap
+  pfp
+  genart
+  mixed
+  collectible
+}
+
 # Remarkably specific types
 type Base @entity {
-    id: ID!
-    type: BaseType!
-    symbol: String!
-    issuer: String!
-    currentOwner: String!  
-    meta: MetadataEntity
-    metadata: String
-    parts: [Part!] @derivedFrom(field: "base")
-    themes: [Theme!] @derivedFrom(field: "base")
-    # attachedToResources: [Resource!] @derivedFrom (field: "base")
-    events: [BaseEvent!]
+  id: ID!
+  type: BaseType!
+  symbol: String!
+  issuer: String!
+  currentOwner: String!
+  meta: MetadataEntity
+  metadata: String
+  parts: [Part!] @derivedFrom(field: "base")
+  themes: [Theme!] @derivedFrom(field: "base")
+  # attachedToResources: [Resource!] @derivedFrom (field: "base")
+  events: [BaseEvent!]
 }
 
 type Part @entity {
-    id: ID! # baseId.partId base-12126274-SKBS.Eyebrows2white
-    name: String! # Eyebrows2white // RMRK calls it part_id
-    base: Base!
-    equippable: [String!]
-    metadata: String
-    meta: MetadataEntity
-    src: String
-    thumb: String # RMRK GraphQL does not have this
-    # resources: [ResourcePart!] @derivedFrom (field: "resource")
-    type: PartType!
-    z: Int
+  id: ID! # baseId.partId base-12126274-SKBS.Eyebrows2white
+  name: String! # Eyebrows2white // RMRK calls it part_id
+  base: Base!
+  equippable: [String!]
+  metadata: String
+  meta: MetadataEntity
+  src: String
+  thumb: String # RMRK GraphQL does not have this
+  # resources: [ResourcePart!] @derivedFrom (field: "resource")
+  type: PartType!
+  z: Int
 }
 
-
 type Theme @entity {
-    id: ID!
-    name: String!
-    base: Base!
-    themeColor1: String
-    themeColor2: String
-    themeColor3: String
-    themeColor4: String
+  id: ID!
+  name: String!
+  base: Base!
+  themeColor1: String
+  themeColor2: String
+  themeColor3: String
+  themeColor4: String
 }
 
 # https://github.com/rmrk-team/rmrk-spec/blob/master/standards/rmrk2.0.0/entities/nft.md#resources-and-resource
 type Resource @entity {
-    id: ID!
-    base: Base
-    src: String
-    meta: MetadataEntity
-    metadata: String
-    slot: Part
-    thumb: String
-    parts: [String!]
-    # parts: [ResourcePart!] @derivedFrom (field: "resource")
-    priority: Int! # 0 is highest priority, need to check if this is correct
-    pending: Boolean!
-    nft: NFTEntity!
+  id: ID!
+  base: Base
+  src: String
+  meta: MetadataEntity
+  metadata: String
+  slot: Part
+  thumb: String
+  parts: [String!]
+  # parts: [ResourcePart!] @derivedFrom (field: "resource")
+  priority: Int! # 0 is highest priority, need to check if this is correct
+  pending: Boolean!
+  nft: NFTEntity!
 }
 
 enum BaseType {
-    svg
-    audio
-    mixed
-    video
-    png
+  svg
+  audio
+  mixed
+  video
+  png
 }
 
 enum PartType {
-    fixed
-    slot
+  fixed
+  slot
 }
 
 type Property @entity {
-    id: ID! 
-    key: String!
-    value: String!
-    type: String!
-    mutable: Boolean!
-    nft: NFTEntity!
+  id: ID!
+  key: String!
+  value: String!
+  type: String!
+  mutable: Boolean!
+  nft: NFTEntity!
 }
 
 # Cachce and tables
 type Series @entity {
   id: ID!
-  issuer: String,
+  issuer: String
   unique: Int!
   uniqueCollectors: Int!
   sold: Int! @index

@@ -55,6 +55,7 @@ export async function mintItem(context: Context): Promise<void> {
     if (final.metadata) {
       const metadata = await handleMetadata(final.metadata, '', context.store)
       final.meta = metadata
+      final.attributes = metadata?.attributes
       final.image = metadata?.image
       final.media = metadata?.animationUrl
       if (metadata && isLewd(metadata)) {
